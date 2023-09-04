@@ -1,0 +1,31 @@
+{
+  "root": true,
+  "parser": "@typescript-eslint/parser",
+  "plugins": [
+    "@typescript-eslint",
+    "eslint-plugin-tsdoc",
+    "eslint-plugin-github",
+    "eslint-plugin-sonarjs"
+  ],
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:github/recommended",
+    "plugin:github/typescript",
+    "plugin:sonarjs/recommended"
+  ],
+  "rules": {
+    "@typescript-eslint/no-unused-vars": [
+      "warn",
+      {
+        "varsIgnorePattern": "^_"
+      }
+    ],
+    "@typescript-eslint/no-inferrable-types": ["off"],
+    "tsdoc/syntax": "warn",
+    "filenames/match-regex": "off",
+    "i18n-text/no-en": "off",
+    "sonarjs/no-duplicate-string": "off"
+  },
+  "env": { "node": true }
+}

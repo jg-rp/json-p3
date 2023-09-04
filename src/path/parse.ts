@@ -1,0 +1,413 @@
+import { JSONPathEnvironment } from "./environment";
+import { JSONPathSyntaxError } from "./errors";
+import {
+  BooleanLiteral,
+  FilterExpression,
+  FunctionExtension,
+  InfixExpression,
+  LogicalExpression,
+  NullLiteral,
+  NumberLiteral,
+  PrefixExpression,
+  RelativeQuery,
+  RootQuery,
+  StringLiteral,
+} from "./expression";
+import { JSONPath } from "./path";
+import {
+  BracketedSelection,
+  BracketedSelector,
+  FilterSelector,
+  IndexSelector,
+  JSONPathSelector,
+  NameSelector,
+  RecursiveDescentSelector,
+  SliceSelector,
+  WildcardSelector,
+} from "./selectors";
+import { Token, TokenKind, TokenStream } from "./token";
+
+const PRECEDENCE_LOWEST = 1;
+const PRECEDENCE_LOGICALRIGHT = 3;
+const PRECEDENCE_LOGICAL_AND = 4;
+const PRECEDENCE_LOGICAL_OR = 5;
+const PRECEDENCE_COMPARISON = 6;
+
+const PRECEDENCES: Map<TokenKind, number> = new Map([
+  [TokenKind.AND, PRECEDENCE_LOGICAL_AND],
+  [TokenKind.EQ, PRECEDENCE_COMPARISON],
+  [TokenKind.GE, PRECEDENCE_COMPARISON],
+  [TokenKind.GT, PRECEDENCE_COMPARISON],
+  [TokenKind.LE, PRECEDENCE_COMPARISON],
+  [TokenKind.LT, PRECEDENCE_COMPARISON],
+  [TokenKind.NE, PRECEDENCE_COMPARISON],
+  [TokenKind.NOT, PRECEDENCE_LOGICALRIGHT],
+  [TokenKind.OR, PRECEDENCE_LOGICAL_OR],
+  [TokenKind.RPAREN, PRECEDENCE_LOWEST],
+]);
+
+const BINARY_OPERATORS: Map<TokenKind, string> = new Map([
+  [TokenKind.AND, "&&"],
+  [TokenKind.EQ, "=="],
+  [TokenKind.GE, ">="],
+  [TokenKind.GT, ">"],
+  [TokenKind.LE, "<="],
+  [TokenKind.LT, "<"],
+  [TokenKind.NE, "!="],
+  [TokenKind.OR, "||"],
+]);
+
+export class Parser {
+  protected tokenMap: Map<string, (stream: TokenStream) => FilterExpression>;
+
+  constructor(readonly environment: JSONPathEnvironment) {
+    this.tokenMap = new Map([
+      [TokenKind.FALSE, this.parseBoolean],
+      [TokenKind.NUMBER, this.parseNumber],
+      [TokenKind.LPAREN, this.parseGroupedExpression],
+      [TokenKind.NOT, this.parsePrefixExpression],
+      [TokenKind.NULL, this.parseNull],
+      [TokenKind.ROOT, this.parseRootQuery],
+      [TokenKind.CURRENT, this.parseRelativeQuery],
+      [TokenKind.STRING, this.parseString],
+      [TokenKind.TRUE, this.parseBoolean],
+      [TokenKind.FUNCTION, this.parseFunction],
+    ]);
+  }
+
+  public *parse(stream: TokenStream): Generator<JSONPathSelector> {
+    if (stream.current.kind === TokenKind.ROOT) stream.next();
+    yield* this.parsePath(stream);
+    if (stream.current.kind === TokenKind.ERROR) {
+      throw new JSONPathSyntaxError(stream.current.value, stream.current);
+    }
+    if (stream.current.kind !== TokenKind.EOF) {
+      throw new JSONPathSyntaxError(
+        `unexpected token '${stream.current.kind}'`,
+        stream.current,
+      );
+    }
+  }
+
+  protected *parsePath(
+    stream: TokenStream,
+    inFilter: boolean = false,
+  ): Generator<JSONPathSelector> {
+    //TODO: check last token for error, remove TokenKind.ERROR handling elsewhere
+    loop: for (;;) {
+      switch (stream.current.kind) {
+        case TokenKind.NAME:
+          yield new NameSelector(
+            this.environment,
+            stream.current,
+            stream.current.value,
+            true,
+          );
+          break;
+        case TokenKind.WILD:
+          yield new WildcardSelector(this.environment, stream.current, true);
+          break;
+        case TokenKind.DDOT:
+          yield new RecursiveDescentSelector(this.environment, stream.current);
+          break;
+        case TokenKind.LBRACKET:
+          yield this.parseBracketedSelection(stream);
+          break;
+        default:
+          if (inFilter) {
+            stream.backup();
+          }
+          break loop;
+      }
+      stream.next();
+    }
+  }
+
+  protected parseIndex(stream: TokenStream): IndexSelector {
+    if (
+      (stream.current.value.length > 1 &&
+        stream.current.value.startsWith("0")) ||
+      stream.current.value.startsWith("-0")
+    ) {
+      throw new JSONPathSyntaxError(
+        "leading zero in index selector",
+        stream.current,
+      );
+    }
+
+    return new IndexSelector(
+      this.environment,
+      stream.current,
+      Number(stream.current.value),
+    );
+  }
+
+  protected parseSlice(stream: TokenStream): SliceSelector {
+    const tok = stream.current;
+    const indices: Array<number | undefined> = [];
+
+    function maybeIndex(token: Token): boolean {
+      if (token.kind === TokenKind.INDEX) {
+        if (
+          (token.value.length > 1 && token.value.startsWith("0")) ||
+          token.value.startsWith("-0")
+        ) {
+          throw new JSONPathSyntaxError(
+            "leading zero in index selector",
+            token,
+          );
+        }
+        return true;
+      }
+      return false;
+    }
+
+    // 1: or :
+    if (maybeIndex(stream.current)) {
+      indices.push(Number(stream.current.value));
+      stream.next();
+      stream.expect(TokenKind.COLON);
+      stream.next();
+    } else {
+      indices.push(undefined);
+      stream.expect(TokenKind.COLON);
+      stream.next();
+    }
+
+    // 1 or 1: or : or ?
+    if (maybeIndex(stream.current)) {
+      indices.push(Number(stream.current.value));
+      stream.next();
+      if (stream.current.kind === TokenKind.COLON) {
+        stream.next();
+      }
+    } else if (stream.current.kind === TokenKind.COLON) {
+      indices.push(undefined);
+      stream.expect(TokenKind.COLON);
+      stream.next();
+    }
+
+    // 1 or ?
+    if (maybeIndex(stream.current)) {
+      indices.push(Number(stream.current.value));
+      stream.next();
+    }
+
+    stream.backup();
+    return new SliceSelector(this.environment, tok, ...indices);
+  }
+
+  protected parseBracketedSelection(stream: TokenStream): BracketedSelection {
+    const token = stream.next();
+    const items: BracketedSelector[] = [];
+
+    while (stream.current.kind !== TokenKind.RBRACKET) {
+      switch (stream.current.kind) {
+        case TokenKind.STRING:
+          // TODO: handle unicode escape sequences
+          items.push(
+            new NameSelector(
+              this.environment,
+              stream.current,
+              stream.current.value,
+              false,
+            ),
+          );
+          break;
+        case TokenKind.FILTER:
+          items.push(this.parseFilter(stream));
+          break;
+        case TokenKind.INDEX:
+          if (stream.peek.kind === TokenKind.COLON) {
+            items.push(this.parseSlice(stream));
+          } else {
+            items.push(this.parseIndex(stream));
+          }
+          break;
+        case TokenKind.COLON:
+          items.push(this.parseSlice(stream));
+          break;
+        case TokenKind.WILD:
+          items.push(new WildcardSelector(this.environment, stream.current));
+          break;
+        case TokenKind.ERROR:
+          throw new JSONPathSyntaxError(stream.current.value, stream.current);
+        case TokenKind.EOF:
+          throw new JSONPathSyntaxError(
+            "unexpected end of query",
+            stream.current,
+          );
+        default:
+          throw new JSONPathSyntaxError(
+            `unexpected token in bracketed selection '${stream.current.kind}'`,
+            stream.current,
+          );
+      }
+
+      if (stream.peek.kind !== TokenKind.RBRACKET) {
+        stream.expectPeek(TokenKind.COMMA);
+        stream.next();
+      }
+
+      stream.next();
+    }
+
+    if (!items.length) {
+      throw new JSONPathSyntaxError("empty bracketed segment", token);
+    }
+
+    return new BracketedSelection(this.environment, token, items);
+  }
+
+  protected parseFilter(stream: TokenStream): FilterSelector {
+    const tok = stream.next();
+    const expr = new LogicalExpression(tok, this.parseFilterExpression(stream));
+    return new FilterSelector(this.environment, tok, expr);
+  }
+
+  protected parseBoolean(stream: TokenStream): BooleanLiteral {
+    if (stream.current.kind === TokenKind.FALSE)
+      return new BooleanLiteral(stream.current, false);
+    return new BooleanLiteral(stream.current, true);
+  }
+
+  protected parseNull(stream: TokenStream): NullLiteral {
+    return new NullLiteral(stream.current);
+  }
+
+  protected parseString(stream: TokenStream): StringLiteral {
+    return new StringLiteral(stream.current, stream.current.value);
+  }
+
+  protected parseNumber(stream: TokenStream): NumberLiteral {
+    return new NumberLiteral(stream.current, Number(stream.current.value));
+  }
+
+  protected parsePrefixExpression(stream: TokenStream): PrefixExpression {
+    stream.expect(TokenKind.NOT);
+    stream.next();
+    return new PrefixExpression(
+      stream.current,
+      "!",
+      this.parseFilterExpression(stream, PRECEDENCE_LOGICALRIGHT),
+    );
+  }
+
+  protected parseInfixExpression(
+    stream: TokenStream,
+    left: FilterExpression,
+  ): InfixExpression {
+    const tok = stream.next();
+    const precedence = PRECEDENCES.get(tok.kind) || PRECEDENCE_LOWEST;
+    return new InfixExpression(
+      tok,
+      left,
+      BINARY_OPERATORS.get(tok.kind) || "",
+      this.parseFilterExpression(stream, precedence),
+    );
+  }
+
+  protected parseGroupedExpression(stream: TokenStream): FilterExpression {
+    stream.next();
+    let expr = this.parseFilterExpression(stream);
+    stream.next();
+
+    while (stream.current.kind !== TokenKind.RPAREN) {
+      if (stream.current.kind === TokenKind.EOF) {
+        throw new JSONPathSyntaxError("unbalanced parentheses", stream.current);
+      }
+      expr = this.parseInfixExpression(stream, expr);
+    }
+
+    stream.expect(TokenKind.RPAREN);
+    return expr;
+  }
+
+  protected parseRootQuery(stream: TokenStream): RootQuery {
+    const tok = stream.next();
+    return new RootQuery(
+      tok,
+      new JSONPath(this.environment, Array.from(this.parsePath(stream, true))),
+    );
+  }
+
+  protected parseRelativeQuery(stream: TokenStream): RelativeQuery {
+    const tok = stream.next();
+    return new RelativeQuery(
+      tok,
+      new JSONPath(this.environment, Array.from(this.parsePath(stream, true))),
+    );
+  }
+
+  protected parseFunction(stream: TokenStream): FunctionExtension {
+    const args: FilterExpression[] = [];
+    const tok = stream.next();
+
+    while (stream.current.kind !== TokenKind.RPAREN) {
+      const func = this.tokenMap.get(stream.current.kind);
+      if (!func) {
+        throw new JSONPathSyntaxError(
+          `unexpected '${stream.current.value}'`,
+          stream.current,
+        );
+      }
+
+      args.push(func(stream));
+
+      if (stream.peek.kind !== TokenKind.RPAREN) {
+        if (stream.peek.kind === TokenKind.RBRACKET) break;
+        stream.expectPeek(TokenKind.COMMA);
+        stream.next();
+      }
+
+      stream.next();
+    }
+
+    return new FunctionExtension(
+      tok,
+      tok.value,
+      this.environment.validateFunctionCall(tok, args),
+    );
+  }
+
+  protected parseFilterExpression(
+    stream: TokenStream,
+    precedence: number = PRECEDENCE_LOWEST,
+  ): FilterExpression {
+    const func = this.tokenMap.get(stream.current.kind);
+    if (!func) {
+      let msg: string;
+      switch (stream.current.kind) {
+        case TokenKind.EOF:
+        case TokenKind.RBRACKET:
+          msg = "end of expression";
+          break;
+        case TokenKind.ERROR:
+          msg = stream.current.value;
+          break;
+        default:
+          msg = `'${stream.current.value}`;
+      }
+      throw new JSONPathSyntaxError(`unexpected ${msg}`, stream.current);
+    }
+
+    let left = func.bind(this)(stream);
+
+    for (;;) {
+      const peekKind = stream.peek.kind;
+      if (
+        peekKind === TokenKind.EOF ||
+        peekKind === TokenKind.RBRACKET ||
+        (PRECEDENCES.get(peekKind) || PRECEDENCE_LOWEST) < precedence
+      ) {
+        break;
+      }
+
+      if (!BINARY_OPERATORS.has(peekKind)) return left;
+      stream.next();
+      left = this.parseInfixExpression(stream, left);
+    }
+
+    return left;
+  }
+}

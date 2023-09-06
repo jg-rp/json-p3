@@ -1,4 +1,4 @@
-import { lex } from "../../src/path";
+import { lex } from "../../src/path/lex";
 import { Token, TokenKind } from "../../src/path/token";
 
 describe("tokenize path", () => {

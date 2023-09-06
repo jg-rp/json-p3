@@ -11,7 +11,7 @@ export class Search implements FilterFunction {
   public call(s: string, pattern: string): boolean {
     try {
       // TODO: cache re
-      const re = new RegExp(pattern, "v");
+      const re = new RegExp(pattern, "u");
       return !!s.match(re);
     } catch {
       // TODO: log error

@@ -11,7 +11,7 @@ export class Match implements FilterFunction {
   public call(s: string, pattern: string): boolean {
     try {
       // TODO: cache re
-      const re = new RegExp(this.fullMatch(pattern), "v");
+      const re = new RegExp(this.fullMatch(pattern), "u");
       return re.test(s);
     } catch {
       // TODO: log error

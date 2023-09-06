@@ -1,7 +1,7 @@
 import { JSONValue, isString } from "./types";
 
 /**
- * The pair of a value and its location.
+ * The pair of a JSON value and its location.
  */
 export class JSONPathNode {
   readonly path: string;

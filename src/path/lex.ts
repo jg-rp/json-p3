@@ -147,7 +147,6 @@ class Lexer {
   }
 
   public error(msg: string): void {
-    // TODO: append position to msg
     this.tokens.push(new Token(TokenKind.ERROR, msg, this.#pos, this.path));
   }
 }

@@ -79,9 +79,9 @@ export class Parser {
     ]);
   }
 
-  public *parse(stream: TokenStream): Generator<JSONPathSelector> {
+  public parse(stream: TokenStream): JSONPathSelector[] {
     if (stream.current.kind === TokenKind.ROOT) stream.next();
-    yield* this.parsePath(stream);
+    const selectors = this.parsePath(stream);
     if (stream.current.kind === TokenKind.ERROR) {
       throw new JSONPathSyntaxError(stream.current.value, stream.current);
     }
@@ -91,30 +91,38 @@ export class Parser {
         stream.current,
       );
     }
+    return selectors;
   }
 
-  protected *parsePath(
+  protected parsePath(
     stream: TokenStream,
     inFilter: boolean = false,
-  ): Generator<JSONPathSelector> {
+  ): JSONPathSelector[] {
+    const selectors: JSONPathSelector[] = [];
     loop: for (;;) {
       switch (stream.current.kind) {
         case TokenKind.NAME:
-          yield new NameSelector(
-            this.environment,
-            stream.current,
-            stream.current.value,
-            true,
+          selectors.push(
+            new NameSelector(
+              this.environment,
+              stream.current,
+              stream.current.value,
+              true,
+            ),
           );
           break;
         case TokenKind.WILD:
-          yield new WildcardSelector(this.environment, stream.current, true);
+          selectors.push(
+            new WildcardSelector(this.environment, stream.current, true),
+          );
           break;
         case TokenKind.DDOT:
-          yield new RecursiveDescentSelector(this.environment, stream.current);
+          selectors.push(
+            new RecursiveDescentSelector(this.environment, stream.current),
+          );
           break;
         case TokenKind.LBRACKET:
-          yield this.parseBracketedSelection(stream);
+          selectors.push(this.parseBracketedSelection(stream));
           break;
         default:
           if (inFilter) {
@@ -124,6 +132,7 @@ export class Parser {
       }
       stream.next();
     }
+    return selectors;
   }
 
   protected parseIndex(stream: TokenStream): IndexSelector {
@@ -351,7 +360,7 @@ export class Parser {
     const tok = stream.next();
     return new RootQuery(
       tok,
-      new JSONPath(this.environment, Array.from(this.parsePath(stream, true))),
+      new JSONPath(this.environment, this.parsePath(stream, true)),
     );
   }
 
@@ -359,7 +368,7 @@ export class Parser {
     const tok = stream.next();
     return new RelativeQuery(
       tok,
-      new JSONPath(this.environment, Array.from(this.parsePath(stream, true))),
+      new JSONPath(this.environment, this.parsePath(stream, true)),
     );
   }
 

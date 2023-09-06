@@ -1,4 +1,4 @@
-import { JSONValue } from "./types";
+import { JSONValue, isString } from "./types";
 
 /**
  * The pair of a value and its location.
@@ -13,10 +13,12 @@ export class JSONPathNode {
    */
   constructor(
     readonly value: JSONValue,
-    readonly location: string[], // TODO: change to string | number
+    readonly location: Array<string | number>,
     readonly root: JSONValue,
   ) {
-    this.path = location.map((s) => `[${s}]`).join(""); // XXX:
+    this.path = location
+      .map((s) => (isString(s) ? `['${s}']` : `[${s}]`))
+      .join("");
   }
 }
 

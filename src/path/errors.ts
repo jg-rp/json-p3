@@ -22,6 +22,8 @@ export class JSONPathLexerError extends JSONPathError {
   }
 }
 
+// TODO: append position to error msg from token
+
 /**
  * Error thrown due to type errors when evaluating filter expressions.
  */

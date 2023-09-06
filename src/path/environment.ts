@@ -67,7 +67,7 @@ export class JSONPathEnvironment {
   public compile(path: string): JSONPath {
     return new JSONPath(
       this,
-      Array.from(this.parser.parse(new TokenStream(tokenize(path)))),
+      this.parser.parse(new TokenStream(tokenize(path))),
     );
   }
 

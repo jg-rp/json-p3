@@ -1,7 +1,7 @@
 {
-  "name": "json-ppp",
+  "name": "json-p3",
   "version": "0.1.0",
-  "description": "JSONPath, JSON Pointer and JSON Patch",
+  "description": "JSONPath, Pointer and Patch",
   "main": "index.js",
   "scripts": {
     "test": "jest",

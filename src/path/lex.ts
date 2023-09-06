@@ -83,7 +83,11 @@ class Lexer {
 
   public backup(): void {
     if (this.#pos <= this.#start) {
-      throw new JSONPathLexerError("can't backup beyond start");
+      const msg = "can't backup beyond start";
+      throw new JSONPathLexerError(
+        msg,
+        new Token(TokenKind.ERROR, msg, this.#pos, this.path),
+      );
     }
     this.#pos -= 1;
   }
@@ -132,11 +136,14 @@ class Lexer {
 
   public ignoreWhitespace(): boolean {
     if (this.#pos !== this.#start) {
+      const msg = `must emit or ignore before consuming whitespace ('${this.path.slice(
+        this.#start,
+        this.#pos,
+      )}':${this.pos})`;
+
       throw new JSONPathLexerError(
-        `must emit or ignore before consuming whitespace ('${this.path.slice(
-          this.#start,
-          this.#pos,
-        )}':${this.pos})`,
+        msg,
+        new Token(TokenKind.ERROR, msg, this.pos, this.path),
       );
     }
     if (this.acceptRun(whitespace)) {
@@ -277,7 +284,7 @@ function lexDotSelector(l: Lexer): StateFn | null {
     l.emit(TokenKind.NAME);
     return lexSegment;
   } else {
-    l.error(`unexpected shorthand selector token '${ch}'`);
+    l.error(`unexpected shorthand selector '${ch}'`);
     return null;
   }
 }

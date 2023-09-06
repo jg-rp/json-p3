@@ -82,9 +82,6 @@ export class Parser {
   public parse(stream: TokenStream): JSONPathSelector[] {
     if (stream.current.kind === TokenKind.ROOT) stream.next();
     const selectors = this.parsePath(stream);
-    if (stream.current.kind === TokenKind.ERROR) {
-      throw new JSONPathSyntaxError(stream.current.value, stream.current);
-    }
     if (stream.current.kind !== TokenKind.EOF) {
       throw new JSONPathSyntaxError(
         `unexpected token '${stream.current.kind}'`,
@@ -242,8 +239,6 @@ export class Parser {
         case TokenKind.WILD:
           items.push(new WildcardSelector(this.environment, stream.current));
           break;
-        case TokenKind.ERROR:
-          throw new JSONPathSyntaxError(stream.current.value, stream.current);
         case TokenKind.EOF:
           throw new JSONPathSyntaxError(
             "unexpected end of query",
@@ -414,9 +409,6 @@ export class Parser {
         case TokenKind.EOF:
         case TokenKind.RBRACKET:
           msg = "end of expression";
-          break;
-        case TokenKind.ERROR:
-          msg = stream.current.value;
           break;
         default:
           msg = `'${stream.current.value}`;

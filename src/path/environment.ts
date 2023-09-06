@@ -96,7 +96,7 @@ export class JSONPathEnvironment {
     const func = this.filterRegister.get(token.value);
     if (!func) {
       throw new UndefinedFilterFunctionError(
-        `filter function '${token.value}' is undefined`,
+        `no such function '${token.value}'`,
         token,
       );
     }
@@ -106,7 +106,7 @@ export class JSONPathEnvironment {
       throw new JSONPathTypeError(
         `${token.value}() takes ${func.argTypes.length} argument${
           func.argTypes.length === 1 ? "" : "s"
-        } (${args.length} given)`,
+        }, ${args.length} given`,
         token,
       );
     }

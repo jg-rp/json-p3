@@ -5,7 +5,10 @@
   "main": "index.js",
   "scripts": {
     "test": "jest",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "coverage": "jest --collectCoverage",
+    "clean": "rm -rf ./lib ./dist ./coverage",
+    "lint": "eslint src tests --ext .js,.jsx,.ts,.tsx"
   },
   "author": "",
   "license": "MIT",

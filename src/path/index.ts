@@ -10,7 +10,8 @@ export {
   JSONPathTypeError,
 } from "./errors";
 
-export * as types from "./types";
+export { Nothing } from "./types";
+export type { JSONValue, JSONPathValue, FilterContext } from "./types";
 
 // TODO: review exports
 // TODO: convenience functions

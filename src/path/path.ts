@@ -19,7 +19,7 @@ export class JSONPath {
    */
   constructor(
     readonly environment: JSONPathEnvironment,
-    readonly selectors: JSONPathSelector[],
+    readonly selectors: JSONPathSelector[], // TODO: should be "segments"
   ) {}
 
   /**

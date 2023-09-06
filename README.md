@@ -6,6 +6,8 @@ JSONPath, JSON Patch and JSON Pointer for JavaScript.
 
 ---
 
+Work in progress.
+
 ## Install
 
 TODO:

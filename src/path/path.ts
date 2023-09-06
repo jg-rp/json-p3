@@ -1,6 +1,11 @@
 import { JSONPathEnvironment } from "./environment";
 import { JSONPathNode, JSONPathNodeList } from "./node";
-import { JSONPathSelector } from "./selectors";
+import {
+  BracketedSelection,
+  IndexSelector,
+  JSONPathSelector,
+  NameSelector,
+} from "./selectors";
 import { JSONValue } from "./types";
 
 /**
@@ -35,5 +40,20 @@ export class JSONPath {
    */
   public toString(): string {
     return `$${this.selectors.map((s) => s.toString()).join("")}`;
+  }
+
+  public singularQuery(): boolean {
+    for (const selector of this.selectors) {
+      if (selector instanceof NameSelector) continue;
+      if (
+        selector instanceof BracketedSelection &&
+        selector.items.length === 1 &&
+        (selector.items[0] instanceof NameSelector ||
+          selector.items[0] instanceof IndexSelector)
+      )
+        continue;
+      return false;
+    }
+    return true;
   }
 }

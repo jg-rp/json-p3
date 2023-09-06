@@ -37,6 +37,20 @@ export class JSONPathTypeError extends JSONPathError {
 }
 
 /**
+ * Error thrown due to out of range indices.
+ */
+export class JSONPathIndexError extends JSONPathError {
+  constructor(
+    readonly message: string,
+    readonly token: Token,
+  ) {
+    super(message);
+    Object.setPrototypeOf(this, new.target.prototype);
+    this.name = "JSONPathIndexError";
+  }
+}
+
+/**
  * Error thrown when attempting to retrieve a filter function that has not
  * been registered.
  */

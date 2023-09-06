@@ -20,10 +20,10 @@ describe("tokenize path", () => {
     expect(tokens).toStrictEqual([
       new Token(TokenKind.ROOT, "$", 0, path),
       new Token(TokenKind.LBRACKET, "[", 1, path),
-      new Token(TokenKind.STRING, "foo", 3, path),
+      new Token(TokenKind.SINGLE_QUOTE_STRING, "foo", 3, path),
       new Token(TokenKind.RBRACKET, "]", 7, path),
       new Token(TokenKind.LBRACKET, "[", 8, path),
-      new Token(TokenKind.STRING, "bar", 10, path),
+      new Token(TokenKind.SINGLE_QUOTE_STRING, "bar", 10, path),
       new Token(TokenKind.RBRACKET, "]", 14, path),
       new Token(TokenKind.EOF, "", 15, path),
     ]);
@@ -80,9 +80,7 @@ describe("tokenize path", () => {
     lexer.run();
     expect(tokens).toStrictEqual([
       new Token(TokenKind.ROOT, "$", 0, path),
-      new Token(TokenKind.NAME, "foo", 3, path),
-      new Token(TokenKind.NAME, "bar", 7, path),
-      new Token(TokenKind.EOF, "", 10, path),
+      new Token(TokenKind.ERROR, "unexpected whitespace after dot", 3, path),
     ]);
   });
   test("whitespace after dot property", () => {
@@ -156,7 +154,7 @@ describe("tokenize path", () => {
       new Token(TokenKind.ROOT, "$", 0, path),
       new Token(TokenKind.NAME, "foo", 2, path),
       new Token(TokenKind.LBRACKET, "[", 5, path),
-      new Token(TokenKind.STRING, "bar", 7, path),
+      new Token(TokenKind.DOUBLE_QUOTE_STRING, "bar", 7, path),
       new Token(TokenKind.RBRACKET, "]", 11, path),
       new Token(TokenKind.EOF, "", 12, path),
     ]);
@@ -169,7 +167,7 @@ describe("tokenize path", () => {
       new Token(TokenKind.ROOT, "$", 0, path),
       new Token(TokenKind.NAME, "foo", 2, path),
       new Token(TokenKind.LBRACKET, "[", 5, path),
-      new Token(TokenKind.STRING, "bar", 7, path),
+      new Token(TokenKind.SINGLE_QUOTE_STRING, "bar", 7, path),
       new Token(TokenKind.RBRACKET, "]", 11, path),
       new Token(TokenKind.EOF, "", 12, path),
     ]);
@@ -182,7 +180,7 @@ describe("tokenize path", () => {
       new Token(TokenKind.ROOT, "$", 0, path),
       new Token(TokenKind.NAME, "foo", 2, path),
       new Token(TokenKind.LBRACKET, "[", 5, path),
-      new Token(TokenKind.STRING, "bar", 7, path),
+      new Token(TokenKind.SINGLE_QUOTE_STRING, "bar", 7, path),
       new Token(TokenKind.COMMA, ",", 11, path),
       new Token(TokenKind.INDEX, "123", 13, path),
       new Token(TokenKind.COMMA, ",", 16, path),

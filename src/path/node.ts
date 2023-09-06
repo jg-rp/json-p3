@@ -13,10 +13,10 @@ export class JSONPathNode {
    */
   constructor(
     readonly value: JSONValue,
-    readonly location: string[],
+    readonly location: string[], // TODO: change to string | number
     readonly root: JSONValue,
   ) {
-    this.path = location.join(""); // XXX: location strings need updating
+    this.path = location.map((s) => `[${s}]`).join(""); // XXX:
   }
 }
 
@@ -53,5 +53,9 @@ export class JSONPathNodeList {
   public valuesOrSingular(): JSONValue {
     if (this.nodes.length === 1) return this.nodes[0].value;
     return this.nodes.map((node) => node.value);
+  }
+
+  public get length(): number {
+    return this.nodes.length;
   }
 }

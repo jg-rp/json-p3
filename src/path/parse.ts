@@ -1,5 +1,5 @@
 import { JSONPathEnvironment } from "./environment";
-import { JSONPathSyntaxError } from "./errors";
+import { JSONPathSyntaxError, JSONPathTypeError } from "./errors";
 import {
   BooleanLiteral,
   FilterExpression,
@@ -13,6 +13,7 @@ import {
   RootQuery,
   StringLiteral,
 } from "./expression";
+import { FunctionExpressionType } from "./functions/function";
 import { JSONPath } from "./path";
 import {
   BracketedSelection,
@@ -57,6 +58,8 @@ const BINARY_OPERATORS: Map<TokenKind, string> = new Map([
   [TokenKind.OR, "||"],
 ]);
 
+const COMPARISON_OPERATORS = new Set(["==", ">=", ">", "<=", "<", "!="]);
+
 export class Parser {
   protected tokenMap: Map<string, (stream: TokenStream) => FilterExpression>;
 
@@ -69,7 +72,8 @@ export class Parser {
       [TokenKind.NULL, this.parseNull],
       [TokenKind.ROOT, this.parseRootQuery],
       [TokenKind.CURRENT, this.parseRelativeQuery],
-      [TokenKind.STRING, this.parseString],
+      [TokenKind.SINGLE_QUOTE_STRING, this.parseString],
+      [TokenKind.DOUBLE_QUOTE_STRING, this.parseString],
       [TokenKind.TRUE, this.parseBoolean],
       [TokenKind.FUNCTION, this.parseFunction],
     ]);
@@ -93,7 +97,6 @@ export class Parser {
     stream: TokenStream,
     inFilter: boolean = false,
   ): Generator<JSONPathSelector> {
-    //TODO: check last token for error, remove TokenKind.ERROR handling elsewhere
     loop: for (;;) {
       switch (stream.current.kind) {
         case TokenKind.NAME:
@@ -203,13 +206,13 @@ export class Parser {
 
     while (stream.current.kind !== TokenKind.RBRACKET) {
       switch (stream.current.kind) {
-        case TokenKind.STRING:
-          // TODO: handle unicode escape sequences
+        case TokenKind.SINGLE_QUOTE_STRING:
+        case TokenKind.DOUBLE_QUOTE_STRING:
           items.push(
             new NameSelector(
               this.environment,
               stream.current,
-              stream.current.value,
+              this.decodeString(stream.current, true),
               false,
             ),
           );
@@ -261,8 +264,21 @@ export class Parser {
 
   protected parseFilter(stream: TokenStream): FilterSelector {
     const tok = stream.next();
-    const expr = new LogicalExpression(tok, this.parseFilterExpression(stream));
-    return new FilterSelector(this.environment, tok, expr);
+    const expr = this.parseFilterExpression(stream);
+    if (expr instanceof FunctionExtension) {
+      const func = this.environment.filterRegister.get(expr.name);
+      if (func && func.returnType === FunctionExpressionType.ValueType) {
+        throw new JSONPathTypeError(
+          `result of ${expr.name}()  must be compared`,
+          expr.token,
+        );
+      }
+    }
+    return new FilterSelector(
+      this.environment,
+      tok,
+      new LogicalExpression(tok, expr),
+    );
   }
 
   protected parseBoolean(stream: TokenStream): BooleanLiteral {
@@ -276,7 +292,7 @@ export class Parser {
   }
 
   protected parseString(stream: TokenStream): StringLiteral {
-    return new StringLiteral(stream.current, stream.current.value);
+    return new StringLiteral(stream.current, this.decodeString(stream.current));
   }
 
   protected parseNumber(stream: TokenStream): NumberLiteral {
@@ -299,12 +315,20 @@ export class Parser {
   ): InfixExpression {
     const tok = stream.next();
     const precedence = PRECEDENCES.get(tok.kind) || PRECEDENCE_LOWEST;
-    return new InfixExpression(
-      tok,
-      left,
-      BINARY_OPERATORS.get(tok.kind) || "",
-      this.parseFilterExpression(stream, precedence),
-    );
+    const right = this.parseFilterExpression(stream, precedence);
+    const operator = BINARY_OPERATORS.get(tok.kind);
+
+    if (!operator) {
+      throw new JSONPathSyntaxError(`unknown operator '${tok.kind}'`, tok);
+    }
+
+    this.throwForNonSingularQuery(left);
+    this.throwForNonSingularQuery(right);
+    if (COMPARISON_OPERATORS.has(operator)) {
+      this.throwForNonComparableFunction(left);
+      this.throwForNonComparableFunction(right);
+    }
+    return new InfixExpression(tok, left, operator, right);
   }
 
   protected parseGroupedExpression(stream: TokenStream): FilterExpression {
@@ -352,7 +376,7 @@ export class Parser {
         );
       }
 
-      args.push(func(stream));
+      args.push(func.bind(this)(stream));
 
       if (stream.peek.kind !== TokenKind.RPAREN) {
         if (stream.peek.kind === TokenKind.RBRACKET) break;
@@ -366,7 +390,7 @@ export class Parser {
     return new FunctionExtension(
       tok,
       tok.value,
-      this.environment.validateFunctionCall(tok, args),
+      this.environment.checkWellTypedness(tok, args),
     );
   }
 
@@ -409,5 +433,45 @@ export class Parser {
     }
 
     return left;
+  }
+
+  protected decodeString(token: Token, isName: boolean = false): string {
+    try {
+      return JSON.parse(
+        token.kind === TokenKind.SINGLE_QUOTE_STRING
+          ? `"${token.value.replaceAll('"', '\\"').replaceAll("\\'", "'")}"`
+          : `"${token.value}"`,
+      );
+    } catch {
+      throw new JSONPathSyntaxError(
+        `invalid ${isName ? "name selector" : "string literal"} '${
+          token.value
+        }'`,
+        token,
+      );
+    }
+  }
+
+  protected throwForNonSingularQuery(expr: FilterExpression): void {
+    if (
+      (expr instanceof RootQuery || expr instanceof RelativeQuery) &&
+      !expr.path.singularQuery()
+    ) {
+      throw new JSONPathSyntaxError(
+        "non-singular query is not comparable",
+        expr.token,
+      );
+    }
+  }
+
+  protected throwForNonComparableFunction(expr: FilterExpression): void {
+    if (!(expr instanceof FunctionExtension)) return;
+    const func = this.environment.filterRegister.get(expr.name);
+    if (func && func.returnType !== FunctionExpressionType.ValueType) {
+      throw new JSONPathTypeError(
+        `result of ${expr.name}() is not comparable`,
+        expr.token,
+      );
+    }
   }
 }

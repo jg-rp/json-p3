@@ -1,4 +1,5 @@
 import { JSONPathEnvironment } from "./environment";
+import { JSONPathIndexError } from "./errors";
 import { LogicalExpression } from "./expression";
 import { JSONPathNode, JSONPathNodeList } from "./node";
 import { Token } from "./token";
@@ -77,6 +78,12 @@ export class IndexSelector extends JSONPathSelector {
     readonly index: number,
   ) {
     super(environment, token);
+    if (
+      index < this.environment.options.minIntIndex ||
+      index > this.environment.options.maxIntIndex
+    ) {
+      throw new JSONPathIndexError("index out of range", this.token);
+    }
   }
 
   public resolve(nodes: JSONPathNodeList): JSONPathNodeList {
@@ -118,7 +125,7 @@ export class SliceSelector extends JSONPathSelector {
     readonly step?: number,
   ) {
     super(environment, token);
-    // TODO: check numbers are in range
+    this.checkRange(start, stop, step);
   }
 
   public resolve(nodes: JSONPathNodeList): JSONPathNodeList {
@@ -126,19 +133,15 @@ export class SliceSelector extends JSONPathSelector {
     for (const node of nodes) {
       if (!isArray(node.value)) continue;
 
-      let index = this.start || 0;
-      const step = this.step || 1;
-
-      for (const value of this.slice(node.value, step)) {
-        const normIndex = this.normalizedIndex(node.value.length, index);
+      for (const [i, value] of this.slice(
+        node.value,
+        this.start,
+        this.stop,
+        this.step,
+      )) {
         rv.push(
-          new JSONPathNode(
-            value,
-            node.location.concat(String(normIndex)),
-            node.root,
-          ),
+          new JSONPathNode(value, node.location.concat(String(i)), node.root),
         );
-        index += step;
       }
     }
     return new JSONPathNodeList(rv);
@@ -151,20 +154,71 @@ export class SliceSelector extends JSONPathSelector {
     return `${start}:${stop}:${step}`;
   }
 
-  private normalizedIndex(length: number, index: number): number {
-    if (index < 0 && length >= Math.abs(index)) return length + index;
-    return index;
+  private checkRange(...indices: Array<number | undefined>): void {
+    for (const index of indices) {
+      if (
+        index !== undefined &&
+        (index < this.environment.options.minIntIndex ||
+          index > this.environment.options.maxIntIndex)
+      ) {
+        throw new JSONPathIndexError("index out of range", this.token);
+      }
+    }
   }
 
-  private slice(array: JSONValue[], step: number): JSONValue[] {
-    if (step === 1) return array.slice(this.start, this.stop);
-    const sliced: JSONValue[] = [];
-    const start = this.normalizedIndex(array.length, this.start || 0);
-    const stop = this.normalizedIndex(array.length, this.stop || array.length);
-    for (let i = start; i <= stop; i += step) {
-      sliced.push(array[i]);
+  private normalizedIndex(length: number, index: number): number {
+    if (index < 0 && length >= Math.abs(index))
+      return Math.min(length + index, length - 1);
+    return Math.min(index, length - 1);
+  }
+
+  // eslint-disable-next-line sonarjs/cognitive-complexity
+  private slice(
+    arr: JSONValue[],
+    start?: number,
+    stop?: number,
+    step?: number,
+  ): Array<[number, JSONValue]> {
+    if (!arr.length) return [];
+
+    // Handle negative start and stop values
+    if (start === undefined || start === null) {
+      start = step && step < 0 ? arr.length - 1 : 0;
+    } else if (start < 0) {
+      start = Math.max(arr.length + start, 0);
+    } else {
+      start = Math.min(start, arr.length - 1);
     }
-    return sliced;
+
+    if (stop === undefined || stop === null) {
+      stop = step && step < 0 ? -1 : arr.length;
+    } else if (stop < 0) {
+      stop = Math.max(arr.length + stop, -1);
+    } else {
+      stop = Math.min(stop, arr.length);
+    }
+
+    // Handle step value
+    if (step === 0) {
+      return [];
+    }
+    if (!step) {
+      step = 1;
+    }
+
+    // Perform the slice
+    const slicedArray: Array<[number, JSONValue]> = [];
+    if (step > 0) {
+      for (let i = start; i < stop; i += step) {
+        slicedArray.push([i, arr[i]]);
+      }
+    } else {
+      for (let i = start; i > stop; i += step) {
+        slicedArray.push([i, arr[i]]);
+      }
+    }
+
+    return slicedArray;
   }
 }
 
@@ -314,9 +368,12 @@ export class BracketedSelection extends JSONPathSelector {
 
   public resolve(nodes: JSONPathNodeList): JSONPathNodeList {
     const rv: JSONPathNode[] = [];
-    for (const item of this.items) {
-      rv.push(...item.resolve(nodes));
+    for (const node of nodes) {
+      for (const item of this.items) {
+        rv.push(...item.resolve(new JSONPathNodeList([node])));
+      }
     }
+
     return new JSONPathNodeList(rv);
   }
 

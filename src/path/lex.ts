@@ -1,4 +1,4 @@
-import { JSONPathLexerError } from "./errors";
+import { JSONPathLexerError, JSONPathSyntaxError } from "./errors";
 import { Token, TokenKind } from "./token";
 
 // These regular expressions are to be used with Lexer.acceptMatchRun(),
@@ -130,15 +130,20 @@ class Lexer {
     return false;
   }
 
-  public ignoreWhitespace(): void {
+  public ignoreWhitespace(): boolean {
     if (this.#pos !== this.#start) {
       throw new JSONPathLexerError(
-        "must emit or ignore before consuming whitespace",
+        `must emit or ignore before consuming whitespace ('${this.path.slice(
+          this.#start,
+          this.#pos,
+        )}':${this.pos})`,
       );
     }
     if (this.acceptRun(whitespace)) {
       this.ignore();
+      return true;
     }
+    return false;
   }
 
   public error(msg: string): void {
@@ -175,6 +180,12 @@ export function lex(path: string): [Lexer, Token[]] {
 export function tokenize(path: string): Token[] {
   const [lexer, tokens] = lex(path);
   lexer.run();
+  if (tokens.length && tokens[tokens.length - 1].kind === TokenKind.ERROR) {
+    throw new JSONPathSyntaxError(
+      tokens[tokens.length - 1].value,
+      tokens[tokens.length - 1],
+    );
+  }
   return tokens;
 }
 
@@ -190,7 +201,9 @@ function lexRoot(l: Lexer): StateFn | null {
 }
 
 function lexSegment(l: Lexer): StateFn | null {
-  l.ignoreWhitespace();
+  if (l.ignoreWhitespace() && !l.peek()) {
+    l.error("trailing whitespace");
+  }
   const ch = l.next();
   switch (ch) {
     case "":
@@ -248,7 +261,12 @@ function lexDescendantSelection(l: Lexer): StateFn | null {
 
 function lexDotSelector(l: Lexer): StateFn | null {
   l.ignore();
-  l.ignoreWhitespace();
+
+  if (l.ignoreWhitespace()) {
+    l.error("unexpected whitespace after dot");
+    return null;
+  }
+
   const ch = l.next();
   if (ch === "*") {
     l.emit(TokenKind.WILD);
@@ -352,6 +370,9 @@ function lexInsideFilter(l: Lexer): StateFn | null {
       case "@":
         l.emit(TokenKind.CURRENT);
         return lexSegment;
+      case ".":
+        l.backup();
+        return lexSegment;
       case "!":
         if (l.peek() === "=") {
           l.next();
@@ -453,23 +474,31 @@ function lexInsideFilter(l: Lexer): StateFn | null {
  * @returns String tokenizing state function.
  */
 function makeLexString(quote: string, state: StateFn): StateFn {
+  // eslint-disable-next-line sonarjs/cognitive-complexity
   function _lexString(l: Lexer): StateFn | null {
     l.ignore();
 
     if (l.peek() === quote) {
       // empty string
-      l.emit(TokenKind.STRING);
+      l.emit(
+        quote === "'"
+          ? TokenKind.SINGLE_QUOTE_STRING
+          : TokenKind.DOUBLE_QUOTE_STRING,
+      );
       l.next();
       l.ignore();
       return state;
     }
 
     for (;;) {
-      const ch = l.next();
       const la = l.path.slice(l.pos, l.pos + 2);
+      const ch = l.next();
       if (la === "\\\\" || la === `\\${quote}`) {
         l.next();
         continue;
+      } else if (ch === "\\" && !la.match(/\\[bfnrtu/]/)) {
+        l.error(`invalid escape`);
+        return null;
       }
 
       if (!ch) {
@@ -479,7 +508,11 @@ function makeLexString(quote: string, state: StateFn): StateFn {
 
       if (ch === quote) {
         l.backup();
-        l.emit(TokenKind.STRING);
+        l.emit(
+          quote === "'"
+            ? TokenKind.SINGLE_QUOTE_STRING
+            : TokenKind.DOUBLE_QUOTE_STRING,
+        );
         l.next();
         l.ignore();
         return state;

@@ -1,21 +1,29 @@
-import { FilterExpression } from "../expression";
-import { Token } from "../token";
+/**
+ * The type of a JSONPath filter function parameter or return value, as
+ * described in See section 2.4.1 of draft-ietf-jsonpath-base-20.
+ */
+export enum FunctionExpressionType {
+  ValueType = "ValueType",
+  LogicalType = "LogicalType",
+  NodesType = "NodesType",
+}
 
 /**
  * A JSONPath filter function definition.
  */
-export type FilterFunction = {
+export interface FilterFunction {
+  /**
+   * Argument types expected by the filter function.
+   */
+  argTypes: FunctionExpressionType[];
+
+  /**
+   * The type of the value returned by the filter function.
+   */
+  returnType: FunctionExpressionType;
+
   /**
    * A function with unknown number and type of arguments.
    */
-  (...args: unknown[]): unknown;
-
-  /**
-   * An optional compile-time argument validation function.
-   * @param args - Function arguments.
-   * @param token - The token that starts the function call.
-   * @returns An array of arguments, possibly the input arguments passed through.
-   */
-  validate?: (args: FilterExpression[], token: Token) => FilterExpression[];
-  nodeList?: boolean;
-};
+  call(...args: unknown[]): unknown;
+}

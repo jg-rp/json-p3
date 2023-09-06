@@ -1,4 +1,9 @@
-import { JSONPathTypeError, UndefinedFilterFunctionError } from "./errors";
+import {
+  JSONPathSyntaxError,
+  JSONPathTypeError,
+  UndefinedFilterFunctionError,
+} from "./errors";
+import { FunctionExpressionType } from "./functions/function";
 import { JSONPathNodeList } from "./node";
 import { JSONPath } from "./path";
 import { Token } from "./token";
@@ -22,7 +27,12 @@ export abstract class FilterExpression {
   public abstract toString(): string;
 }
 
-export class NullLiteral extends FilterExpression {
+/**
+ * Base class for JSONPath ValueType literals.
+ */
+export abstract class FilterExpressionLiteral extends FilterExpression {}
+
+export class NullLiteral extends FilterExpressionLiteral {
   public evaluate(): null {
     return null;
   }
@@ -32,7 +42,7 @@ export class NullLiteral extends FilterExpression {
   }
 }
 
-export class BooleanLiteral extends FilterExpression {
+export class BooleanLiteral extends FilterExpressionLiteral {
   constructor(
     readonly token: Token,
     readonly value: boolean,
@@ -49,7 +59,7 @@ export class BooleanLiteral extends FilterExpression {
   }
 }
 
-export class StringLiteral extends FilterExpression {
+export class StringLiteral extends FilterExpressionLiteral {
   constructor(
     readonly token: Token,
     readonly value: string,
@@ -66,7 +76,7 @@ export class StringLiteral extends FilterExpression {
   }
 }
 
-export class NumberLiteral extends FilterExpression {
+export class NumberLiteral extends FilterExpressionLiteral {
   constructor(
     readonly token: Token,
     readonly value: number,
@@ -120,25 +130,23 @@ export class InfixExpression extends FilterExpression {
   }
 
   public evaluate(context: FilterContext): boolean {
+    let left = this.left.evaluate(context);
+    if (left instanceof JSONPathNodeList && left.nodes.length === 1)
+      left = left.nodes[0].value;
+
+    let right = this.right.evaluate(context);
+    if (right instanceof JSONPathNodeList && right.nodes.length === 1)
+      right = right.nodes[0].value;
+
     if (this.operator === "&&") {
-      return (
-        isTruthy(this.left.evaluate(context)) &&
-        isTruthy(this.right.evaluate(context))
-      );
+      return isTruthy(left) && isTruthy(right);
     }
 
     if (this.operator === "||") {
-      return (
-        isTruthy(this.left.evaluate(context)) ||
-        isTruthy(this.right.evaluate(context))
-      );
+      return isTruthy(left) || isTruthy(right);
     }
 
-    return compare(
-      this.left.evaluate(context),
-      this.operator,
-      this.right.evaluate(context),
-    );
+    return compare(left, this.operator, right);
   }
 
   public toString(): string {
@@ -170,14 +178,19 @@ export class LogicalExpression extends FilterExpression {
   }
 }
 
-export class RelativeQuery extends FilterExpression {
+/**
+ * Base class for relative and absolute JSONPath query expressions.
+ */
+export abstract class JSONPathQuery extends FilterExpression {
   constructor(
     readonly token: Token,
     readonly path: JSONPath,
   ) {
     super(token);
   }
+}
 
+export class RelativeQuery extends JSONPathQuery {
   public evaluate(context: FilterContext): JSONPathNodeList {
     return this.path.query(context.currentValue);
   }
@@ -187,14 +200,7 @@ export class RelativeQuery extends FilterExpression {
   }
 }
 
-export class RootQuery extends FilterExpression {
-  constructor(
-    readonly token: Token,
-    readonly path: JSONPath,
-  ) {
-    super(token);
-  }
-
+export class RootQuery extends JSONPathQuery {
   public evaluate(context: FilterContext): JSONPathNodeList {
     return this.path.query(context.rootValue);
   }
@@ -222,19 +228,19 @@ export class FunctionExtension extends FilterExpression {
       );
     }
 
-    const args = this.args.map((arg) => arg.evaluate(context));
-    if (!func.nodeList) return func(...this.unpackNodeLists(args));
-    return func(...args);
+    const args = this.args
+      .map((arg) => arg.evaluate(context))
+      .map((arg, idx) =>
+        func.argTypes[idx] !== FunctionExpressionType.NodesType &&
+        arg instanceof JSONPathNodeList
+          ? arg.valuesOrSingular()
+          : arg,
+      );
+    return func.call(...args);
   }
 
   public toString(): string {
     return `${this.name}(${this.args.map((e) => e.toString()).join(", ")})`;
-  }
-
-  private unpackNodeLists(args: unknown[]): unknown[] {
-    return args.map((arg) =>
-      arg instanceof JSONPathNodeList ? arg.valuesOrSingular() : arg,
-    );
   }
 }
 
@@ -243,8 +249,8 @@ export class FunctionExtension extends FilterExpression {
  * @param value -
  */
 function isTruthy(value: unknown): boolean {
-  // TODO: Boolean wrapper objects?
-  return typeof value === "boolean" && value === true;
+  if (value instanceof JSONPathNodeList && value.empty()) return false;
+  return !(typeof value === "boolean" && value === false);
 }
 
 /**
@@ -264,11 +270,10 @@ function compare(left: unknown, operator: string, right: unknown): boolean {
     case ">":
       return lt(right, left);
     case ">=":
-      return lt(right, left) && eq(left, right);
+      return lt(right, left) || eq(left, right);
     case "<=":
-      return lt(left, right) && eq(left, right);
+      return lt(left, right) || eq(left, right);
     default:
-      // TODO: throw?
       return false;
   }
 }

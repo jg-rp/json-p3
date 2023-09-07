@@ -1,8 +1,4 @@
-import {
-  JSONPathSyntaxError,
-  JSONPathTypeError,
-  UndefinedFilterFunctionError,
-} from "./errors";
+import { JSONPathTypeError, UndefinedFilterFunctionError } from "./errors";
 import { FunctionExpressionType } from "./functions/function";
 import { JSONPathNodeList } from "./node";
 import { JSONPath } from "./path";

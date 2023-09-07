@@ -4,3 +4,4 @@ jest.config.js
 benchmark
 tests/browser
 docs
+tests/path/cts

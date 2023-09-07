@@ -17,12 +17,12 @@ import { FunctionExpressionType } from "./functions/function";
 import { JSONPath } from "./path";
 import {
   BracketedSelection,
-  BracketedSelector,
+  BracketedSegment,
   FilterSelector,
   IndexSelector,
   JSONPathSelector,
   NameSelector,
-  RecursiveDescentSelector,
+  RecursiveDescentSegment,
   SliceSelector,
   WildcardSelector,
 } from "./selectors";
@@ -115,7 +115,7 @@ export class Parser {
           break;
         case TokenKind.DDOT:
           selectors.push(
-            new RecursiveDescentSelector(this.environment, stream.current),
+            new RecursiveDescentSegment(this.environment, stream.current),
           );
           break;
         case TokenKind.LBRACKET:
@@ -208,7 +208,7 @@ export class Parser {
 
   protected parseBracketedSelection(stream: TokenStream): BracketedSelection {
     const token = stream.next();
-    const items: BracketedSelector[] = [];
+    const items: BracketedSegment[] = [];
 
     while (stream.current.kind !== TokenKind.RBRACKET) {
       switch (stream.current.kind) {

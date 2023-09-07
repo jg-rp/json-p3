@@ -1,7 +1,16 @@
+import { JSONPathEnvironment } from "./environment";
+
 export { JSONPathEnvironment } from "./environment";
+export type { JSONPathEnvironmentOptions } from "./environment";
+
 export { JSONPath } from "./path";
 export { JSONPathNodeList, JSONPathNode } from "./node";
 export { Token, TokenKind } from "./token";
+
+export * as selectors from "./selectors";
+export * as expressions from "./expression";
+export * as functions from "./functions";
+
 export {
   JSONPathError,
   JSONPathIndexError,
@@ -13,5 +22,8 @@ export {
 export { Nothing } from "./types";
 export type { JSONValue, JSONPathValue, FilterContext } from "./types";
 
-// TODO: review exports
-// TODO: convenience functions
+export const DEFAULT_ENVIRONMENT = new JSONPathEnvironment();
+// TODO: document convenience functions
+export const query = DEFAULT_ENVIRONMENT.query.bind(DEFAULT_ENVIRONMENT);
+export const compile = DEFAULT_ENVIRONMENT.compile.bind(DEFAULT_ENVIRONMENT);
+export default query;

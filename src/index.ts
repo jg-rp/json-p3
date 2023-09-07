@@ -1,2 +1,2 @@
 export const version = "__VERSION__";
-export * as path from "./path";
+export * as jsonpath from "./path";

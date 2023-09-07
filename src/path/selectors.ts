@@ -12,7 +12,7 @@ import {
 } from "./types";
 
 /**
- * Base class for all JSONPath selectors.
+ * Base class for all JSONPath segments and selectors.
  */
 export abstract class JSONPathSelector {
   /**
@@ -95,7 +95,7 @@ export class IndexSelector extends JSONPathSelector {
           rv.push(
             new JSONPathNode(
               node.value[normIndex],
-              node.location.concat(String(normIndex)),
+              node.location.concat(normIndex),
               node.root,
             ),
           );
@@ -139,9 +139,7 @@ export class SliceSelector extends JSONPathSelector {
         this.stop,
         this.step,
       )) {
-        rv.push(
-          new JSONPathNode(value, node.location.concat(String(i)), node.root),
-        );
+        rv.push(new JSONPathNode(value, node.location.concat(i), node.root));
       }
     }
     return new JSONPathNodeList(rv);
@@ -237,9 +235,7 @@ export class WildcardSelector extends JSONPathSelector {
       if (node.value instanceof String) continue;
       if (isArray(node.value)) {
         for (const [i, value] of node.value.entries()) {
-          rv.push(
-            new JSONPathNode(value, node.location.concat(String(i)), node.root),
-          );
+          rv.push(new JSONPathNode(value, node.location.concat(i), node.root));
         }
       } else if (isObject(node.value)) {
         for (const [key, value] of Object.entries(node.value)) {
@@ -257,7 +253,7 @@ export class WildcardSelector extends JSONPathSelector {
   }
 }
 
-export class RecursiveDescentSelector extends JSONPathSelector {
+export class RecursiveDescentSegment extends JSONPathSelector {
   public resolve(nodes: JSONPathNodeList): JSONPathNodeList {
     const rv: JSONPathNode[] = [];
     for (const node of nodes) {
@@ -277,7 +273,7 @@ export class RecursiveDescentSelector extends JSONPathSelector {
       for (const [i, value] of node.value.entries()) {
         const _node = new JSONPathNode(
           value,
-          node.location.concat(String(i)),
+          node.location.concat(i),
           node.root,
         );
         rv.push(_node, ...this.visit(_node));
@@ -319,11 +315,7 @@ export class FilterSelector extends JSONPathSelector {
           };
           if (this.expression.evaluate(filterContext)) {
             rv.push(
-              new JSONPathNode(
-                value,
-                node.location.concat(String(i)),
-                node.root,
-              ),
+              new JSONPathNode(value, node.location.concat(i), node.root),
             );
           }
         }
@@ -350,7 +342,7 @@ export class FilterSelector extends JSONPathSelector {
   }
 }
 
-export type BracketedSelector =
+export type BracketedSegment =
   | FilterSelector
   | IndexSelector
   | NameSelector
@@ -361,7 +353,7 @@ export class BracketedSelection extends JSONPathSelector {
   constructor(
     readonly environment: JSONPathEnvironment,
     readonly token: Token,
-    readonly items: BracketedSelector[],
+    readonly items: BracketedSegment[],
   ) {
     super(environment, token);
   }

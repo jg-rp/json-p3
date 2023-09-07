@@ -30,7 +30,7 @@ const nodes = jsonpath.query("$.users[?@.score < 100].name", data);
 console.log(nodes.values()); // [ 'John', 'Sally', 'Jane' ]
 ```
 
-The result of `path.query()` is an instance of `JSONPathNodeList`. That is a list of `JSONPathNode` objects, one node for each value in the target JSON document that matched they query. Each node has:
+The result of `jsonpath.query()` is an instance of `JSONPathNodeList`. That is a list of `JSONPathNode` objects, one node for each value in the target JSON document matching the query. Each node has a:
 
 - `value` - The value found in the target JSON value. This could be an array, object or primitive value.
 - `location` - An array of property names and array indices that were required to reach the node's value in the target JSON value.

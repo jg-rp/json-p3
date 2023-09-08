@@ -23,7 +23,7 @@ export { Nothing } from "./types";
 export type { JSONValue, JSONPathValue, FilterContext } from "./types";
 
 export const DEFAULT_ENVIRONMENT = new JSONPathEnvironment();
-// TODO: document convenience functions
+// TODO: document or wrap convenience functions
 export const query = DEFAULT_ENVIRONMENT.query.bind(DEFAULT_ENVIRONMENT);
 export const compile = DEFAULT_ENVIRONMENT.compile.bind(DEFAULT_ENVIRONMENT);
 export default query;

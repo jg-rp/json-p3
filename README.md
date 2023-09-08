@@ -91,7 +91,59 @@ console.log(nodes.values()); // [ 'John', 'Sally', 'Jane' ]
 
 ## JSON Pointer
 
-TODO: Work in progress.
+Identify a single value in JSON-like data, as per RFC 6901. Use `jsonpointer.resolve()` to retrieve the value.
+
+```javascript
+import { jsonpointer } from "json-p3";
+
+const data = {
+  users: [
+    { name: "Sue", score: 100 },
+    { name: "John", score: 86 },
+    { name: "Sally", score: 84 },
+    { name: "Jane", score: 55 },
+  ],
+};
+
+const rv = jsonpointer.resolve("/users/1", data);
+console.log(rv); // { name: 'John', score: 86 }
+```
+
+If the pointer can't be resolved against the argument JSON value, one of `JSONPointerIndexError`, `JSONPointerKeyError` or `JSONPointerTypeError` is thrown. All three exceptions inherit from `JSONPointerResolutionError`.
+
+```javascript
+import { jsonpointer } from "json-p3";
+
+const data = {
+  users: [
+    { name: "Sue", score: 100 },
+    { name: "John", score: 86 },
+    { name: "Sally", score: 84 },
+    { name: "Jane", score: 55 },
+  ],
+};
+
+const rv = jsonpointer.resolve("/users/1/age", data);
+// JSONPointerKeyError: no such property ("/users/1/age")
+```
+
+A fallback value can be given as a third argument, which will be returned in the even of a `JSONPointerResolutionError`.
+
+```javascript
+import { jsonpointer } from "json-p3";
+
+const data = {
+  users: [
+    { name: "Sue", score: 100 },
+    { name: "John", score: 86 },
+    { name: "Sally", score: 84 },
+    { name: "Jane", score: 55 },
+  ],
+};
+
+const rv = jsonpointer.resolve("/users/1/age", data, -1);
+console.log(rv); // -1
+```
 
 ## JSON Patch
 

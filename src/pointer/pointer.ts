@@ -1,7 +1,7 @@
 import {
-  JSONPointerError,
   JSONPointerIndexError,
   JSONPointerKeyError,
+  JSONPointerResolutionError,
   JSONPointerSyntaxError,
   JSONPointerTypeError,
 } from "./errors";
@@ -59,16 +59,30 @@ export class JSONPointer {
   }
 
   /**
+   * Resolve this pointer against JSON-like data _value_.
    *
-   * @param data -
-   * @param fallback -
-   * @returns
+   * @param value - The target JSON-like value, possibly loaded using
+   *  `JSON.parse()`.
+   * @param fallback - A default value to return if _value_ has no
+   *   path matching `pointer`.
+   * @returns The value identified by _pointer_ or, if given, the fallback
+   *   value in the even of a `JSONPointerResolutionError`.
+   *
+   * @throws {@link JSONPointerResolutionError}
+   * If the value pointed to by _pointer_ does not exist in _value_, and
+   * no fallback value is given.
    */
-  public resolve(data: JSONValue, fallback: MaybeJSONValue = UNDEFINED) {
+  public resolve(
+    value: JSONValue,
+    fallback: MaybeJSONValue = UNDEFINED,
+  ): JSONValue {
     try {
-      return this.#tokens.reduce(this.getItem.bind(this), data);
+      return this.#tokens.reduce(this.getItem.bind(this), value);
     } catch (error) {
-      if (error instanceof JSONPointerError && fallback !== UNDEFINED) {
+      if (
+        error instanceof JSONPointerResolutionError &&
+        fallback !== UNDEFINED
+      ) {
         return fallback;
       }
       throw error;
@@ -77,15 +91,15 @@ export class JSONPointer {
 
   /**
    *
-   * @param data -
+   * @param value -
    * @returns
    */
-  public resolveWithParent(data: JSONValue): [MaybeJSONValue, MaybeJSONValue] {
-    if (!this.#tokens.length) return [UNDEFINED, this.resolve(data)];
+  public resolveWithParent(value: JSONValue): [MaybeJSONValue, MaybeJSONValue] {
+    if (!this.#tokens.length) return [UNDEFINED, this.resolve(value)];
 
     const parent = this.#tokens
       .slice(0, this.#tokens.length - 1)
-      .reduce(this.getItem.bind(this), data);
+      .reduce(this.getItem.bind(this), value);
 
     try {
       return [

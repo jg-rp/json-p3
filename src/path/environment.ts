@@ -64,6 +64,11 @@ export class JSONPathEnvironment {
     this.setupFilterFunctions();
   }
 
+  /**
+   *
+   * @param path -
+   * @returns
+   */
   public compile(path: string): JSONPath {
     return new JSONPath(
       this,
@@ -71,6 +76,12 @@ export class JSONPathEnvironment {
     );
   }
 
+  /**
+   *
+   * @param path -
+   * @param value -
+   * @returns
+   */
   public query(path: string, value: JSONValue): JSONPathNodeList {
     return this.compile(path).query(value);
   }

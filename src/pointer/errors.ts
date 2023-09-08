@@ -9,7 +9,15 @@ export class JSONPointerError extends Error {
   }
 }
 
-export class JSONPointerIndexError extends JSONPointerError {
+export class JSONPointerResolutionError extends JSONPointerError {
+  constructor(readonly message: string) {
+    super(message);
+    Object.setPrototypeOf(this, new.target.prototype);
+    this.name = "JSONPointerResolutionError";
+  }
+}
+
+export class JSONPointerIndexError extends JSONPointerResolutionError {
   constructor(readonly message: string) {
     super(message);
     Object.setPrototypeOf(this, new.target.prototype);
@@ -17,7 +25,7 @@ export class JSONPointerIndexError extends JSONPointerError {
   }
 }
 
-export class JSONPointerKeyError extends JSONPointerError {
+export class JSONPointerKeyError extends JSONPointerResolutionError {
   constructor(readonly message: string) {
     super(message);
     Object.setPrototypeOf(this, new.target.prototype);
@@ -33,7 +41,7 @@ export class JSONPointerSyntaxError extends JSONPointerError {
   }
 }
 
-export class JSONPointerTypeError extends JSONPointerError {
+export class JSONPointerTypeError extends JSONPointerResolutionError {
   constructor(readonly message: string) {
     super(message);
     Object.setPrototypeOf(this, new.target.prototype);

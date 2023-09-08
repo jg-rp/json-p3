@@ -1,11 +1,11 @@
-import { JSONPointer } from "../../src/pointer";
+import { JSONPointer, resolve, UNDEFINED } from "../../src/pointer";
 import {
   JSONPointerIndexError,
   JSONPointerKeyError,
   JSONPointerSyntaxError,
   JSONPointerTypeError,
+  JSONPointerResolutionError,
 } from "../../src/pointer/errors";
-import { UNDEFINED } from "../../src/pointer/pointer";
 
 describe("JSON pointer", () => {
   test("string representation", () => {
@@ -69,5 +69,19 @@ describe("JSON pointer", () => {
     const pointer = new JSONPointer("/some/thing/1");
     const data = { some: { thing: "else" } };
     expect(() => pointer.resolveWithParent(data)).toThrow(JSONPointerTypeError);
+  });
+  test("convenience resolve", () => {
+    const data = { some: { thing: "else" } };
+    expect(resolve("/some/thing", data)).toBe("else");
+  });
+  test("convenience resolve with default", () => {
+    const data = { some: { thing: "else" } };
+    expect(resolve("/some/other", data, null)).toBe(null);
+  });
+  test("convenience resolve with explicit undefined default", () => {
+    const data = { some: { thing: "else" } };
+    expect(() => resolve("/some/other", data, UNDEFINED)).toThrow(
+      JSONPointerResolutionError,
+    );
   });
 });

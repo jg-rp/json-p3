@@ -1,4 +1,4 @@
-import { LRUCache } from "../../lru_cache";
+import { LRUCache } from "../lru_cache";
 import { FilterFunction, FunctionExpressionType } from "./function";
 
 export type MatchFilterFunctionOptions = {

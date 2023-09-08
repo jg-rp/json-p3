@@ -54,8 +54,8 @@ export class JSONPointer {
    * @param pointer - A string representation of a JSON Pointer.
    */
   constructor(pointer: string) {
-    this.#tokens = this.#parse(pointer);
-    this.#pointer = this.#encode(this.#tokens);
+    this.#tokens = this.parse(pointer);
+    this.#pointer = this.encode(this.#tokens);
   }
 
   /**
@@ -66,7 +66,7 @@ export class JSONPointer {
    */
   public resolve(data: JSONValue, fallback: MaybeJSONValue = UNDEFINED) {
     try {
-      return this.#tokens.reduce(this.#getItem.bind(this), data);
+      return this.#tokens.reduce(this.getItem.bind(this), data);
     } catch (error) {
       if (error instanceof JSONPointerError && fallback !== UNDEFINED) {
         return fallback;
@@ -85,12 +85,12 @@ export class JSONPointer {
 
     const parent = this.#tokens
       .slice(0, this.#tokens.length - 1)
-      .reduce(this.#getItem.bind(this), data);
+      .reduce(this.getItem.bind(this), data);
 
     try {
       return [
         parent,
-        this.#getItem(
+        this.getItem(
           parent,
           this.#tokens[this.#tokens.length - 1],
           this.#tokens.length - 1,
@@ -115,7 +115,7 @@ export class JSONPointer {
     return this.#pointer;
   }
 
-  #parse(pointer: string): string[] {
+  protected parse(pointer: string): string[] {
     if (pointer.length && !pointer.startsWith("/")) {
       throw new JSONPointerSyntaxError(
         `"${pointer}" pointers must start with a slash or be the empty string`,
@@ -128,7 +128,7 @@ export class JSONPointer {
       .slice(1);
   }
 
-  #getItem(val: JSONValue, token: string, idx: number): JSONValue {
+  protected getItem(val: JSONValue, token: string, idx: number): JSONValue {
     // NOTE:
     //   - string primitives "have own" indices and `length`.
     //   - Arrays have a `length` property.
@@ -139,7 +139,7 @@ export class JSONPointer {
         return val[Number(token)];
       } else {
         throw new JSONPointerIndexError(
-          `index out of range ("${this.#encode(
+          `index out of range ("${this.encode(
             this.#tokens.slice(0, idx + 1),
           )}")`,
         );
@@ -149,20 +149,18 @@ export class JSONPointer {
         return val[token];
       } else {
         throw new JSONPointerKeyError(
-          `no such property ("${this.#encode(
-            this.#tokens.slice(0, idx + 1),
-          )}")`,
+          `no such property ("${this.encode(this.#tokens.slice(0, idx + 1))}")`,
         );
       }
     }
     throw new JSONPointerTypeError(
-      `primitive property access ("${this.#encode(
+      `found primitive value, expected an object ("${this.encode(
         this.#tokens.slice(0, idx + 1),
       )}")`,
     );
   }
 
-  #encode(tokens: string[]) {
+  protected encode(tokens: string[]) {
     if (!tokens.length) return "";
     return (
       // eslint-disable-next-line prefer-template

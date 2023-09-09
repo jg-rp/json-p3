@@ -1,4 +1,8 @@
 /**
+ * Common types and type predicates.
+ */
+
+/**
  * A JSON-like value.
  */
 export type JSONValue =

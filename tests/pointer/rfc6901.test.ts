@@ -67,7 +67,7 @@ const RFC6901_TEST_CASES: Case[] = [
   { pointer: "/m~0n", want: 8 },
 ];
 
-describe("RRC6901", () => {
+describe("RFC6901", () => {
   test.each<Case>(RFC6901_TEST_CASES)("$pointer", ({ pointer, want }: Case) => {
     const p = new JSONPointer(pointer);
     expect(p.resolve(RFC6901_DOCUMENT)).toStrictEqual(want);

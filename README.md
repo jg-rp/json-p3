@@ -127,7 +127,7 @@ const rv = jsonpointer.resolve("/users/1/age", data);
 // JSONPointerKeyError: no such property ("/users/1/age")
 ```
 
-A fallback value can be given as a third argument, which will be returned in the even of a `JSONPointerResolutionError`.
+A fallback value can be given as a third argument, which will be returned in the event of a `JSONPointerResolutionError`.
 
 ```javascript
 import { jsonpointer } from "json-p3";

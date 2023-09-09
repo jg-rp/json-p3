@@ -111,7 +111,7 @@ export class OpRemove implements Op {
   public apply(value: JSONValue, index: number): JSONValue {
     const [parent, obj] = this.path.resolveWithParent(value);
     if (parent === UNDEFINED) {
-      throw new JSONPatchError("can't remove root");
+      throw new JSONPatchError(`can't remove root (${this.name}:${index})`);
     }
 
     const target = this.path.tokens.at(-1);
@@ -126,7 +126,7 @@ export class OpRemove implements Op {
           `can't remove nonexistent item (${this.name}:${index})`,
         );
       }
-      delete parent[Number(target)];
+      parent.splice(Number(target), 1);
     } else if (isObject(parent)) {
       if (obj === UNDEFINED) {
         throw new JSONPatchError(
@@ -180,7 +180,7 @@ export class OpReplace implements Op {
           `can't replace nonexistent item (${this.name}:${index})`,
         );
       }
-      parent.splice(Number(target), 0, this.value);
+      parent.splice(Number(target), 1, this.value);
     } else if (isObject(parent)) {
       if (obj === UNDEFINED) {
         throw new JSONPatchError(
@@ -227,7 +227,7 @@ export class OpMove implements Op {
       );
     }
 
-    const sourceTarget = this.path.tokens.at(-1);
+    const sourceTarget = this.from.tokens.at(-1);
     if (sourceTarget === undefined) {
       // this should not be possible
       throw new JSONPatchError(
@@ -236,7 +236,7 @@ export class OpMove implements Op {
     }
 
     if (isArray(sourceParent)) {
-      delete sourceParent[Number(sourceTarget)];
+      sourceParent.splice(Number(sourceTarget), 1);
     } else if (isObject(sourceParent)) {
       delete sourceParent[sourceTarget];
     }
@@ -475,6 +475,7 @@ export class JSONPatch {
         if (error instanceof JSONPointerResolutionError) {
           throw new JSONPatchError(`${error.message} (${op.name}:${i})`);
         }
+        throw error;
       }
     }
     return _value;

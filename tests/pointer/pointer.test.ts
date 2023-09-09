@@ -17,7 +17,7 @@ describe("JSON pointer", () => {
     const data = { some: { thing: "else" } };
     expect(() => pointer.resolve(data)).toThrow(JSONPointerKeyError);
     expect(() => pointer.resolve(data)).toThrow(
-      'no such property ("/some/other")',
+      "no such property '/some/other'",
     );
   });
   test("index out of range", () => {
@@ -25,7 +25,7 @@ describe("JSON pointer", () => {
     const data = { some: { thing: [1, 2, 3] } };
     expect(() => pointer.resolve(data)).toThrow(JSONPointerIndexError);
     expect(() => pointer.resolve(data)).toThrow(
-      'index out of range ("/some/thing/7")',
+      "index out of range '/some/thing/7'",
     );
   });
   test("property of a primitive", () => {
@@ -33,7 +33,7 @@ describe("JSON pointer", () => {
     const data = { some: { thing: "foo" } };
     expect(() => pointer.resolve(data)).toThrow(JSONPointerTypeError);
     expect(() => pointer.resolve(data)).toThrow(
-      'found primitive value, expected an object ("/some/thing/else")',
+      "found primitive value, expected an object '/some/thing/else'",
     );
   });
   test("resolve with default", () => {

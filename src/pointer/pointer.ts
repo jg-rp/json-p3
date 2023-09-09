@@ -166,9 +166,7 @@ export class JSONPointer {
         return val[Number(token)];
       } else {
         throw new JSONPointerIndexError(
-          `index out of range ("${this.encode(
-            this.tokens.slice(0, idx + 1),
-          )}")`,
+          `index out of range '${this.encode(this.tokens.slice(0, idx + 1))}'`,
         );
       }
     } else if (isObject(val)) {
@@ -176,14 +174,14 @@ export class JSONPointer {
         return val[token];
       } else {
         throw new JSONPointerKeyError(
-          `no such property ("${this.encode(this.tokens.slice(0, idx + 1))}")`,
+          `no such property '${this.encode(this.tokens.slice(0, idx + 1))}'`,
         );
       }
     }
     throw new JSONPointerTypeError(
-      `found primitive value, expected an object ("${this.encode(
+      `found primitive value, expected an object '${this.encode(
         this.tokens.slice(0, idx + 1),
-      )}")`,
+      )}'`,
     );
   }
 

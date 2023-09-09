@@ -4,6 +4,15 @@ import { JSONPointer, MaybeJSONValue, UNDEFINED } from "./pointer";
 export { JSONPointer, UNDEFINED } from "./pointer";
 export type { JSONValue, MaybeJSONValue } from "./pointer";
 
+export {
+  JSONPointerError,
+  JSONPointerResolutionError,
+  JSONPointerIndexError,
+  JSONPointerKeyError,
+  JSONPointerSyntaxError,
+  JSONPointerTypeError,
+} from "./errors";
+
 /**
  * Resolve JSON Pointer _pointer_ against JSON-like data _value_.
  *

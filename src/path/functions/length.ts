@@ -1,5 +1,6 @@
 import { FilterFunction, FunctionExpressionType } from "./function";
-import { Nothing, isArray, isObject, isString } from "../types";
+import { Nothing } from "../types";
+import { isArray, isObject, isString } from "../../types";
 
 export class Length implements FilterFunction {
   readonly argTypes = [FunctionExpressionType.ValueType];

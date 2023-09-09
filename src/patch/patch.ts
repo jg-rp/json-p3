@@ -1,24 +1,11 @@
-import { deepEquals } from "../path/expression"; // TODO: move me
-import { isArray, isObject, isString } from "../path/types"; // TODO: move me
+import { deepEquals } from "../deep_equals";
 import { JSONPointer, UNDEFINED } from "../pointer";
 import {
   JSONPointerError,
   JSONPointerResolutionError,
 } from "../pointer/errors";
+import { JSONValue, isArray, isObject, isString } from "../types";
 import { JSONPatchError, JSONPatchTestFailure } from "./errors";
-
-// TODO: move me
-/**
- * A JSON-like value.
- */
-export type JSONValue =
-  | string
-  | number
-  | null
-  | undefined
-  | boolean
-  | JSONValue[]
-  | { [key: string]: JSONValue };
 
 export type OpObject = {
   op: string;

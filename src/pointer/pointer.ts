@@ -1,3 +1,4 @@
+import { JSONValue, isArray, isObject } from "../types";
 import {
   JSONPointerIndexError,
   JSONPointerKeyError,
@@ -11,38 +12,7 @@ import {
  */
 export const UNDEFINED = Symbol.for("jsonpointer.undefined");
 
-/**
- * A JSON-like value.
- */
-export type JSONValue =
-  | string
-  | number
-  | null
-  | undefined
-  | boolean
-  | JSONValue[]
-  | { [key: string]: JSONValue };
-
 export type MaybeJSONValue = JSONValue | typeof UNDEFINED;
-
-// TODO: move me
-/**
- * A type predicate for the Array object.
- */
-function isArray(value: unknown): value is unknown[] {
-  return Array.isArray(value);
-}
-
-// TODO: move me
-/**
- * A type predicate for object.
- */
-function isObject(value: unknown): value is object {
-  const _type = typeof value;
-  return (value !== null && _type === "object") || _type === "function"
-    ? true
-    : false;
-}
 
 /**
  * Identify a single value in JSON-like data, as per RFC 6901.

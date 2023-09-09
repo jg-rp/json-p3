@@ -70,6 +70,8 @@ console.log(nodes.locations());
 ]
 ```
 
+TODO: node lists are iterable
+
 You can also compile a JSONPath query for repeated use against different data.
 
 ```javascript
@@ -144,6 +146,8 @@ const data = {
 const rv = jsonpointer.resolve("/users/1/age", data, -1);
 console.log(rv); // -1
 ```
+
+TODO: "compile" a pointer for later use
 
 ## JSON Patch
 

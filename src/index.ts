@@ -2,3 +2,4 @@ export const version = "__VERSION__";
 export * as jsonpath from "./path";
 export * as jsonpointer from "./pointer";
 export * as jsonpatch from "./patch";
+export type { JSONValue } from "./types";

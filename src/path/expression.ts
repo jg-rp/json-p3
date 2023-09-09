@@ -1,9 +1,11 @@
+import { deepEquals } from "../deep_equals";
 import { JSONPathTypeError, UndefinedFilterFunctionError } from "./errors";
 import { FunctionExpressionType } from "./functions/function";
 import { JSONPathNodeList } from "./node";
 import { JSONPath } from "./path";
 import { Token } from "./token";
-import { FilterContext, Nothing, isNumber, isObject, isString } from "./types";
+import { FilterContext, Nothing } from "./types";
+import { isNumber, isString } from "../types";
 
 /**
  * Base class for all filter expressions.
@@ -297,53 +299,5 @@ function lt(left: unknown, right: unknown): boolean {
     (isNumber(left) && isNumber(right))
   )
     return left < right;
-  return false;
-}
-
-/**
- * Deep equality of JSON-like values.
- *
- * No attempt is made to handle function objects, recursive data
- * structures, NaNs, sparse arrays, primitive wrapper objects....
- *
- * We're not using JSON.stringify because we want objects with the same
- * entries in a different order to compare equal.
- */
-// eslint-disable-next-line sonarjs/cognitive-complexity
-export function deepEquals(a: unknown, b: unknown): boolean {
-  if (a === b) {
-    return true;
-  }
-
-  if (Array.isArray(a)) {
-    if (Array.isArray(b)) {
-      if (a.length !== b.length) {
-        return false;
-      }
-      for (let i = 0; i < a.length; i++) {
-        if (!deepEquals(a[i], b[i])) {
-          return false;
-        }
-      }
-      return true;
-    }
-    return false;
-  } else if (isObject(a) && isObject(b)) {
-    const keysA = Object.keys(a);
-    const keysB = Object.keys(b);
-
-    if (keysA.length !== keysB.length) {
-      return false;
-    }
-
-    for (const key of keysA) {
-      if (!deepEquals(a[key as keyof typeof a], b[key as keyof typeof b])) {
-        return false;
-      }
-    }
-
-    return true;
-  }
-
   return false;
 }

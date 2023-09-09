@@ -3,13 +3,8 @@ import { JSONPathIndexError } from "./errors";
 import { LogicalExpression } from "./expression";
 import { JSONPathNode, JSONPathNodeList } from "./node";
 import { Token } from "./token";
-import {
-  FilterContext,
-  JSONValue,
-  hasStringKey,
-  isArray,
-  isObject,
-} from "./types";
+import { FilterContext, hasStringKey } from "./types";
+import { isArray, isObject, JSONValue } from "../types";
 
 /**
  * Base class for all JSONPath segments and selectors.

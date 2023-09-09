@@ -1,4 +1,4 @@
-import { JSONValue, isString } from "./types";
+import { JSONValue, isString } from "../types";
 
 /**
  * The pair of a JSON value and its location found in the target JSON value.

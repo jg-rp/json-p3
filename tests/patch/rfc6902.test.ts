@@ -32,7 +32,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { JSONValue } from "../../src/pointer";
+import { JSONValue } from "../../src/types";
 import { JSONPatch, OpObject } from "../../src/patch";
 
 type Case = {

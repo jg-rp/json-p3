@@ -16,7 +16,7 @@ import { JSONPathNodeList } from "./node";
 import { Parser } from "./parse";
 import { JSONPath } from "./path";
 import { Token, TokenStream } from "./token";
-import { JSONValue } from "./types";
+import { JSONValue } from "../types";
 
 /**
  *

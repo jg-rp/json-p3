@@ -1,8 +1,8 @@
-import { JSONValue } from "../path";
+import { JSONValue } from "../types";
 import { JSONPointer, MaybeJSONValue, UNDEFINED } from "./pointer";
 
 export { JSONPointer, UNDEFINED } from "./pointer";
-export type { JSONValue, MaybeJSONValue } from "./pointer";
+export type { MaybeJSONValue } from "./pointer";
 
 export {
   JSONPointerError,

@@ -6,7 +6,7 @@ import terser from "@rollup/plugin-terser";
 import pkg from "./package.json" assert { type: "json" };
 
 const extensions = [".js", ".jsx", ".ts", ".tsx"];
-const name = "jsonp3"; // TODO: think about name for browser namespace
+const name = "json_p3";
 const licence = readFileSync("./LICENCE", { encoding: "utf8" });
 
 const banner = `/*

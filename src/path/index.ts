@@ -20,7 +20,7 @@ export {
 } from "./errors";
 
 export { Nothing } from "./types";
-export type { JSONValue, JSONPathValue, FilterContext } from "./types";
+export type { JSONPathValue, FilterContext } from "./types";
 
 export const DEFAULT_ENVIRONMENT = new JSONPathEnvironment();
 // TODO: document or wrap convenience functions

@@ -6,7 +6,7 @@ import {
   JSONPathSelector,
   NameSelector,
 } from "./selectors";
-import { JSONValue } from "./types";
+import { JSONValue } from "../types";
 
 /**
  *

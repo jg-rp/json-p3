@@ -1,6 +1,6 @@
 import { JSONPathEnvironment } from "../../src/path/environment";
 import { JSONPathError } from "../../src/path/errors";
-import { JSONValue } from "../../src/path/types";
+import { JSONValue } from "../../src/types";
 
 import cts from "./cts/cts.json";
 

@@ -33,7 +33,7 @@
  */
 
 import { JSONValue } from "../../src/types";
-import { JSONPatch, OpObject } from "../../src/patch";
+import { JSONPatch, OpObject, apply } from "../../src/patch";
 
 type Case = {
   description: string;
@@ -167,5 +167,11 @@ describe("RFC6902", () => {
 describe("JSONPatch constructor", () => {
   test.each<Case>(TEST_CASES)("$description", ({ data, op, want }: Case) => {
     expect(new JSONPatch([op]).apply(deepCopy(data))).toStrictEqual(want);
+  });
+});
+
+describe("convenience function", () => {
+  test.each<Case>(TEST_CASES)("$description", ({ data, op, want }: Case) => {
+    expect(apply([op], deepCopy(data))).toStrictEqual(want);
   });
 });

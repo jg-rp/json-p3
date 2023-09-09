@@ -151,4 +151,40 @@ TODO: "compile" a pointer for later use
 
 ## JSON Patch
 
-TODO: Work in progress.
+Apply a JSON Patch ([RFC 6902](https://datatracker.ietf.org/doc/html/rfc6902)) to some data. A JSON Patch defines update operation to perform on a JSON document. **Data is modified in place.**.
+
+```javascript
+import { jsonpatch } from "json-p3";
+
+const ops = [
+  { op: "add", path: "/some/foo", value: { foo: {} } },
+  { op: "add", path: "/some/foo", value: { bar: [] } },
+  { op: "copy", from: "/some/other", path: "/some/foo/else" },
+  { op: "add", path: "/some/foo/bar/-", value: 1 },
+];
+
+const data = { some: { other: "thing" } };
+jsonpatch.apply(ops, data);
+console.log(data);
+// { some: { other: 'thing', foo: { bar: [Array], else: 'thing' } } }
+```
+
+Use the JSONPatch class to create a patch for repeated application.
+
+```javascript
+import { JSONPatch } from "json-p3";
+
+const patch = new JSONPatch([
+  { op: "add", path: "/some/foo", value: { foo: {} } },
+  { op: "add", path: "/some/foo", value: { bar: [] } },
+  { op: "copy", from: "/some/other", path: "/some/foo/else" },
+  { op: "add", path: "/some/foo/bar/-", value: 1 },
+]);
+
+const data = { some: { other: "thing" } };
+patch.apply(data);
+console.log(data);
+// { some: { other: 'thing', foo: { bar: [Array], else: 'thing' } } }
+```
+
+TODO: patch builder api

@@ -234,6 +234,7 @@ export class WildcardSelector extends JSONPathSelector {
     for (const node of nodes) {
       if (node.value instanceof String) continue;
       if (isArray(node.value)) {
+        // TODO: replace with traditional for loop
         for (const [i, value] of node.value.entries()) {
           rv.push(new JSONPathNode(value, node.location.concat(i), node.root));
         }
@@ -270,6 +271,7 @@ export class RecursiveDescentSegment extends JSONPathSelector {
     const rv: JSONPathNode[] = [];
     if (node.value instanceof String) return new JSONPathNodeList(rv);
     if (isArray(node.value)) {
+      // TODO: replace with traditional for loop
       for (const [i, value] of node.value.entries()) {
         const _node = new JSONPathNode(
           value,
@@ -307,6 +309,7 @@ export class FilterSelector extends JSONPathSelector {
     for (const node of nodes) {
       if (node.value instanceof String) continue;
       if (isArray(node.value)) {
+        // TODO: replace with traditional for loop
         for (const [i, value] of node.value.entries()) {
           const filterContext: FilterContext = {
             environment: this.environment,

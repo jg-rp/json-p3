@@ -9,7 +9,6 @@ const extensions = [".js", ".jsx", ".ts", ".tsx"];
 const name = "jsonp3"; // TODO: think about name for browser namespace
 const licence = readFileSync("./LICENCE", { encoding: "utf8" });
 
-// XXX: update github url
 const banner = `/*
  * json-p3 version ${pkg.version}
  * https://github.com/jg-rp/json-p3

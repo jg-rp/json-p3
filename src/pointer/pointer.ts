@@ -25,6 +25,7 @@ export type JSONValue =
 
 export type MaybeJSONValue = JSONValue | typeof UNDEFINED;
 
+// TODO: move me
 /**
  * A type predicate for the Array object.
  */
@@ -32,6 +33,7 @@ function isArray(value: unknown): value is unknown[] {
   return Array.isArray(value);
 }
 
+// TODO: move me
 /**
  * A type predicate for object.
  */
@@ -47,15 +49,14 @@ function isObject(value: unknown): value is object {
  */
 export class JSONPointer {
   #pointer: string;
-  #tokens: string[];
+  tokens: string[];
 
   /**
-   *
    * @param pointer - A string representation of a JSON Pointer.
    */
   constructor(pointer: string) {
-    this.#tokens = this.parse(pointer);
-    this.#pointer = this.encode(this.#tokens);
+    this.tokens = this.parse(pointer);
+    this.#pointer = this.encode(this.tokens);
   }
 
   /**
@@ -77,7 +78,7 @@ export class JSONPointer {
     fallback: MaybeJSONValue = UNDEFINED,
   ): JSONValue {
     try {
-      return this.#tokens.reduce(this.getItem.bind(this), value);
+      return this.tokens.reduce(this.getItem.bind(this), value);
     } catch (error) {
       if (
         error instanceof JSONPointerResolutionError &&
@@ -95,10 +96,10 @@ export class JSONPointer {
    * @returns
    */
   public resolveWithParent(value: JSONValue): [MaybeJSONValue, MaybeJSONValue] {
-    if (!this.#tokens.length) return [UNDEFINED, this.resolve(value)];
+    if (!this.tokens.length) return [UNDEFINED, this.resolve(value)];
 
-    const parent = this.#tokens
-      .slice(0, this.#tokens.length - 1)
+    const parent = this.tokens
+      .slice(0, this.tokens.length - 1)
       .reduce(this.getItem.bind(this), value);
 
     try {
@@ -106,8 +107,8 @@ export class JSONPointer {
         parent,
         this.getItem(
           parent,
-          this.#tokens[this.#tokens.length - 1],
-          this.#tokens.length - 1,
+          this.tokens[this.tokens.length - 1],
+          this.tokens.length - 1,
         ),
       ];
     } catch (error) {
@@ -127,6 +128,18 @@ export class JSONPointer {
    */
   public toString(): string {
     return this.#pointer;
+  }
+
+  /**
+   * Return _true_ if this pointer points to a child of _pointer_.
+   */
+  public isRelativeTo(pointer: JSONPointer): boolean {
+    return (
+      pointer.tokens.length < this.tokens.length &&
+      this.tokens
+        .slice(0, pointer.tokens.length)
+        .every((t, i) => t === pointer.tokens[i])
+    );
   }
 
   protected parse(pointer: string): string[] {
@@ -154,7 +167,7 @@ export class JSONPointer {
       } else {
         throw new JSONPointerIndexError(
           `index out of range ("${this.encode(
-            this.#tokens.slice(0, idx + 1),
+            this.tokens.slice(0, idx + 1),
           )}")`,
         );
       }
@@ -163,13 +176,13 @@ export class JSONPointer {
         return val[token];
       } else {
         throw new JSONPointerKeyError(
-          `no such property ("${this.encode(this.#tokens.slice(0, idx + 1))}")`,
+          `no such property ("${this.encode(this.tokens.slice(0, idx + 1))}")`,
         );
       }
     }
     throw new JSONPointerTypeError(
       `found primitive value, expected an object ("${this.encode(
-        this.#tokens.slice(0, idx + 1),
+        this.tokens.slice(0, idx + 1),
       )}")`,
     );
   }
@@ -184,4 +197,9 @@ export class JSONPointer {
         .join("/")
     );
   }
+
+  // TODO: join
+  // TODO: exists
+  // TODO: parent
+  // TODO: to (relative pointer)
 }

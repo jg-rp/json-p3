@@ -169,7 +169,7 @@ console.log(data);
 // { some: { other: 'thing', foo: { bar: [Array], else: 'thing' } } }
 ```
 
-Use the JSONPatch class to create a patch for repeated application.
+Use the `JSONPatch` class to create a patch for repeated application.
 
 ```javascript
 import { JSONPatch } from "json-p3";

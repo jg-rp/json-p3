@@ -14,6 +14,9 @@ export * as selectors from "./selectors";
 export * as expressions from "./expression";
 export * as functions from "./functions";
 
+export { FunctionExpressionType } from "./functions";
+export type { FilterFunction } from "./functions";
+
 export {
   JSONPathError,
   JSONPathIndexError,

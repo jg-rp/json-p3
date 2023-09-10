@@ -3,7 +3,15 @@
   "version": "0.1.0",
   "author": "James Prior",
   "license": "MIT",
-  "description": "JSONPath, Pointer and Patch",
+  "description": "JSONPath, JSON Pointer and JSON Patch",
+  "homepage": "https://github.com/jg-rp/json-p3",
+  "bugs": {
+    "url": "https://github.com/jg-rp/json-p3/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jg-rp/json-p3.git"
+  },
   "scripts": {
     "test": "jest",
     "build:types": "tsc --emitDeclarationOnly",
@@ -23,7 +31,7 @@
   "module": "dist/json-p3.esm.js",
   "browser": "dist/json-p3.iife.js",
   "browser-min": "dist/json-p3.iife.min.js",
-  "jsdelivr": "dist/json-p3.iife.bundle.min.js",
+  "jsdelivr": "dist/json-p3.iife.min.js",
   "types": "dist/index.d.ts",
   "files": [
     "dist/**/*"

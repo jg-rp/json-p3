@@ -4,11 +4,73 @@
 JSONPath, JSON Patch and JSON Pointer for JavaScript.
 </p>
 
+<p align="center">
+  <a href="https://github.com/jg-rp/json-p3/blob/main/LICENSE">
+    <img alt="NPM" src="https://img.shields.io/npm/l/json-p3">
+  </a>
+  <a href="https://github.com/jg-rp/json-p3/actions">
+    <img src="https://img.shields.io/github/actions/workflow/status/jg-rp/json-p3/tests.yaml?branch=main&label=tests&style=flat-square" alt="Tests">
+  </a>
+  <br>
+</p>
+
 ---
 
 ## Install
 
-TODO: Work in progress.
+### Node.js
+
+Use npm:
+
+```console
+npm install --save json-p3
+```
+
+Or yarn:
+
+```console
+yarn add json-p3
+```
+
+Or pnpm:
+
+```console
+pnpm add json-p3
+```
+
+And use ES module imports:
+
+```javascript
+import { query } from "json-p3";
+
+const data = {
+  players: [{ name: "Sue" }, { name: "John" }, { name: "Sally" }],
+  visitors: [{ name: "Brian" }, { name: "Roy" }],
+};
+
+const nodes = query("$..name", data);
+console.log(nodes.values());
+// [ 'Sue', 'John', 'Sally', 'Brian', 'Roy' ]
+```
+
+Or CommonJS modules:
+
+```javascript
+const { query } = require("json-p3");
+
+const data = {
+  players: [{ name: "Sue" }, { name: "John" }, { name: "Sally" }],
+  visitors: [{ name: "Brian" }, { name: "Roy" }],
+};
+
+const nodes = query("$..name", data);
+console.log(nodes.values());
+// [ 'Sue', 'John', 'Sally', 'Brian', 'Roy' ]
+```
+
+### Browser
+
+TODO:
 
 ## JSONPath
 

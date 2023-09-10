@@ -1,3 +1,4 @@
+import { JSONPointer } from "../pointer";
 import { JSONValue, isString } from "../types";
 
 /**
@@ -22,6 +23,16 @@ export class JSONPathNode {
     this.path =
       // eslint-disable-next-line prefer-template
       "$" + location.map((s) => (isString(s) ? `['${s}']` : `[${s}]`)).join("");
+  }
+
+  /**
+   * Return this node's location as a {@link JSONPointer}.
+   */
+  public toPointer(): JSONPointer {
+    if (!this.location.length) {
+      return new JSONPointer("");
+    }
+    return new JSONPointer(JSONPointer.encode(this.location.map(String)));
   }
 }
 
@@ -82,6 +93,14 @@ export class JSONPathNodeList {
    */
   public paths(): string[] {
     return this.nodes.map((node) => node.path);
+  }
+
+  /**
+   * @returns An array of {@link JSONPointer} instances, one for each node
+   * in the list.
+   */
+  public pointers(): JSONPointer[] {
+    return this.nodes.map((node) => node.toPointer());
   }
 
   /**

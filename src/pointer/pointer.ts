@@ -26,7 +26,18 @@ export class JSONPointer {
    */
   constructor(pointer: string) {
     this.tokens = this.parse(pointer);
-    this.#pointer = this.encode(this.tokens);
+    this.#pointer = JSONPointer.encode(this.tokens);
+  }
+
+  static encode(tokens: string[]) {
+    if (!tokens.length) return "";
+    return (
+      // eslint-disable-next-line prefer-template
+      "/" +
+      tokens
+        .map((token) => token.replaceAll("~", "~0").replaceAll("/", "~1"))
+        .join("/")
+    );
   }
 
   /**
@@ -59,6 +70,8 @@ export class JSONPointer {
       throw error;
     }
   }
+
+  // TODO: add `resolveWithFallback` to handle explicit `undefined`
 
   /**
    *
@@ -136,7 +149,9 @@ export class JSONPointer {
         return val[Number(token)];
       } else {
         throw new JSONPointerIndexError(
-          `index out of range '${this.encode(this.tokens.slice(0, idx + 1))}'`,
+          `index out of range '${JSONPointer.encode(
+            this.tokens.slice(0, idx + 1),
+          )}'`,
         );
       }
     } else if (isObject(val)) {
@@ -144,25 +159,16 @@ export class JSONPointer {
         return val[token];
       } else {
         throw new JSONPointerKeyError(
-          `no such property '${this.encode(this.tokens.slice(0, idx + 1))}'`,
+          `no such property '${JSONPointer.encode(
+            this.tokens.slice(0, idx + 1),
+          )}'`,
         );
       }
     }
     throw new JSONPointerTypeError(
-      `found primitive value, expected an object '${this.encode(
+      `found primitive value, expected an object '${JSONPointer.encode(
         this.tokens.slice(0, idx + 1),
       )}'`,
-    );
-  }
-
-  protected encode(tokens: string[]) {
-    if (!tokens.length) return "";
-    return (
-      // eslint-disable-next-line prefer-template
-      "/" +
-      tokens
-        .map((token) => token.replaceAll("~", "~0").replaceAll("/", "~1"))
-        .join("/")
     );
   }
 
@@ -183,7 +189,7 @@ export class JSONPointer {
         .map((token) => token.replaceAll("~1", "/").replaceAll("~0", "~")),
     );
 
-    return new JSONPointer(this.encode(tokens));
+    return new JSONPointer(JSONPointer.encode(tokens));
   }
 
   /**
@@ -238,10 +244,9 @@ export class JSONPointer {
     }
 
     return new JSONPointer(
-      this.encode(this.tokens.slice(0, this.tokens.length - 1)),
+      JSONPointer.encode(this.tokens.slice(0, this.tokens.length - 1)),
     );
   }
 
   // TODO: to (relative pointer)
-  // TODO: from json path node
 }

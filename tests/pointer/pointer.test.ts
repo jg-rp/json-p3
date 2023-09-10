@@ -84,6 +84,20 @@ describe("resolve JSON pointer", () => {
       JSONPointerResolutionError,
     );
   });
+  test("trailing slash", () => {
+    const data = { foo: { "": [1, 2, 3], " ": [4, 5, 6] } };
+    expect(resolve("/foo/", data)).toStrictEqual([1, 2, 3]);
+  });
+  test("trailing whitespace", () => {
+    const data = { foo: { "": [1, 2, 3], " ": [4, 5, 6] } };
+    expect(resolve("/foo/ ", data)).toStrictEqual([4, 5, 6]);
+  });
+  test("index with leading zero", () => {
+    const data = { some: { thing: [1, 2, 3] } };
+    expect(() => resolve("/some/thing/01", data)).toThrow(
+      JSONPointerIndexError,
+    );
+  });
 });
 
 describe("join pointers", () => {
@@ -143,5 +157,18 @@ describe("parent of a pointer", () => {
     parent = parent.parent();
     expect(parent.toString()).toBe("");
     expect(parent.resolve(data)).toStrictEqual({ some: { thing: [1, 2, 3] } });
+  });
+});
+
+describe("pointer exists", () => {
+  const data = { some: { thing: [1, 2, 3] }, other: undefined };
+  test("truthy value", () => {
+    expect(new JSONPointer("/some/thing").exists(data)).toBe(true);
+  });
+  test("falsy value", () => {
+    expect(new JSONPointer("/other").exists(data)).toBe(true);
+  });
+  test("does not exist", () => {
+    expect(new JSONPointer("/nosuchthing").exists(data)).toBe(false);
   });
 });

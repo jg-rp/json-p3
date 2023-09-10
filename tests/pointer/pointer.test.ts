@@ -7,7 +7,7 @@ import {
   JSONPointerResolutionError,
 } from "../../src/pointer/errors";
 
-describe("JSON pointer", () => {
+describe("resolve JSON pointer", () => {
   test("string representation", () => {
     const pointer = new JSONPointer("/some/thing/1");
     expect(pointer.toString()).toBe("/some/thing/1");
@@ -83,5 +83,65 @@ describe("JSON pointer", () => {
     expect(() => resolve("/some/other", data, UNDEFINED)).toThrow(
       JSONPointerResolutionError,
     );
+  });
+});
+
+describe("join pointers", () => {
+  const pointer = new JSONPointer("/foo");
+  test("repr of pointer", () => {
+    expect(pointer.toString()).toBe("/foo");
+  });
+  test("join with nothing", () => {
+    expect(pointer.join().toString()).toBe("/foo");
+  });
+  test("join with singular token", () => {
+    expect(pointer.join("bar").toString()).toBe("/foo/bar");
+  });
+  test("join with singular token, multiple parts", () => {
+    expect(pointer.join("bar/baz").toString()).toBe("/foo/bar/baz");
+  });
+  test("join with multiple tokens", () => {
+    expect(pointer.join("bar", "baz").toString()).toBe("/foo/bar/baz");
+  });
+  test("join with a numeric token", () => {
+    expect(pointer.join("bar", "baz", "0").toString()).toBe("/foo/bar/baz/0");
+  });
+  test("join with a rooted token", () => {
+    expect(pointer.join("/bar").toString()).toBe("/bar");
+  });
+  test("continue after a rooted token", () => {
+    expect(pointer.join("/bar", "0").toString()).toBe("/bar/0");
+  });
+  test("throw on non-string token", () => {
+    expect(() => pointer.join(0 as never)).toThrow(JSONPointerTypeError);
+  });
+});
+
+describe("parent of a pointer", () => {
+  const data = { some: { thing: [1, 2, 3] } };
+  const pointer = new JSONPointer("/some/thing/0");
+  let parent = pointer.parent();
+
+  test("pointer", () => {
+    expect(pointer.resolve(data)).toStrictEqual(1);
+  });
+  test("pointer's parent", () => {
+    expect(parent.toString()).toBe("/some/thing");
+    expect(parent.resolve(data)).toStrictEqual([1, 2, 3]);
+  });
+  test("parent's parent", () => {
+    parent = parent.parent();
+    expect(parent.toString()).toBe("/some");
+    expect(parent.resolve(data)).toStrictEqual({ thing: [1, 2, 3] });
+  });
+  test("parent is root", () => {
+    parent = parent.parent();
+    expect(parent.toString()).toBe("");
+    expect(parent.resolve(data)).toStrictEqual({ some: { thing: [1, 2, 3] } });
+  });
+  test("parent of root", () => {
+    parent = parent.parent();
+    expect(parent.toString()).toBe("");
+    expect(parent.resolve(data)).toStrictEqual({ some: { thing: [1, 2, 3] } });
   });
 });

@@ -1,4 +1,4 @@
-import { JSONValue, isArray, isObject } from "../types";
+import { JSONValue, isArray, isObject, isString } from "../types";
 import {
   JSONPointerIndexError,
   JSONPointerKeyError,
@@ -166,8 +166,82 @@ export class JSONPointer {
     );
   }
 
-  // TODO: join
-  // TODO: exists
-  // TODO: parent
+  private _join(pointer: string): JSONPointer {
+    if (!isString(pointer)) {
+      throw new JSONPointerTypeError(
+        `join() requires string arguments, found ${typeof pointer}`,
+      );
+    }
+
+    if (pointer.startsWith("/")) {
+      return new JSONPointer(pointer);
+    }
+
+    const tokens = this.tokens.concat(
+      pointer
+        .split("/")
+        .map((token) => token.replaceAll("~1", "/").replaceAll("~0", "~")),
+    );
+
+    return new JSONPointer(this.encode(tokens));
+  }
+
+  /**
+   * Join this pointer with _tokens_.
+   * @param tokens - JSON Pointer strings, possibly without leading slashes.
+   * If a token or "part" does have a leading slash, the previous pointer is
+   * ignored and a new `JSONPointer` is created, then processing of the
+   * remaining tokens continues.
+   * @returns A new JSON Pointer that is the concatenation of all tokens or
+   * "parts".
+   */
+  public join(...tokens: string[]): JSONPointer {
+    if (!tokens.length) {
+      return this;
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
+    let pointer: JSONPointer = this;
+    for (const tok of tokens) {
+      pointer = pointer._join(tok);
+    }
+    return pointer;
+  }
+
+  /**
+   * Return _true_ if this pointer can be resolved against _value_.
+   *
+   * Note that `JSONPointer.resolve()` can return legitimate falsy values
+   * that form part of the target JSON document. This method will return
+   * `true` if a falsy value is found.
+   */
+  public exists(value: JSONValue): boolean {
+    try {
+      this.resolve(value);
+    } catch (error) {
+      if (error instanceof JSONPointerResolutionError) {
+        return false;
+      }
+      throw error;
+    }
+    return true;
+  }
+
+  /**
+   * Return this pointer's parent as a new `JSONPointer`.
+   *
+   * If this pointer points to the document root, _this_ is returned.
+   */
+  public parent(): JSONPointer {
+    if (!this.tokens.length) {
+      return this;
+    }
+
+    return new JSONPointer(
+      this.encode(this.tokens.slice(0, this.tokens.length - 1)),
+    );
+  }
+
   // TODO: to (relative pointer)
+  // TODO: from json path node
 }

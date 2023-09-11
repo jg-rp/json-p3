@@ -6,12 +6,15 @@ JSONPath, JSON Patch and JSON Pointer for JavaScript.
 
 <p align="center">
   <a href="https://github.com/jg-rp/json-p3/blob/main/LICENSE">
-    <img alt="NPM" src="https://img.shields.io/npm/l/json-p3">
+    <img alt="LICENSE" src="https://img.shields.io/npm/l/json-p3?style=flat-square">
   </a>
   <a href="https://github.com/jg-rp/json-p3/actions">
     <img src="https://img.shields.io/github/actions/workflow/status/jg-rp/json-p3/tests.yaml?branch=main&label=tests&style=flat-square" alt="Tests">
   </a>
-  <br>
+  <a href="https://www.npmjs.com/package/json-p3">
+    <img alt="NPM" src="https://img.shields.io/npm/v/json-p3?style=flat-square">
+  </a>
+  <img alt="npm type definitions" src="https://img.shields.io/npm/types/json-p3">
 </p>
 
 ---
@@ -94,8 +97,8 @@ console.log(nodes.values()); // [ 'John', 'Sally', 'Jane' ]
 
 The result of `jsonpath.query()` is an instance of `JSONPathNodeList`. That is a list of `JSONPathNode` objects, one node for each value in the target JSON document matching the query. Each node has a:
 
-- `value` - The value found in the target JSON value. This could be an array, object or primitive value.
-- `location` - An array of property names and array indices that were required to reach the node's value in the target JSON value.
+- `value` - The value found in the target JSON document. This could be an array, object or primitive value.
+- `location` - An array of property names and array indices that were required to reach the node's value in the target JSON document.
 - `path` - The normalized JSONPath to this node in the target JSON document.
 
 Use `JSONPathNodeList.paths()` to retrieve all node paths.
@@ -132,7 +135,22 @@ console.log(nodes.locations());
 ]
 ```
 
-TODO: node lists are iterable
+`JSONPathNodeList` objects are iterable too.
+
+```javascript
+// .. continued from above
+for (const node of nodes) {
+  console.log(`${node.value} @ ${node.path}`);
+}
+```
+
+**Output:**
+
+```plain
+John @ $['users'][1]['name']
+Sally @ $['users'][2]['name']
+Jane @ $['users'][3]['name']
+```
 
 You can also compile a JSONPath query for repeated use against different data.
 
@@ -176,17 +194,7 @@ console.log(rv); // { name: 'John', score: 86 }
 If the pointer can't be resolved against the argument JSON value, one of `JSONPointerIndexError`, `JSONPointerKeyError` or `JSONPointerTypeError` is thrown. All three exceptions inherit from `JSONPointerResolutionError`.
 
 ```javascript
-import { jsonpointer } from "json-p3";
-
-const data = {
-  users: [
-    { name: "Sue", score: 100 },
-    { name: "John", score: 86 },
-    { name: "Sally", score: 84 },
-    { name: "Jane", score: 55 },
-  ],
-};
-
+// .. continued from above
 const rv = jsonpointer.resolve("/users/1/age", data);
 // JSONPointerKeyError: no such property ("/users/1/age")
 ```
@@ -194,22 +202,32 @@ const rv = jsonpointer.resolve("/users/1/age", data);
 A fallback value can be given as a third argument, which will be returned in the event of a `JSONPointerResolutionError`.
 
 ```javascript
-import { jsonpointer } from "json-p3";
-
-const data = {
-  users: [
-    { name: "Sue", score: 100 },
-    { name: "John", score: 86 },
-    { name: "Sally", score: 84 },
-    { name: "Jane", score: 55 },
-  ],
-};
-
+// .. continued from above
 const rv = jsonpointer.resolve("/users/1/age", data, -1);
 console.log(rv); // -1
 ```
 
-TODO: "compile" a pointer for later use
+You can create an instance of `JSONPointer` then resolve it against different data.
+
+```javascript
+import { JSONPointer } from "json-p3";
+
+const someData = {
+  users: [
+    { name: "Sue", score: 100 },
+    { name: "John", score: 86 },
+    { name: "Sally", score: 84 },
+  ],
+};
+
+const otherData = {
+  users: [{ name: "Brian" }, { name: "Roy" }],
+};
+
+const pointer = new JSONPointer("/users/1");
+console.log(pointer.resolve(someData)); // { name: 'John', score: 86 }
+console.log(pointer.resolve(otherData)); // { name: 'Roy' }
+```
 
 ## JSON Patch
 
@@ -249,4 +267,33 @@ console.log(data);
 // { some: { other: 'thing', foo: { bar: [Array], else: 'thing' } } }
 ```
 
-TODO: patch builder api
+`JSONPatch` also offers a builder API for constructing JSON patch documents. We use strings as JSON Pointers in this example, but existing `JSONPointer` objects are OK too.
+
+```javascript
+import { JSONPatch } from "json-p3";
+
+const data = { some: { other: "thing" } };
+
+const patch = new JSONPatch()
+  .add("/some/foo", { foo: [] })
+  .add("/some/foo", { bar: [] })
+  .copy("/some/other", "/some/foo/else")
+  .add("/some/foo/bar/-", "/some/foo/else");
+
+patch.apply(data);
+console.log(JSON.stringify(data, undefined, "  "));
+```
+
+**Output:**
+
+```json
+{
+  "some": {
+    "other": "thing",
+    "foo": {
+      "bar": ["/some/foo/else"],
+      "else": "thing"
+    }
+  }
+}
+```

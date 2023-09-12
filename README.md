@@ -14,10 +14,17 @@ JSONPath, JSON Patch and JSON Pointer for JavaScript.
   <a href="https://www.npmjs.com/package/json-p3">
     <img alt="NPM" src="https://img.shields.io/npm/v/json-p3?style=flat-square">
   </a>
-  <img alt="npm type definitions" src="https://img.shields.io/npm/types/json-p3">
+  <img alt="npm type definitions" src="https://img.shields.io/npm/types/json-p3?style=flat-square">
 </p>
 
 ---
+
+**Table of Contents**
+
+- [Install](#install)
+- [JSONPath](#jsonpath)
+- [JSON Pointer](#json-pointer)
+- [JSON Patch](#json-patch)
 
 ## Install
 
@@ -73,7 +80,35 @@ console.log(nodes.values());
 
 ### Browser
 
-TODO:
+Download and include JSON P3 in a script tag:
+
+```html
+<script src="path/to/json-p3.iife.min.js"></script>
+<script>
+  const data = {
+    players: [{ name: "Sue" }, { name: "John" }, { name: "Sally" }],
+    visitors: [{ name: "Brian" }, { name: "Roy" }],
+  };
+  const nodes = json_p3.query("$..name");
+  console.log(nodes.values());
+  // [ 'Sue', 'John', 'Sally', 'Brian', 'Roy' ]
+</script>
+```
+
+Or use a CDN:
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/json-p3@0.1.0/dist/json-p3.iife.min.js"></script>
+<script>
+  const data = {
+    players: [{ name: "Sue" }, { name: "John" }, { name: "Sally" }],
+    visitors: [{ name: "Brian" }, { name: "Roy" }],
+  };
+  const nodes = json_p3.query("$..name");
+  console.log(nodes.values());
+  // [ 'Sue', 'John', 'Sally', 'Brian', 'Roy' ]
+</script>
+```
 
 ## JSONPath
 

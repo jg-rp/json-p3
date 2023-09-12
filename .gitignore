@@ -12,3 +12,6 @@ coverage/
 # node profiler logs
 benchmark/*.log
 benchmark/*.txt
+
+# dev
+tests/dev.test.ts

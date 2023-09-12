@@ -194,10 +194,12 @@ export class JSONPointer {
 
   /**
    * Join this pointer with _tokens_.
+   *
    * @param tokens - JSON Pointer strings, possibly without leading slashes.
    * If a token or "part" does have a leading slash, the previous pointer is
    * ignored and a new `JSONPointer` is created, then processing of the
    * remaining tokens continues.
+   *
    * @returns A new JSON Pointer that is the concatenation of all tokens or
    * "parts".
    */

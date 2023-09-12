@@ -207,7 +207,7 @@ const rv = jsonpointer.resolve("/users/1/age", data, -1);
 console.log(rv); // -1
 ```
 
-You can create an instance of `JSONPointer` then resolve it against different data.
+You can also create an instance of `JSONPointer` then resolve it against different data.
 
 ```javascript
 import { JSONPointer } from "json-p3";

@@ -41,6 +41,6 @@ export function isString(value: unknown): value is string {
 /**
  * A type predicate for a number primitive.
  */
-export function isNumber(value: unknown): value is string {
+export function isNumber(value: unknown): value is number {
   return typeof value === "number";
 }

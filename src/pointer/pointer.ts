@@ -1,4 +1,4 @@
-import { JSONValue, isArray, isObject, isString } from "../types";
+import { JSONValue, isArray, isNumber, isObject, isString } from "../types";
 import {
   JSONPointerIndexError,
   JSONPointerKeyError,
@@ -145,6 +145,7 @@ export class JSONPointer {
     //   - A property might exist with the value `undefined` or `null`.
     //   - obj[1] is equivalent to obj["1"].
     if (isArray(val)) {
+      // TODO: handle non-standard '#' from relative json pointer
       if (token !== "length" && Object.hasOwn(val, token)) {
         return val[Number(token)];
       } else {
@@ -155,6 +156,7 @@ export class JSONPointer {
         );
       }
     } else if (isObject(val)) {
+      // TODO: handle non-standard '#' from relative json pointer
       if (Object.hasOwn(val, token)) {
         return val[token];
       } else {
@@ -250,5 +252,115 @@ export class JSONPointer {
     );
   }
 
-  // TODO: to (relative pointer)
+  public to(rel: string | RelativeJSONPointer): JSONPointer {
+    const relativePointer = isString(rel) ? new RelativeJSONPointer(rel) : rel;
+    return relativePointer.to(this);
+  }
+}
+
+const RE_RELATIVE_POINTER =
+  /(?<ORIGIN>\d+)(?<INDEX_G>(?<SIGN>[+-])(?<INDEX>\d))?(?<POINTER>.*)/s;
+
+const RE_INT = /(0|[1-9][0-9]*)/;
+
+/**
+ * A relative JSON Pointer.
+ *
+ * See https://www.ietf.org/id/draft-hha-relative-json-pointer-00.html
+ */
+export class RelativeJSONPointer {
+  readonly origin: number;
+  readonly index: number;
+  readonly pointer: string | JSONPointer;
+
+  constructor(rel: string) {
+    [this.origin, this.index, this.pointer] = this.parse(rel);
+  }
+
+  protected parse(rel: string): [number, number, string | JSONPointer] {
+    const match = RE_RELATIVE_POINTER.exec(rel);
+    if (!match || !match.groups) {
+      throw new JSONPointerSyntaxError("failed to parse relative pointer");
+    }
+
+    // steps to move
+    const origin = this.parseInt(match.groups.origin);
+
+    // optional index manipulation
+    let index = 0;
+    if (match.groups["INDEX_G"]) {
+      index = this.parseInt(match.groups.INDEX);
+      if (index === 0) {
+        throw new JSONPointerSyntaxError("index offset can't be zero");
+      }
+      if (match.groups.SIGN === "-") {
+        index = -index;
+      }
+    }
+
+    // pointer or '#'. an empty string is OK.
+    if (match.groups.POINTER === "#") {
+      return [origin, index, "#"];
+    }
+
+    return [origin, index, new JSONPointer(match.groups.POINTER)];
+  }
+
+  protected parseInt(s: string): number {
+    if (s.startsWith("0") && s.length > 1) {
+      throw new JSONPointerSyntaxError("unexpected leading zero");
+    }
+
+    if (RE_INT.test(s)) {
+      return Number(s);
+    }
+
+    throw new JSONPointerSyntaxError(`expected an integer, found '${s}'`);
+  }
+
+  /**
+   *
+   * @param pointer -
+   */
+  public to(pointer: string | JSONPointer): JSONPointer {
+    const p = isString(pointer) ? new JSONPointer(pointer) : pointer;
+
+    // move to origin
+    if (this.origin > p.tokens.length) {
+      throw new JSONPointerIndexError(
+        `origin (${this.origin}) exceeds root ${p.tokens.length}`,
+      );
+    }
+
+    const tokens =
+      this.origin < 1 ? p.tokens.slice() : p.tokens.slice(0, -this.origin);
+
+    // array index offset
+    if (this.index && tokens.length && this.isIntLike(tokens.at(-1))) {
+      const newIndex = Number(tokens.at(-1)) + this.index;
+      if (newIndex < 0) {
+        throw new JSONPointerIndexError(
+          `index offset out of range (${newIndex})`,
+        );
+      }
+      tokens[tokens.length - 1] = String(newIndex);
+    }
+
+    // pointer or index/property
+    if (this.pointer instanceof JSONPointer) {
+      tokens.push(...this.pointer.tokens);
+    } else {
+      tokens[tokens.length - 1] = `#${tokens[tokens.length - 1]}`;
+    }
+
+    return new JSONPointer(JSONPointer.encode(tokens));
+  }
+
+  protected isIntLike(value: string | number | undefined): boolean {
+    if (value === undefined || isNumber(value)) {
+      return true;
+    } else {
+      return RE_INT.test(value);
+    }
+  }
 }

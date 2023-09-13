@@ -21,7 +21,12 @@ export {
 export type { JSONPathEnvironmentOptions, FilterFunction } from "./path";
 
 export * as jsonpointer from "./pointer";
-export { JSONPointer, resolve, UNDEFINED } from "./pointer";
+export {
+  JSONPointer,
+  RelativeJSONPointer,
+  resolve,
+  UNDEFINED,
+} from "./pointer";
 
 export * as jsonpatch from "./patch";
 export {

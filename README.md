@@ -264,6 +264,19 @@ console.log(pointer.resolve(someData)); // { name: 'John', score: 86 }
 console.log(pointer.resolve(otherData)); // { name: 'Roy' }
 ```
 
+We also support [Relative JSON Pointers](https://www.ietf.org/id/draft-hha-relative-json-pointer-00.html) via the `to(rel)` method of `JSONPointer`, where `rel` is a relative JSON pointer string, and a new `JSONPointer` is returned.
+
+```javascript
+import { JSONPointer } from "json-p3";
+
+const data = { foo: { bar: [1, 2, 3], baz: [4, 5, 6] } };
+const pointer = new JSONPointer("/foo/bar/2");
+
+console.log(pointer.resolve(data)); // 3
+console.log(pointer.to("0-1").resolve(data)); // 2
+console.log(pointer.to("2/baz/2").resolve(data)); // 6
+```
+
 ## JSON Patch
 
 Apply a JSON Patch ([RFC 6902](https://datatracker.ietf.org/doc/html/rfc6902)) to some data. A JSON Patch defines update operation to perform on a JSON document. **Data is modified in place.**.

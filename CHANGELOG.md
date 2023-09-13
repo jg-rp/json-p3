@@ -1,6 +1,10 @@
 # JSON P3 Change Log
 
-# Version 0.2.0
+# Version 0.2.0 (unreleased)
+
+- Implement [Relative JSON Pointers](https://www.ietf.org/id/draft-hha-relative-json-pointer-00.html). Use the `to(rel)` method of `JSONPointer`, where `rel` is a relative JSON pointer string and a new `JSONPointer` is returned.
+
+# Version 0.1.1
 
 **Fixes**
 

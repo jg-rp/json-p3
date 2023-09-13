@@ -138,6 +138,7 @@ export class JSONPointer {
       .slice(1);
   }
 
+  // eslint-disable-next-line sonarjs/cognitive-complexity
   protected getItem(val: JSONValue, token: string, idx: number): JSONValue {
     // NOTE:
     //   - string primitives "have own" indices and `length`.
@@ -145,9 +146,20 @@ export class JSONPointer {
     //   - A property might exist with the value `undefined` or `null`.
     //   - obj[1] is equivalent to obj["1"].
     if (isArray(val)) {
-      // TODO: handle non-standard '#' from relative json pointer
       if (token !== "length" && Object.hasOwn(val, token)) {
         return val[Number(token)];
+      } else if (token.startsWith("#")) {
+        // handle non-standard '#' from relative json pointer
+        const maybeIndex = token.slice(1);
+        if (RE_INT.test(maybeIndex) && Object.hasOwn(val, maybeIndex)) {
+          return Number(maybeIndex);
+        } else {
+          throw new JSONPointerIndexError(
+            `index out of range '${JSONPointer.encode(
+              this.tokens.slice(0, idx + 1),
+            )}'`,
+          );
+        }
       } else {
         throw new JSONPointerIndexError(
           `index out of range '${JSONPointer.encode(
@@ -156,9 +168,11 @@ export class JSONPointer {
         );
       }
     } else if (isObject(val)) {
-      // TODO: handle non-standard '#' from relative json pointer
       if (Object.hasOwn(val, token)) {
         return val[token];
+      } else if (token.startsWith("#") && Object.hasOwn(val, token.slice(1))) {
+        // handle non-standard '#' from relative json pointer
+        return token.slice(1);
       } else {
         throw new JSONPointerKeyError(
           `no such property '${JSONPointer.encode(
@@ -273,8 +287,60 @@ export class RelativeJSONPointer {
   readonly index: number;
   readonly pointer: string | JSONPointer;
 
+  /**
+   *
+   * @param rel -
+   */
   constructor(rel: string) {
     [this.origin, this.index, this.pointer] = this.parse(rel);
+  }
+
+  /**
+   *
+   * @returns
+   */
+  public toString(): string {
+    const sign = this.index > 0 ? "+" : "";
+    const index = this.index === 0 ? "" : `${sign}${this.index}`;
+    return `${this.origin}${index}${this.pointer}`;
+  }
+
+  /**
+   *
+   * @param pointer -
+   */
+  public to(pointer: string | JSONPointer): JSONPointer {
+    const p = isString(pointer) ? new JSONPointer(pointer) : pointer;
+
+    // move to origin
+    if (this.origin > p.tokens.length) {
+      throw new JSONPointerIndexError(
+        `origin (${this.origin}) exceeds root (${p.tokens.length})`,
+      );
+    }
+
+    const tokens =
+      this.origin < 1 ? p.tokens.slice() : p.tokens.slice(0, -this.origin);
+
+    // array index offset
+    if (this.index && tokens.length && this.isIntLike(tokens.at(-1))) {
+      const newIndex = Number(tokens.at(-1)) + this.index;
+      if (newIndex < 0) {
+        throw new JSONPointerIndexError(
+          `index offset out of range (${newIndex})`,
+        );
+      }
+      tokens[tokens.length - 1] = String(newIndex);
+    }
+
+    // pointer or index/property
+    if (this.pointer instanceof JSONPointer) {
+      tokens.push(...this.pointer.tokens);
+    } else {
+      tokens[tokens.length - 1] = `#${tokens[tokens.length - 1]}`;
+    }
+
+    return new JSONPointer(JSONPointer.encode(tokens));
   }
 
   protected parse(rel: string): [number, number, string | JSONPointer] {
@@ -284,7 +350,7 @@ export class RelativeJSONPointer {
     }
 
     // steps to move
-    const origin = this.parseInt(match.groups.origin);
+    const origin = this.parseInt(match.groups.ORIGIN);
 
     // optional index manipulation
     let index = 0;
@@ -316,44 +382,6 @@ export class RelativeJSONPointer {
     }
 
     throw new JSONPointerSyntaxError(`expected an integer, found '${s}'`);
-  }
-
-  /**
-   *
-   * @param pointer -
-   */
-  public to(pointer: string | JSONPointer): JSONPointer {
-    const p = isString(pointer) ? new JSONPointer(pointer) : pointer;
-
-    // move to origin
-    if (this.origin > p.tokens.length) {
-      throw new JSONPointerIndexError(
-        `origin (${this.origin}) exceeds root ${p.tokens.length}`,
-      );
-    }
-
-    const tokens =
-      this.origin < 1 ? p.tokens.slice() : p.tokens.slice(0, -this.origin);
-
-    // array index offset
-    if (this.index && tokens.length && this.isIntLike(tokens.at(-1))) {
-      const newIndex = Number(tokens.at(-1)) + this.index;
-      if (newIndex < 0) {
-        throw new JSONPointerIndexError(
-          `index offset out of range (${newIndex})`,
-        );
-      }
-      tokens[tokens.length - 1] = String(newIndex);
-    }
-
-    // pointer or index/property
-    if (this.pointer instanceof JSONPointer) {
-      tokens.push(...this.pointer.tokens);
-    } else {
-      tokens[tokens.length - 1] = `#${tokens[tokens.length - 1]}`;
-    }
-
-    return new JSONPointer(JSONPointer.encode(tokens));
   }
 
   protected isIntLike(value: string | number | undefined): boolean {

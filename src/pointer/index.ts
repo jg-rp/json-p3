@@ -1,7 +1,7 @@
 import { JSONValue } from "../types";
 import { JSONPointer, MaybeJSONValue, UNDEFINED } from "./pointer";
 
-export { JSONPointer, UNDEFINED } from "./pointer";
+export { JSONPointer, RelativeJSONPointer, UNDEFINED } from "./pointer";
 export type { MaybeJSONValue } from "./pointer";
 
 export {

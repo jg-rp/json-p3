@@ -48,7 +48,7 @@ Or pnpm:
 pnpm add json-p3
 ```
 
-And use ES module imports:
+And use ES modules:
 
 ```javascript
 import { query } from "json-p3";

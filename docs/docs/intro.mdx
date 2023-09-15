@@ -1,0 +1,95 @@
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+# Introduction
+
+JSON P3 implements JSONPath following the [IETF JSONPath draft](https://datatracker.ietf.org/doc/html/draft-ietf-jsonpath-base-20) specification, JSON Pointer described by [RFC 6901](https://datatracker.ietf.org/doc/html/rfc6901), and JSON Patch described by [RFC 6902](https://datatracker.ietf.org/doc/html/rfc6902).
+
+JSONPath is a mini language for selecting values from JSON-like data. A JSONPath query has the potential to return multiple values from a data structure, along with their locations. This implementation is non-evaluating and read-only. We strictly follow the [IETF JSONPath draft](https://datatracker.ietf.org/doc/html/draft-ietf-jsonpath-base-20).
+
+JSON Pointer is a syntax for targeting a single value in JSON-like data. JSON Pointers can be _resolved_ against data to retrieve the value, or used as part of a JSON Patch operation.
+
+JSON Patch is a standard for describing update operations to perform on JSON-like data. You can _apply_ a patch to _add_, _remove_, _replace_, _move_, _copy_ and _move_ values within a JSON document.
+
+We use the term _JSON-like data_ to describe arbitrary, possibly nested, JavaScript arrays and objects, plus primitive strings, numbers, booleans and `null`, as you might expect from `JSON.parse()`. When traversing JSON-like data, we only resolve an object's direct properties, and the `length` property of arrays and strings is ignored.
+
+## Install
+
+### Node.js
+
+Install JSON P3 using your preferred project manager:
+
+<Tabs groupId="js-package">
+<TabItem value="npm" label="npm">
+
+```bash
+npm install --save json-p3
+```
+
+</TabItem>
+<TabItem value="yarn" label="yarn">
+
+```bash
+yarn add json-p3
+```
+
+</TabItem>
+<TabItem value="pnpm" label="pnpm">
+
+```bash
+pnpm add json-p3
+```
+
+</TabItem>
+</Tabs>
+
+And import the module:
+
+<Tabs groupId="js-modules">
+<TabItem value="esm" label="ESM">
+
+```js
+import { query } from "json-p3";
+```
+
+</TabItem>
+<TabItem value="cjs" label="CJS">
+
+```js
+const { query } = require("json-p3");
+```
+
+</TabItem>
+</Tabs>
+
+### Browser
+
+Download and include JSON P3 in a script tag:
+
+```html
+<script src="path/to/json-p3.iife.min.js"></script>
+<script>
+  const data = {
+    players: [{ name: "Sue" }, { name: "John" }, { name: "Sally" }],
+    visitors: [{ name: "Brian" }, { name: "Roy" }],
+  };
+  const nodes = json_p3.query("$..name");
+  console.log(nodes.values());
+  // [ 'Sue', 'John', 'Sally', 'Brian', 'Roy' ]
+</script>
+```
+
+Or use a CDN
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/json-p3@0.1.0/dist/json-p3.iife.min.js"></script>
+<script>
+  const data = {
+    players: [{ name: "Sue" }, { name: "John" }, { name: "Sally" }],
+    visitors: [{ name: "Brian" }, { name: "Roy" }],
+  };
+  const nodes = json_p3.query("$..name");
+  console.log(nodes.values());
+  // [ 'Sue', 'John', 'Sally', 'Brian', 'Roy' ]
+</script>
+```

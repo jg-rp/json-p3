@@ -1,3 +1,3 @@
-# JSONPatch Functions
+# JSONPath Functions
 
 TODO:

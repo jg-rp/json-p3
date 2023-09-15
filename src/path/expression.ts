@@ -218,7 +218,7 @@ export class FunctionExtension extends FilterExpression {
   }
 
   public evaluate(context: FilterContext): unknown {
-    const func = context.environment.filterRegister.get(this.name);
+    const func = context.environment.functionRegister.get(this.name);
     if (!func) {
       throw new UndefinedFilterFunctionError(
         `filter function '${this.name}' is undefined`,

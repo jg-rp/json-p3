@@ -270,7 +270,7 @@ export class Parser {
     const tok = stream.next();
     const expr = this.parseFilterExpression(stream);
     if (expr instanceof FunctionExtension) {
-      const func = this.environment.filterRegister.get(expr.name);
+      const func = this.environment.functionRegister.get(expr.name);
       if (func && func.returnType === FunctionExpressionType.ValueType) {
         throw new JSONPathTypeError(
           `result of ${expr.name}()  must be compared`,
@@ -467,7 +467,7 @@ export class Parser {
 
   protected throwForNonComparableFunction(expr: FilterExpression): void {
     if (!(expr instanceof FunctionExtension)) return;
-    const func = this.environment.filterRegister.get(expr.name);
+    const func = this.environment.functionRegister.get(expr.name);
     if (func && func.returnType !== FunctionExpressionType.ValueType) {
       throw new JSONPathTypeError(
         `result of ${expr.name}() is not comparable`,

@@ -3,6 +3,7 @@ import {
   BooleanLiteral,
   FilterExpression,
   FilterExpressionLiteral,
+  FunctionExtension,
   JSONPathQuery,
 } from "./expression";
 import { Count as CountFilterFunction } from "./functions/count";
@@ -51,7 +52,7 @@ export class JSONPathEnvironment {
   /**
    *
    */
-  public filterRegister: Map<string, FilterFunction> = new Map();
+  public functionRegister: Map<string, FilterFunction> = new Map();
 
   private parser: Parser;
 
@@ -87,11 +88,11 @@ export class JSONPathEnvironment {
   }
 
   protected setupFilterFunctions(): void {
-    this.filterRegister.set("count", new CountFilterFunction());
-    this.filterRegister.set("length", new LengthFilterFunction());
-    this.filterRegister.set("search", new SearchFilterFunction());
-    this.filterRegister.set("match", new MatchFilterFunction());
-    this.filterRegister.set("value", new ValueFilterFunction());
+    this.functionRegister.set("count", new CountFilterFunction());
+    this.functionRegister.set("length", new LengthFilterFunction());
+    this.functionRegister.set("search", new SearchFilterFunction());
+    this.functionRegister.set("match", new MatchFilterFunction());
+    this.functionRegister.set("value", new ValueFilterFunction());
   }
 
   /**
@@ -104,7 +105,7 @@ export class JSONPathEnvironment {
     token: Token,
     args: FilterExpression[],
   ): FilterExpression[] {
-    const func = this.filterRegister.get(token.value);
+    const func = this.functionRegister.get(token.value);
     if (!func) {
       throw new UndefinedFilterFunctionError(
         `no such function '${token.value}'`,
@@ -135,7 +136,10 @@ export class JSONPathEnvironment {
           if (
             !(
               arg instanceof FilterExpressionLiteral ||
-              (arg instanceof JSONPathQuery && arg.path.singularQuery())
+              (arg instanceof JSONPathQuery && arg.path.singularQuery()) ||
+              (arg instanceof FunctionExtension &&
+                this.functionRegister.get(arg.name)?.returnType ===
+                  FunctionExpressionType.ValueType)
             )
           ) {
             throw new JSONPathTypeError(
@@ -145,6 +149,9 @@ export class JSONPathEnvironment {
           }
           break;
         case FunctionExpressionType.LogicalType:
+          // XXX: BooleanLiteral != LogicalType
+          // LogicalType can be returned by a function or the result of a test/
+          // comparison expression.
           if (!(arg instanceof BooleanLiteral)) {
             throw new JSONPathTypeError(
               `${token.value}() argument ${idx} must be of LogicalType`,

@@ -251,13 +251,11 @@ function isTruthy(value: unknown): boolean {
   return !(typeof value === "boolean" && value === false);
 }
 
-/**
- *
- * @param left -
- * @param operator -
- * @param right -
- */
-function compare(left: unknown, operator: string, right: unknown): boolean {
+export function compare(
+  left: unknown,
+  operator: string,
+  right: unknown,
+): boolean {
   switch (operator) {
     case "==":
       return eq(left, right);

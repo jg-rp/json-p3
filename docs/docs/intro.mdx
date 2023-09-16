@@ -93,3 +93,86 @@ Or use a CDN
   // [ 'Sue', 'John', 'Sally', 'Brian', 'Roy' ]
 </script>
 ```
+
+## Example
+
+This example uses a JSONPath query to find players with a low score, converts the query results to a `JSONPointer`, then uses that pointer to build a `JSONPatch` that, when applied to our original data, boosts each player's score by 20.
+
+```javascript
+import { query, JSONPatch } from "json-p3";
+
+const data = {
+  teams: [
+    {
+      name: "A Team",
+      players: [
+        {
+          name: "Sue",
+          score: 110,
+        },
+        {
+          name: "John",
+          score: 86,
+        },
+      ],
+    },
+    {
+      name: "B Team",
+      players: [
+        {
+          name: "Sally",
+          score: 84,
+        },
+        {
+          name: "Jane",
+          score: 55,
+        },
+      ],
+    },
+  ],
+};
+
+const nodes = query("$..players[?@.score < 90]", data);
+const patch = new JSONPatch();
+
+for (const node of nodes) {
+  const pointer = node.toPointer().join("score");
+  patch.replace(pointer, node.value.score + 20);
+}
+
+patch.apply(data);
+console.log(JSON.stringify(data, undefined, "  "));
+```
+
+```json title="output"
+{
+  "teams": [
+    {
+      "name": "A Team",
+      "players": [
+        {
+          "name": "Sue",
+          "score": 110
+        },
+        {
+          "name": "John",
+          "score": 106
+        }
+      ]
+    },
+    {
+      "name": "B Team",
+      "players": [
+        {
+          "name": "Sally",
+          "score": 104
+        },
+        {
+          "name": "Jane",
+          "score": 75
+        }
+      ]
+    }
+  ]
+}
+```

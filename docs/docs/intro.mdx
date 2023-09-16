@@ -96,7 +96,7 @@ Or use a CDN
 
 ## Example
 
-This example uses a JSONPath query to find players with a low score, converts the query results to a `JSONPointer`, then uses that pointer to build a `JSONPatch` that, when applied to our original data, boosts each player's score by 20.
+This example uses a JSONPath query to find players with a low score, converts each node from the query result to a `JSONPointer`, then uses that pointer to build a `JSONPatch` that, when applied to our original data, boosts each player's score by 20.
 
 ```javascript
 import { query, JSONPatch } from "json-p3";

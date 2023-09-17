@@ -8,7 +8,8 @@
 
 **Fixes**
 
-- Fix validation of function expressions that accept a `ValueType` parameter and is called with a function that returns a `ValueType` (like `value()`). Previously a `JSONPathTypeError` was thrown.
+- Fix validation of JSONPath function expressions that accept a `ValueType` parameter and is called with a function that returns a `ValueType` (like `value()`). Previously a `JSONPathTypeError` was thrown.
+- Fixed a bug with unbalanced parentheses detection in JSONPath expressions when parsing nested function calls. In some cases we were not throwing a `JSONPathSyntaxError` when a function was not closed, but an inner function was.
 
 **Features**
 

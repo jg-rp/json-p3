@@ -380,7 +380,17 @@ export class Parser {
         );
       }
 
-      args.push(func.bind(this)(stream));
+      let expr = func.bind(this)(stream);
+
+      // Could be a comparison/logical expression
+      let peekKind = stream.peek.kind;
+      while (BINARY_OPERATORS.has(peekKind)) {
+        stream.next();
+        expr = this.parseInfixExpression(stream, expr);
+        peekKind = stream.peek.kind;
+      }
+
+      args.push(expr);
 
       if (stream.peek.kind !== TokenKind.RPAREN) {
         if (stream.peek.kind === TokenKind.RBRACKET) break;

@@ -87,23 +87,58 @@ const TEST_CASES: TestCase[] = [
     valid: false,
   },
   {
-    description: "value, comparison",
+    description: "value, non-singular query param, comparison",
     path: "$[?value(@..color) == 'red']",
     valid: true,
   },
   {
-    description: "value, existence",
+    description: "value, non-singular query param",
     path: "$[?value(@..color)]",
     valid: false,
   },
   {
-    description: "function, logical return type, existence",
+    description:
+      "function, singular query, value type param, logical return type",
     path: "$[?bar(@.a)]",
+    valid: true,
+  },
+  {
+    description:
+      "function, non-singular query, value type param, logical return type",
+    path: "$[?bar(@.*)]",
+    valid: false,
+  },
+  {
+    description:
+      "function, non-singular query, nodes type param, logical return type",
+    path: "$[?bn(@.*)]",
+    valid: true,
+  },
+  {
+    description:
+      "function, non-singular query, logical type param, logical return type",
+    path: "$[?bl(@.*)]",
+    valid: true,
+  },
+  {
+    description:
+      "function, logical type param, comparison, logical return type",
+    path: "$[?bl(1==1)]",
+    valid: true,
+  },
+  {
+    description: "function, logical type param, literal, logical return type",
+    path: "$[?bl(1)]",
+    valid: false,
+  },
+  {
+    description: "function, value type param, literal, logical return type",
+    path: "$[?bar(1)]",
     valid: true,
   },
 ];
 
-class MockFooFunction implements FilterFunction {
+class MockFoo implements FilterFunction {
   argTypes = [FunctionExpressionType.NodesType];
   returnType = FunctionExpressionType.NodesType;
 
@@ -112,8 +147,26 @@ class MockFooFunction implements FilterFunction {
   }
 }
 
-class MockBarFunction implements FilterFunction {
+class MockBar implements FilterFunction {
+  argTypes = [FunctionExpressionType.ValueType];
+  returnType = FunctionExpressionType.LogicalType;
+
+  call(): boolean {
+    return false;
+  }
+}
+
+class MockBn implements FilterFunction {
   argTypes = [FunctionExpressionType.NodesType];
+  returnType = FunctionExpressionType.LogicalType;
+
+  call(): boolean {
+    return false;
+  }
+}
+
+class MockBl implements FilterFunction {
+  argTypes = [FunctionExpressionType.LogicalType];
   returnType = FunctionExpressionType.LogicalType;
 
   call(): boolean {
@@ -123,8 +176,10 @@ class MockBarFunction implements FilterFunction {
 
 describe("IETF function well-typedness examples", () => {
   const env = new JSONPathEnvironment();
-  env.functionRegister.set("foo", new MockFooFunction());
-  env.functionRegister.set("bar", new MockBarFunction());
+  env.functionRegister.set("foo", new MockFoo());
+  env.functionRegister.set("bar", new MockBar());
+  env.functionRegister.set("bn", new MockBn());
+  env.functionRegister.set("bl", new MockBl());
   test.each<TestCase>(TEST_CASES)(
     "$description",
     ({ path, valid }: TestCase) => {

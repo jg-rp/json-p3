@@ -1,9 +1,9 @@
 import { JSONPathTypeError, UndefinedFilterFunctionError } from "./errors";
 import {
-  BooleanLiteral,
   FilterExpression,
   FilterExpressionLiteral,
   FunctionExtension,
+  InfixExpression,
   JSONPathQuery,
 } from "./expression";
 import { Count as CountFilterFunction } from "./functions/count";
@@ -149,10 +149,9 @@ export class JSONPathEnvironment {
           }
           break;
         case FunctionExpressionType.LogicalType:
-          // XXX: BooleanLiteral != LogicalType
-          // LogicalType can be returned by a function or the result of a test/
-          // comparison expression.
-          if (!(arg instanceof BooleanLiteral)) {
+          if (
+            !(arg instanceof JSONPathQuery || arg instanceof InfixExpression)
+          ) {
             throw new JSONPathTypeError(
               `${token.value}() argument ${idx} must be of LogicalType`,
               arg.token,

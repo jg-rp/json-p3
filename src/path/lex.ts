@@ -341,6 +341,10 @@ function lexInsideFilter(l: Lexer): StateFn | null {
       case "":
       case "]":
         l.filterLevel -= 1;
+        if (l.parenStack.length === 1) {
+          l.error("unbalanced parentheses");
+          return null;
+        }
         l.backup();
         return lexInsideBracketedSelection;
       case ",":

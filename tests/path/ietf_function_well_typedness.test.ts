@@ -1,5 +1,5 @@
 /**
- * Function well-typedness examples.
+ * Function well-typedness tests from IETF spec examples.
  *
  * The test cases defined here are taken from version 20 of the JSONPath
  * internet draft, draft-ietf-jsonpath-base-20. In accordance with
@@ -37,7 +37,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { JSONPathTypeError, compile } from "../../src";
+import {
+  FilterFunction,
+  FunctionExpressionType,
+  JSONPathEnvironment,
+  JSONPathTypeError,
+} from "../../src";
 
 type TestCase = {
   description: string;
@@ -66,18 +71,67 @@ const TEST_CASES: TestCase[] = [
     path: "$[?count(1) == 1]",
     valid: false,
   },
+  {
+    description: "nested function, LogicalType -> NodesType",
+    path: "$[?count(foo(@.*)) == 1]",
+    valid: true,
+  },
+  {
+    description: "match, singular query, string literal",
+    path: "$[?match(@.timezone, 'Europe/.*')]",
+    valid: true,
+  },
+  {
+    description: "match, singular query, string literal, compared",
+    path: "$[?match(@.timezone, 'Europe/.*') == true]",
+    valid: false,
+  },
+  {
+    description: "value, comparison",
+    path: "$[?value(@..color) == 'red']",
+    valid: true,
+  },
+  {
+    description: "value, existence",
+    path: "$[?value(@..color)]",
+    valid: false,
+  },
+  {
+    description: "function, logical return type, existence",
+    path: "$[?bar(@.a)]",
+    valid: true,
+  },
 ];
 
-// TODO: tests with mock functions
+class MockFooFunction implements FilterFunction {
+  argTypes = [FunctionExpressionType.NodesType];
+  returnType = FunctionExpressionType.NodesType;
+
+  call(nodes: NodeList): NodeList {
+    return nodes;
+  }
+}
+
+class MockBarFunction implements FilterFunction {
+  argTypes = [FunctionExpressionType.NodesType];
+  returnType = FunctionExpressionType.LogicalType;
+
+  call(): boolean {
+    return false;
+  }
+}
 
 describe("IETF function well-typedness examples", () => {
+  const env = new JSONPathEnvironment();
+  env.functionRegister.set("foo", new MockFooFunction());
+  env.functionRegister.set("bar", new MockBarFunction());
   test.each<TestCase>(TEST_CASES)(
     "$description",
     ({ path, valid }: TestCase) => {
       if (!valid) {
-        expect(() => compile(path)).toThrow(JSONPathTypeError);
+        expect(() => env.compile(path)).toThrow(JSONPathTypeError);
       } else {
-        compile(path);
+        env.compile(path);
       }
     },
   );

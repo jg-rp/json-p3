@@ -382,12 +382,6 @@ export class Parser {
 
       args.push(func.bind(this)(stream));
 
-      // Without this, that closing parenthesis of the inner function
-      // can incorrectly close the outer function.
-      if (args.at(-1) instanceof FunctionExtension) {
-        stream.next();
-      }
-
       if (stream.peek.kind !== TokenKind.RPAREN) {
         if (stream.peek.kind === TokenKind.RBRACKET) break;
         stream.expectPeek(TokenKind.COMMA);

@@ -160,7 +160,14 @@ export class JSONPathEnvironment {
           }
           break;
         case FunctionExpressionType.NodesType:
-          if (!(arg instanceof JSONPathQuery)) {
+          if (
+            !(
+              arg instanceof JSONPathQuery ||
+              (arg instanceof FunctionExtension &&
+                this.functionRegister.get(arg.name)?.returnType ===
+                  FunctionExpressionType.NodesType)
+            )
+          ) {
             throw new JSONPathTypeError(
               `${token.value}() argument ${idx} must be of NodesType`,
               arg.token,

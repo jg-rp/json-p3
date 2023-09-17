@@ -1,5 +1,5 @@
 /**
- * Filter expression comparison examples.
+ * Filter expression comparison tests from IETF spec examples.
  *
  * The test cases defined here are taken from version 20 of the JSONPath
  * internet draft, draft-ietf-jsonpath-base-20. In accordance with

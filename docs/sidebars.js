@@ -16,7 +16,7 @@ const sidebars = {
   docsSidebar: [
     {
       type: "category",
-      label: "Introduction",
+      label: "Getting Started",
       collapsed: false,
       items: ["intro", "quick-start"],
     },

@@ -38,13 +38,11 @@ const config = {
       /** @type {import('@docusaurus/preset-classic').Options} */
       ({
         docs: {
+          routeBasePath: "/",
           sidebarPath: require.resolve("./sidebars.js"),
           editUrl: "https://github.com/jg-rp/json-p3/tree/docs",
         },
-        blog: {
-          showReadingTime: true,
-          editUrl: "https://github.com/jg-rp/json-3/tree/blog",
-        },
+        blog: false,
         theme: {
           customCss: require.resolve("./src/css/custom.css"),
         },
@@ -82,7 +80,7 @@ const config = {
             label: "Docs",
           },
           {
-            to: "/docs/api/",
+            to: "/api/",
             label: "API",
             position: "left",
           },

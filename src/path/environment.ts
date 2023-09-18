@@ -128,6 +128,8 @@ export class JSONPathEnvironment {
     return this.compile(path).query(value);
   }
 
+  // TODO: match(path, value): boolean
+
   protected setupFilterFunctions(): void {
     this.functionRegister.set("count", new CountFilterFunction());
     this.functionRegister.set("length", new LengthFilterFunction());

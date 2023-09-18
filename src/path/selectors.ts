@@ -1,5 +1,5 @@
 import { JSONPathEnvironment } from "./environment";
-import { JSONPathIndexError } from "./errors";
+import { JSONPathIndexError, JSONPathRecursionLimitError } from "./errors";
 import { LogicalExpression } from "./expression";
 import { JSONPathNode, JSONPathNodeList } from "./node";
 import { Token } from "./token";
@@ -74,8 +74,8 @@ export class IndexSelector extends JSONPathSelector {
   ) {
     super(environment, token);
     if (
-      index < this.environment.options.minIntIndex ||
-      index > this.environment.options.maxIntIndex
+      index < this.environment.minIntIndex ||
+      index > this.environment.maxIntIndex
     ) {
       throw new JSONPathIndexError("index out of range", this.token);
     }
@@ -151,18 +151,12 @@ export class SliceSelector extends JSONPathSelector {
     for (const index of indices) {
       if (
         index !== undefined &&
-        (index < this.environment.options.minIntIndex ||
-          index > this.environment.options.maxIntIndex)
+        (index < this.environment.minIntIndex ||
+          index > this.environment.maxIntIndex)
       ) {
         throw new JSONPathIndexError("index out of range", this.token);
       }
     }
-  }
-
-  private normalizedIndex(length: number, index: number): number {
-    if (index < 0 && length >= Math.abs(index))
-      return Math.min(length + index, length - 1);
-    return Math.min(index, length - 1);
   }
 
   // eslint-disable-next-line sonarjs/cognitive-complexity
@@ -263,7 +257,13 @@ export class RecursiveDescentSegment extends JSONPathSelector {
     return "..";
   }
 
-  private visit(node: JSONPathNode): JSONPathNodeList {
+  private visit(node: JSONPathNode, depth: number = 1): JSONPathNodeList {
+    if (depth >= this.environment.maxRecursionDepth) {
+      throw new JSONPathRecursionLimitError(
+        "recursion limit reached",
+        this.token,
+      );
+    }
     const rv: JSONPathNode[] = [];
     if (node.value instanceof String) return new JSONPathNodeList(rv);
     if (isArray(node.value)) {
@@ -273,7 +273,7 @@ export class RecursiveDescentSegment extends JSONPathSelector {
           node.location.concat(i),
           node.root,
         );
-        rv.push(_node, ...this.visit(_node));
+        rv.push(_node, ...this.visit(_node, depth + 1));
       }
     } else if (isObject(node.value)) {
       for (const [key, value] of Object.entries(node.value)) {
@@ -282,7 +282,7 @@ export class RecursiveDescentSegment extends JSONPathSelector {
           node.location.concat(key),
           node.root,
         );
-        rv.push(_node, ...this.visit(_node));
+        rv.push(_node, ...this.visit(_node, depth + 1));
       }
     }
     return new JSONPathNodeList(rv);

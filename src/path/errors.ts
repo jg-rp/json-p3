@@ -111,3 +111,18 @@ export class JSONPathSyntaxError extends JSONPathError {
     this.message = withErrorContext(message, token);
   }
 }
+
+/**
+ * Error thrown when the maximum recursion depth is reached.
+ */
+export class JSONPathRecursionLimitError extends JSONPathError {
+  constructor(
+    readonly message: string,
+    readonly token: Token,
+  ) {
+    super(message, token);
+    Object.setPrototypeOf(this, new.target.prototype);
+    this.name = "JSONPathRecursionLimitError";
+    this.message = withErrorContext(message, token);
+  }
+}

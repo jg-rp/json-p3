@@ -20,29 +20,37 @@ import { Token, TokenStream } from "./token";
 import { JSONValue } from "../types";
 
 /**
- *
+ * JSONPath environment options. The defaults are in compliance with JSONPath
+ * standards.
  */
 export type JSONPathEnvironmentOptions = {
   /**
+   * Indicates if the environment should to be strict about its compliance with
+   * JSONPath standards.
    *
+   * Defaults to `true`. Setting `strict` to `false` currently has no effect.
+   * If/when we add non-standard features, the environment's strictness will
+   * control their availability.
    */
-  strict: boolean;
+  strict?: boolean;
 
   /**
-   *
+   * The maximum number allowed when indexing or slicing an array. Defaults to
+   * 2**53 -1.
    */
-  maxIntIndex: number;
+  maxIntIndex?: number;
 
   /**
-   *
+   * The minimum number allowed when indexing or slicing an array. Defaults to
+   * -(2**53) -1.
    */
-  minIntIndex: number;
-};
+  minIntIndex?: number;
 
-export const defaultOptions: JSONPathEnvironmentOptions = {
-  strict: true,
-  maxIntIndex: Math.pow(2, 53) - 1,
-  minIntIndex: -Math.pow(2, 53) - 1,
+  /**
+   * The maximum number of objects and/or arrays the recursive descent selector
+   * can visit before a `JSONPathRecursionLimitError` is thrown.
+   */
+  maxRecursionDepth?: number;
 };
 
 /**
@@ -50,7 +58,36 @@ export const defaultOptions: JSONPathEnvironmentOptions = {
  */
 export class JSONPathEnvironment {
   /**
+   * Indicates if the environment should to be strict about its compliance with
+   * JSONPath standards.
    *
+   * Defaults to `true`. Setting `strict` to `false` currently has no effect.
+   * If/when we add non-standard features, the environment's strictness will
+   * control their availability.
+   */
+  readonly strict: boolean;
+
+  /**
+   * The maximum number allowed when indexing or slicing an array. Defaults to
+   * 2**53 -1.
+   */
+  readonly maxIntIndex: number;
+
+  /**
+   * The minimum number allowed when indexing or slicing an array. Defaults to
+   * -(2**53) -1.
+   */
+  readonly minIntIndex: number;
+
+  /**
+   * The maximum number of objects and/or arrays the recursive descent selector
+   * can visit before a `JSONPathRecursionLimitError` is thrown.
+   */
+  readonly maxRecursionDepth: number;
+
+  /**
+   * A map of function names to objects implementing the {@link FilterFunction}
+   * interface. You are free to set or delete custom filter functions directly.
    */
   public functionRegister: Map<string, FilterFunction> = new Map();
 
@@ -60,7 +97,11 @@ export class JSONPathEnvironment {
    *
    * @param options -
    */
-  constructor(readonly options: JSONPathEnvironmentOptions = defaultOptions) {
+  constructor(options: JSONPathEnvironmentOptions = {}) {
+    this.strict = options.strict ?? true;
+    this.maxIntIndex = options.maxIntIndex ?? Math.pow(2, 53) - 1;
+    this.minIntIndex = options.maxIntIndex ?? -Math.pow(2, 53) - 1;
+    this.maxRecursionDepth = options.maxRecursionDepth ?? 50;
     this.parser = new Parser(this);
     this.setupFilterFunctions();
   }

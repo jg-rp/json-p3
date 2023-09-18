@@ -12,6 +12,7 @@ export {
   JSONPathNodeList,
   JSONPathSyntaxError,
   JSONPathTypeError,
+  JSONPathRecursionLimitError,
   Token,
   TokenKind,
   Nothing,

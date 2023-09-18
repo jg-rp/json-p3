@@ -23,6 +23,7 @@ export {
   JSONPathLexerError,
   JSONPathSyntaxError,
   JSONPathTypeError,
+  JSONPathRecursionLimitError,
 } from "./errors";
 
 export { Nothing } from "./types";

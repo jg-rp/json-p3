@@ -1,6 +1,8 @@
+import { JSONValue } from "../../src";
 import { JSONPathEnvironment } from "../../src/path/environment";
 import {
   JSONPathIndexError,
+  JSONPathRecursionLimitError,
   JSONPathSyntaxError,
   JSONPathTypeError,
   UndefinedFilterFunctionError,
@@ -68,5 +70,25 @@ describe("undefined filter function", () => {
     expect(() => env.query(query, {})).toThrow(
       "no such function 'slice' ('$[?slice(':3)",
     );
+  });
+});
+
+describe("recursion limit reached", () => {
+  test("recursive data", () => {
+    const env = new JSONPathEnvironment();
+    const query = "$..a";
+    const arr: JSONValue[] = [];
+    const data = { foo: arr };
+    arr.push(data);
+    expect(() => env.query(query, data)).toThrow(JSONPathRecursionLimitError);
+    expect(() => env.query(query, data)).toThrow("recursion limit reached");
+  });
+
+  test("nested data with low limit", () => {
+    const env = new JSONPathEnvironment({ maxRecursionDepth: 2 });
+    const query = "$..a";
+    const data = { foo: [{ bar: [1, 2, 3] }] };
+    expect(() => env.query(query, data)).toThrow(JSONPathRecursionLimitError);
+    expect(() => env.query(query, data)).toThrow("recursion limit reached");
   });
 });

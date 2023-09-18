@@ -5,6 +5,7 @@
 **Breaking Changes**
 
 - Rename `JSONPathEnvironment.filterRegister` to `JSONPathEnvironment.functionRegister`.
+- Removed `JSONPathEnvironment.options` in favour of equivalent environment properties. For example, `JSONPathEnvironment.options.maxIntIndex` is now `JSONPathEnvironment.maxIntIndex`.
 
 **Fixes**
 
@@ -15,6 +16,7 @@
 **Features**
 
 - Implement [Relative JSON Pointers](https://www.ietf.org/id/draft-hha-relative-json-pointer-00.html). Use the `to(rel)` method of `JSONPointer`, where `rel` is a relative JSON pointer string and a new `JSONPointer` is returned.
+- Guard against recursive data structures by implementing the `JSONPathEnvironment.maxRecursionDepth` option. When using the recursive descent selector (`..`), if the maximum recursion depth is reached, a `JSONPathRecursionLimitError` is thrown.
 
 # Version 0.1.1
 

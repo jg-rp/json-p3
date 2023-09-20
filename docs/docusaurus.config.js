@@ -32,6 +32,8 @@ const config = {
     locales: ["en"],
   },
 
+  trailingSlash: false,
+
   presets: [
     [
       "classic",
@@ -94,28 +96,57 @@ const config = {
         style: "dark",
         links: [
           {
-            title: "Docs",
+            title: "Getting started",
             items: [
               {
-                label: "Tutorial",
-                to: "/docs/intro",
+                label: "Introduction",
+                to: "/",
+              },
+              {
+                label: "Install",
+                to: "/#install",
+              },
+              {
+                label: "Quick start",
+                to: "/quick-start",
               },
             ],
           },
           {
-            title: "Community",
+            title: "Guides",
             items: [
               {
-                label: "Stack Overflow",
-                href: "https://stackoverflow.com/questions/tagged/docusaurus",
+                label: "JSONPath query syntax",
+                to: "/guides/jsonpath-syntax",
               },
               {
-                label: "Discord",
-                href: "https://discordapp.com/invite/docusaurus",
+                label: "JSONPath functions",
+                to: "/guides/jsonpath-functions",
               },
               {
-                label: "Twitter",
-                href: "https://twitter.com/docusaurus",
+                label: "JSON Pointer",
+                to: "/guides/json-pointer",
+              },
+              {
+                label: "JSON Patch",
+                to: "/guides/json-patch",
+              },
+            ],
+          },
+          {
+            title: "Links",
+            items: [
+              {
+                label: "GitHub",
+                href: "https://github.com/jg-rp/json-p3",
+              },
+              {
+                label: "Change Log",
+                href: "https://github.com/jg-rp/json-p3/blob/main/CHANGELOG.md",
+              },
+              {
+                label: "NPM",
+                href: "https://www.npmjs.com/package/json-p3",
               },
             ],
           },

@@ -19,7 +19,7 @@
     "build": "npm run build:types && npm run build:js",
     "type-check": "tsc --noEmit",
     "coverage": "jest --collectCoverage",
-    "clean": "rm -rf ./lib ./dist ./coverage",
+    "clean": "rm -rf ./lib ./dist ./coverage ./docs/docs/api",
     "lint": "eslint src tests --ext .js,.jsx,.ts,.tsx"
   },
   "browserslist": [

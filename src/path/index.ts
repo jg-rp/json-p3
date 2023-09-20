@@ -1,6 +1,6 @@
 import { JSONValue } from "../types";
 import { JSONPathEnvironment } from "./environment";
-import { JSONPathNodeList } from "./node";
+import { JSONPathNode, JSONPathNodeList } from "./node";
 import { JSONPath } from "./path";
 
 export { JSONPathEnvironment } from "./environment";
@@ -63,4 +63,20 @@ export function query(path: string, value: JSONValue): JSONPathNodeList {
  */
 export function compile(path: string): JSONPath {
   return DEFAULT_ENVIRONMENT.compile(path);
+}
+
+/**
+ * Return a {@link JSONPathNode} instance for the first object found in
+ * _value_ matching _path_.
+ *
+ * @param path - A JSONPath query.
+ * @param value - JSON-like data to which the query _path_ will be applied.
+ * @returns The first node in _value_ matching  _path_, or `undefined` if
+ * there are no matches.
+ */
+export function match(
+  path: string,
+  value: JSONValue,
+): JSONPathNode | undefined {
+  return DEFAULT_ENVIRONMENT.match(path, value);
 }

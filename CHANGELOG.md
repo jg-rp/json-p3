@@ -15,8 +15,9 @@
 
 **Features**
 
-- Implement [Relative JSON Pointers](https://www.ietf.org/id/draft-hha-relative-json-pointer-00.html). Use the `to(rel)` method of `JSONPointer`, where `rel` is a relative JSON pointer string and a new `JSONPointer` is returned.
+- Implemented [Relative JSON Pointers](https://www.ietf.org/id/draft-hha-relative-json-pointer-00.html). Use the `to(rel)` method of `JSONPointer`, where `rel` is a relative JSON pointer string and a new `JSONPointer` is returned.
 - Guard against recursive data structures by implementing the `JSONPathEnvironment.maxRecursionDepth` option. When using the recursive descent selector (`..`), if the maximum recursion depth is reached, a `JSONPathRecursionLimitError` is thrown.
+- Added `JSONPathEnvironment.match()` and `JSONPath.match()`, which returns a `JSONPathNode` for the first value matching a query, or `undefined` if there are no matches.
 
 # Version 0.1.1
 

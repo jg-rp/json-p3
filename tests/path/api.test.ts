@@ -1,4 +1,4 @@
-import { JSONPathEnvironment } from "../../src/path";
+import { JSONPathEnvironment, JSONPathNode } from "../../src/path";
 
 describe("JSONPath API", () => {
   const env = new JSONPathEnvironment();
@@ -64,5 +64,16 @@ describe("JSONPath API", () => {
       "/some/foo/0",
       "/some/bar/0",
     ]);
+  });
+  test("pointer from empty node", () => {
+    const node = new JSONPathNode("", [], {});
+    expect(node.toPointer().toString()).toBe("");
+  });
+  test("match first available node", () => {
+    const node = env.match("$.foo", { foo: [1, 2, 3] });
+    expect(node).toBeInstanceOf(JSONPathNode);
+    if (node) {
+      expect(node.value).toStrictEqual([1, 2, 3]);
+    }
   });
 });

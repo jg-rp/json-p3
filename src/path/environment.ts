@@ -13,7 +13,7 @@ import { Match as MatchFilterFunction } from "./functions/match";
 import { Search as SearchFilterFunction } from "./functions/search";
 import { Value as ValueFilterFunction } from "./functions/value";
 import { tokenize } from "./lex";
-import { JSONPathNodeList } from "./node";
+import { JSONPathNode, JSONPathNodeList } from "./node";
 import { Parser } from "./parse";
 import { JSONPath } from "./path";
 import { Token, TokenStream } from "./token";
@@ -128,7 +128,18 @@ export class JSONPathEnvironment {
     return this.compile(path).query(value);
   }
 
-  // TODO: match(path, value): boolean
+  /**
+   * Return a {@link JSONPathNode} instance for the first object found in
+   * _value_ matching _path_.
+   *
+   * @param path - A JSONPath query.
+   * @param value - JSON-like data to which the query _path_ will be applied.
+   * @returns The first node in _value_ matching  _path_, or `undefined` if
+   * there are no matches.
+   */
+  public match(path: string, value: JSONValue): JSONPathNode | undefined {
+    return this.compile(path).match(value);
+  }
 
   protected setupFilterFunctions(): void {
     this.functionRegister.set("count", new CountFilterFunction());

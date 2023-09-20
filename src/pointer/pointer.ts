@@ -71,8 +71,6 @@ export class JSONPointer {
     }
   }
 
-  // TODO: add `resolveWithFallback` to handle explicit `undefined`
-
   /**
    *
    * @param value -

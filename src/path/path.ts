@@ -36,6 +36,18 @@ export class JSONPath {
   }
 
   /**
+   * Return a {@link JSONPathNode} instance for the first object found in
+   * _value_ matching this query.
+   *
+   * @param value - JSON-like data to which this query will be applied.
+   * @returns The first node in _value_ matching this query, or `undefined` if
+   * there are no matches.
+   */
+  public match(value: JSONValue): JSONPathNode | undefined {
+    return this.query(value).nodes.at(0);
+  }
+
+  /**
    *
    */
   public toString(): string {

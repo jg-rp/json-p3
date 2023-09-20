@@ -64,13 +64,12 @@ const config = {
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
-      // TODO: Replace with your project's social card
-      image: "img/docusaurus-social-card.jpg",
       navbar: {
         title: "JSON P3",
         logo: {
           alt: "JSON P3",
-          src: "img/logo.svg", // TODO
+          src: "img/p3_path_plain.svg",
+          srcDark: "img/p3_dark_path_plain.svg",
         },
         items: [
           {

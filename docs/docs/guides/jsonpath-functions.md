@@ -97,12 +97,12 @@ class TypeOfFilterFunction implements FilterFunction {
 }
 ```
 
-We would then register an instance of `TypeOf` with a `JSONPathEnvironment`, and use the environment's `query()`, `compile()` or `match()` methods.
+We would then register an instance of `TypeOfFilterFunction` with a `JSONPathEnvironment`, and use the environment's `query()`, `compile()` or `match()` methods.
 
 ```typescript
 // .. continued from above
 const env = new JSONPathEnvironment();
 env.functionRegister.set("typeof", new TypeOfFilterFunction());
 
-const nodes = env.query("$.users[?typeof(@.score) == 'number']");
+const nodes = env.query("$.users[?typeof(@.score) == 'number']", data);
 ```

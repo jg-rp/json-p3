@@ -199,8 +199,6 @@ console.log(pointer.to("2/baz/2").resolve(data)); // 6
 
 Apply a JSON Patch ([RFC 6902](https://datatracker.ietf.org/doc/html/rfc6902)) to some data with `jsonpatch.apply()`. **Data is modified in place.**.
 
-### JSONPatch constructor
-
 ```javascript
 import { jsonpatch } from "json-p3";
 
@@ -217,7 +215,11 @@ console.log(data);
 // { some: { other: 'thing', foo: { bar: [Array], else: 'thing' } } }
 ```
 
-`apply()` is a convenience function equivalent to `new JSONPatch(ops).apply(data)`. Use the [`JSONPatch`](./api/classes/jsonpatch.JSONPatch.md) constructor when you need to apply the same patch to multiple different data structures.
+`apply()` is also re-exported from JSON P3's top-level namespace.
+
+### JSONPatch constructor
+
+`jsonpatch.apply()` is a convenience function equivalent to `new JSONPatch(ops).apply(data)`. Use the [`JSONPatch`](./api/classes/jsonpatch.JSONPatch.md) constructor when you need to apply the same patch to multiple different data structures.
 
 ```javascript
 import { JSONPatch } from "json-p3";
@@ -234,8 +236,6 @@ patch.apply(data);
 console.log(data);
 // { some: { other: 'thing', foo: { bar: [Array], else: 'thing' } } }
 ```
-
-`apply()` is also re-exported from JSON P3's top-level namespace.
 
 ### Builder API
 

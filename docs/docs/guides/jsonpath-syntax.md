@@ -1,6 +1,6 @@
 # JSONPath Query Syntax
 
-This page provides a casual introduction to JSONPath syntax described in the [IETF JSONPath draft](https://datatracker.ietf.org/doc/html/draft-ietf-jsonpath-base-20) specification. We follow it strictly, and test against the [JSONPath Compliance Test Suite](https://github.com/jsonpath-standard/jsonpath-compliance-test-suite).
+This page provides a short introduction to JSONPath syntax described in the [IETF JSONPath draft](https://datatracker.ietf.org/doc/html/draft-ietf-jsonpath-base-20) specification. We follow it strictly, and test against the [JSONPath Compliance Test Suite](https://github.com/jsonpath-standard/jsonpath-compliance-test-suite).
 
 Imagine a JSON document as a tree structure, where each JSON object and array can contain more objects, arrays and scalar values. Every object, array and scalar value is a node in the tree, and the outermost value is the "root" node.
 

@@ -2,6 +2,7 @@ export const version = "__VERSION__";
 
 export * as jsonpath from "./path";
 export {
+  DEFAULT_ENVIRONMENT,
   FunctionExpressionType,
   JSONPath,
   JSONPathEnvironment,

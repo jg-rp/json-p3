@@ -2,7 +2,7 @@
 
 ## Standard functions
 
-These are the standard, built-in function available to JSONPath [filters](./jsonpath-syntax.md#filters). You can also create your own [function extensions](#function-extensions).
+These are the standard, built-in functions available to JSONPath [filters](./jsonpath-syntax.md#filters). You can also create your own [function extensions](#function-extensions).
 
 ### `count()`
 
@@ -72,4 +72,37 @@ Please see [Section 2.4.3](https://datatracker.ietf.org/doc/html/draft-ietf-json
 
 ## Function extensions
 
-TODO:
+Add, remove or replace [filter functions](./jsonpath-syntax.md#filter-functions) by updating the [function register](../api/classes/jsonpath.JSONPathEnvironment.md#functionregister) on a [`JSONPathEnvironment`](../api/classes/jsonpath.JSONPathEnvironment.md). It is a regular [Map](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map), mapping function names to objects implementing the [`FilterFunction`](../api/interfaces/jsonpath.functions.FilterFunction.md) interface.
+
+:::info
+You can update the function register on the _default environment_ (`import { DEFAULT_ENVIRONMENT } from "json-p3"`), and use convenience functions like [`query()`](../quick-start.md#jsonpath) and [`compile()`](../quick-start.md#compilation). Here we'll create a new `JSONPathEnvironment`, then use its methods directly.
+:::
+
+Every filter function must define the types of its parameters and the type of its return value, according to the JSONPath specification's [type system](https://datatracker.ietf.org/doc/html/draft-ietf-jsonpath-base-20#name-type-system-for-function-ex). This example implements a `typeof()` function, which accepts a parameter of [`ValueType`](../api/enums/jsonpath.functions.FunctionExpressionType.md) and returns a `ValueType`.
+
+```typescript
+import {
+  FilterFunction,
+  FunctionExpressionType,
+  JSONPathEnvironment,
+} from "json-p3";
+
+class TypeOfFilterFunction implements FilterFunction {
+  readonly argTypes = [FunctionExpressionType.ValueType];
+  readonly returnType = FunctionExpressionType.ValueType;
+
+  public call(value: unknown): string {
+    return typeof value;
+  }
+}
+```
+
+We would then register an instance of `TypeOf` with a `JSONPathEnvironment`, and use the environment's `query()`, `compile()` or `match()` methods.
+
+```typescript
+// .. continued from above
+const env = new JSONPathEnvironment();
+env.functionRegister.set("typeof", new TypeOfFilterFunction());
+
+const nodes = env.query("$.users[?typeof(@.score) == 'number']");
+```

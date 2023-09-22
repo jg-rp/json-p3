@@ -365,6 +365,15 @@ export class JSONPatch {
   }
 
   /**
+   * @returns an iterator over ops in this patch.
+   */
+  *[Symbol.iterator](): Iterator<OpObject> {
+    for (const op of this.ops) {
+      yield op.toObject();
+    }
+  }
+
+  /**
    *
    * @param path -
    * @param value -

@@ -32,7 +32,7 @@ We use the terms "target JSON document", "target document" and "query argument" 
 
 `$` is the root node identifier, pointing to the first node in the target JSON document.
 
-```text title="Example query"
+```text
 $.users
 ```
 

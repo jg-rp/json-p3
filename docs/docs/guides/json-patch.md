@@ -1,6 +1,6 @@
 # JSON Patch
 
-[JSON Patch](./quick-start.md#json-patch) ([RFC 6902](https://datatracker.ietf.org/doc/html/rfc6902)) is a standard for describing update operations to perform on JSON-like data. Each operation includes, at least, an `op` string and a `path`, which is a [JSON Pointer](./json-pointer.md).
+JSON Patch ([RFC 6902](https://datatracker.ietf.org/doc/html/rfc6902)) is a standard for describing update operations to perform on JSON-like data. Each operation includes, at least, an `op` string and a `path`, which is a [JSON Pointer](./json-pointer.md).
 
 Use [`jsonpatch.apply(ops, data)`](../api/namespaces/jsonpatch.md#apply) to apply _ops_ to _data_, where _ops_ should be an array of [`OpObject`s](../api/namespaces/jsonpatch.md#opobject), as per RFC 6902. Patch operation are applied sequentially and, unless the target JSON document's root value is replaced, **data is modified in place**.
 

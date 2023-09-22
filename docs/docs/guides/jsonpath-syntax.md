@@ -141,6 +141,19 @@ Selectively include child nodes from the current selection using filters of the 
 - an existence test on the result of a JSONPath query,
 - or the truthiness of some function calls, depending on the function's return type.
 
+```text
+$.users[?@.admin]
+```
+
+```json title="Example output"
+[
+  { "name": "John", "score": 86, "admin": true },
+  { "name": "Sally", "score": 84, "admin": false }
+]
+```
+
+### Filter queries
+
 Inside a filter expression, `@` is the _current node identifier_, starting a new JSONPath query with the current node at the root.
 
 ```text
@@ -177,7 +190,7 @@ $.users[?@.score > 85 && @.score < 100].name
 ["John"]
 ```
 
-### Functions
+### Filter functions
 
 Filter expressions can include calls to predefined functions. For example, the [`match()`](./jsonpath-functions.md#match) function matches nodes against a regular expression, if that node is a string value.
 
@@ -215,7 +228,7 @@ $.users[0, ?@.name == 'Sally', 'foo'].score
 
 ### Recursive descent
 
-The recursive descent segment (`..[<selectors>]`) selects all nodes, recursively, beneath the current selection in the JSON document tree. There mst be at least one selector. In this example we use shorthand notation for a property name (`score`), but a bracketed selector list is OK too.
+The recursive descent segment (`..[<selectors>]`) visits all nodes, recursively, beneath the current selection in the JSON document tree. There mst be at least one selector. In this example we use shorthand notation for a property name (`score`), but a bracketed selector list is OK too.
 
 ```text
 $..score

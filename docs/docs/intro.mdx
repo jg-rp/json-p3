@@ -9,13 +9,15 @@ import TabItem from "@theme/TabItem";
 
 JSON P3 implements JSONPath following the [IETF JSONPath draft](https://datatracker.ietf.org/doc/html/draft-ietf-jsonpath-base-20) specification, JSON Pointer described by [RFC 6901](https://datatracker.ietf.org/doc/html/rfc6901), and JSON Patch described by [RFC 6902](https://datatracker.ietf.org/doc/html/rfc6902).
 
-**JSONPath** is a mini language for selecting values from JSON-like data. A JSONPath query has the potential to return multiple values from a data structure, along with their locations. This implementation is non-evaluating and read-only. We strictly follow the [IETF JSONPath draft](https://datatracker.ietf.org/doc/html/draft-ietf-jsonpath-base-20).
+**[JSONPath](./quick-start.md#jsonpath)** is a mini language for selecting values from JSON-like data. A JSONPath query has the potential to return multiple values from a data structure, along with their locations. This implementation is non-evaluating and read-only. We strictly follow the [IETF JSONPath draft](https://datatracker.ietf.org/doc/html/draft-ietf-jsonpath-base-20).
 
-**JSON Pointer** is a syntax for targeting a single value in JSON-like data. JSON Pointers can be _resolved_ against data to retrieve the value, or used as part of a JSON Patch operation.
+**[JSON Pointer](./quick-start.md#json-pointer)** is a syntax for targeting a single value in JSON-like data. JSON Pointers can be _resolved_ against data to retrieve the value, or used as part of a JSON Patch operation.
 
-**JSON Patch** is a standard for describing update operations to perform on JSON-like data. You can _apply_ a patch to _add_, _remove_, _replace_, _copy_ and _move_ values within a JSON document.
+**[JSON Patch](./quick-start.md#json-patch)** is a standard for describing update operations to perform on JSON-like data. You can _apply_ a patch to _add_, _remove_, _replace_, _copy_ and _move_ values within a JSON document.
 
+:::info
 We use the term _JSON-like data_ to describe arbitrary, possibly nested, JavaScript arrays and objects, plus primitive strings, numbers, booleans and `null`, as you might expect from `JSON.parse()`. When traversing JSON-like data, we only resolve an object's direct properties, and the `length` property of arrays and strings is ignored.
+:::
 
 ## Install
 

@@ -66,7 +66,7 @@ Return the value associated with the first node in _nodes_, if _nodes_ has exact
 
 ## Well-typedness
 
-The JSONPath specification defines a [type system for function expressions](https://datatracker.ietf.org/doc/html/draft-ietf-jsonpath-base-20#name-type-system-for-function-ex), and rules for how those types can be used within an expression. JSON P3 will throw a [JSONPathTypeError](../api/classes/jsonpath.JSONPathTypeError.md) as query compile time if it contains expressions that are not deemed to be well-typed.
+The JSONPath specification defines a [type system for function expressions](https://datatracker.ietf.org/doc/html/draft-ietf-jsonpath-base-20#name-type-system-for-function-ex), and rules for how those types can be used within an expression. JSON P3 will throw a [JSONPathTypeError](../api/classes/jsonpath.JSONPathTypeError.md) at query compile time if it contains expressions that are not deemed to be well-typed.
 
 Please see [Section 2.4.3](https://datatracker.ietf.org/doc/html/draft-ietf-jsonpath-base-20#name-well-typedness-of-function-) _Well-Typedness of Function Expressions_.
 

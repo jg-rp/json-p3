@@ -19,101 +19,6 @@ JSONPath, JSON Patch and JSON Pointer for JavaScript.
 
 ---
 
-**Table of Contents**
-
-- [Install](#install)
-- [JSONPath](#jsonpath)
-- [JSON Pointer](#json-pointer)
-- [JSON Patch](#json-patch)
-
-## Install
-
-### Node.js
-
-Use npm:
-
-```console
-npm install --save json-p3
-```
-
-Or yarn:
-
-```console
-yarn add json-p3
-```
-
-Or pnpm:
-
-```console
-pnpm add json-p3
-```
-
-And use ES modules:
-
-```javascript
-import { query } from "json-p3";
-
-const data = {
-  players: [{ name: "Sue" }, { name: "John" }, { name: "Sally" }],
-  visitors: [{ name: "Brian" }, { name: "Roy" }],
-};
-
-const nodes = query("$..name", data);
-console.log(nodes.values());
-// [ 'Sue', 'John', 'Sally', 'Brian', 'Roy' ]
-```
-
-Or CommonJS modules:
-
-```javascript
-const { query } = require("json-p3");
-
-const data = {
-  players: [{ name: "Sue" }, { name: "John" }, { name: "Sally" }],
-  visitors: [{ name: "Brian" }, { name: "Roy" }],
-};
-
-const nodes = query("$..name", data);
-console.log(nodes.values());
-// [ 'Sue', 'John', 'Sally', 'Brian', 'Roy' ]
-```
-
-### Browser
-
-Download and include JSON P3 in a script tag:
-
-```html
-<script src="path/to/json-p3.iife.min.js"></script>
-<script>
-  const data = {
-    players: [{ name: "Sue" }, { name: "John" }, { name: "Sally" }],
-    visitors: [{ name: "Brian" }, { name: "Roy" }],
-  };
-  const nodes = json_p3.query("$..name");
-  console.log(nodes.values());
-  // [ 'Sue', 'John', 'Sally', 'Brian', 'Roy' ]
-</script>
-```
-
-Or use a CDN:
-
-```html
-<script src="https://cdn.jsdelivr.net/npm/json-p3@0.1.0/dist/json-p3.iife.min.js"></script>
-<script>
-  const data = {
-    players: [{ name: "Sue" }, { name: "John" }, { name: "Sally" }],
-    visitors: [{ name: "Brian" }, { name: "Roy" }],
-  };
-  const nodes = json_p3.query("$..name");
-  console.log(nodes.values());
-  // [ 'Sue', 'John', 'Sally', 'Brian', 'Roy' ]
-</script>
-```
-
-## JSONPath
-
-Retrieve values from JSON-like data using JSONPath query expressions. We strictly follow standards described in the [IETF JSONPath draft](https://datatracker.ietf.org/doc/html/draft-ietf-jsonpath-base-20).
-
 ```javascript
 import { jsonpath } from "json-p3";
 
@@ -130,218 +35,33 @@ const nodes = jsonpath.query("$.users[?@.score < 100].name", data);
 console.log(nodes.values()); // [ 'John', 'Sally', 'Jane' ]
 ```
 
-The result of `jsonpath.query()` is an instance of `JSONPathNodeList`. That is a list of `JSONPathNode` objects, one node for each value in the target JSON document matching the query. Each node has a:
+## Links
 
-- `value` - The value found in the target JSON document. This could be an array, object or primitive value.
-- `location` - An array of property names and array indices that were required to reach the node's value in the target JSON document.
-- `path` - The normalized JSONPath to this node in the target JSON document.
+- Docs: https://jg-rp.github.io/json-p3/
+- Install: https://jg-rp.github.io/json-p3/#install
+- JSONPath syntax: https://jg-rp.github.io/json-p3/guides/jsonpath-syntax
+- API reference: https://jg-rp.github.io/json-p3/api
+- Change log: https://github.com/jg-rp/json-p3/blob/main/CHANGELOG.md
+- NPM: https://www.npmjs.com/package/json-p3
+- Issue tracker: https://github.com/jg-rp/json-p3/issues
 
-Use `JSONPathNodeList.paths()` to retrieve all node paths.
+## Bundles
 
-```javascript
-// .. continued from above
-console.log(nodes.paths());
-```
+JSON P3 is written in TypeScript, compiled to JavaScript using [Babel](https://babeljs.io/), and bundled using [Rollup](https://rollupjs.org/introduction/). The following, included bundles target `defaults, maintained node version`, as defined by [Browserslist](https://browsersl.ist/#q=defaults%2C+maintained+node+versions).
 
-**Output:**
+JSON P3 has zero runtime dependencies.
 
-```plain
-[
-  "$['users']['1']['name']",
-  "$['users']['2']['name']",
-  "$['users']['3']['name']"
-]
-```
+| Bundle                | Description                                                                |
+| --------------------- | -------------------------------------------------------------------------- |
+| `json-p3.cjs.js`      | A CommonJS formatted bundle.                                               |
+| `json-p3.esm.js`      | An ECMAScript module formatted bundle.                                     |
+| `json-p3-iife.js`     | A bundle formatted as an Immediately Invoked Function Expression.          |
+| `json-p3-iife.min.js` | A minified bundle formatted as an Immediately Invoked Function Expression. |
 
-And `JSONPathNodeList.locations()` to get an array of node locations.
+## Contributing
 
-```javascript
-// .. continued from above
-console.log(nodes.locations());
-```
+Please see [Contributing to JSON P3](https://github.com/jg-rp/json-p3/blob/main/CONTRIBUTING.md)
 
-**Output:**
+## License
 
-```plain
-[
-  [ 'users', 1, 'name' ],
-  [ 'users', 2, 'name' ],
-  [ 'users', 3, 'name' ]
-]
-```
-
-`JSONPathNodeList` objects are iterable too.
-
-```javascript
-// .. continued from above
-for (const node of nodes) {
-  console.log(`${node.value} @ ${node.path}`);
-}
-```
-
-**Output:**
-
-```plain
-John @ $['users'][1]['name']
-Sally @ $['users'][2]['name']
-Jane @ $['users'][3]['name']
-```
-
-You can also compile a JSONPath query for repeated use against different data.
-
-```javascript
-import { jsonpath } from "json-p3";
-
-const data = {
-  users: [
-    { name: "Sue", score: 100 },
-    { name: "John", score: 86 },
-    { name: "Sally", score: 84 },
-    { name: "Jane", score: 55 },
-  ],
-};
-
-const path = jsonpath.compile("$.users[?@.score < 100].name");
-const nodes = path.query(data);
-console.log(nodes.values()); // [ 'John', 'Sally', 'Jane' ]
-```
-
-## JSON Pointer
-
-Identify a single value in JSON-like data, as per RFC 6901. Use `jsonpointer.resolve()` to retrieve the value.
-
-```javascript
-import { jsonpointer } from "json-p3";
-
-const data = {
-  users: [
-    { name: "Sue", score: 100 },
-    { name: "John", score: 86 },
-    { name: "Sally", score: 84 },
-    { name: "Jane", score: 55 },
-  ],
-};
-
-const rv = jsonpointer.resolve("/users/1", data);
-console.log(rv); // { name: 'John', score: 86 }
-```
-
-If the pointer can't be resolved against the argument JSON value, one of `JSONPointerIndexError`, `JSONPointerKeyError` or `JSONPointerTypeError` is thrown. All three exceptions inherit from `JSONPointerResolutionError`.
-
-```javascript
-// .. continued from above
-const rv = jsonpointer.resolve("/users/1/age", data);
-// JSONPointerKeyError: no such property ("/users/1/age")
-```
-
-A fallback value can be given as a third argument, which will be returned in the event of a `JSONPointerResolutionError`.
-
-```javascript
-// .. continued from above
-const rv = jsonpointer.resolve("/users/1/age", data, -1);
-console.log(rv); // -1
-```
-
-You can also create an instance of `JSONPointer` then resolve it against different data.
-
-```javascript
-import { JSONPointer } from "json-p3";
-
-const someData = {
-  users: [
-    { name: "Sue", score: 100 },
-    { name: "John", score: 86 },
-    { name: "Sally", score: 84 },
-  ],
-};
-
-const otherData = {
-  users: [{ name: "Brian" }, { name: "Roy" }],
-};
-
-const pointer = new JSONPointer("/users/1");
-console.log(pointer.resolve(someData)); // { name: 'John', score: 86 }
-console.log(pointer.resolve(otherData)); // { name: 'Roy' }
-```
-
-We also support [Relative JSON Pointers](https://www.ietf.org/id/draft-hha-relative-json-pointer-00.html) via the `to(rel)` method of `JSONPointer`, where `rel` is a relative JSON pointer string, and a new `JSONPointer` is returned.
-
-```javascript
-import { JSONPointer } from "json-p3";
-
-const data = { foo: { bar: [1, 2, 3], baz: [4, 5, 6] } };
-const pointer = new JSONPointer("/foo/bar/2");
-
-console.log(pointer.resolve(data)); // 3
-console.log(pointer.to("0-1").resolve(data)); // 2
-console.log(pointer.to("2/baz/2").resolve(data)); // 6
-```
-
-## JSON Patch
-
-Apply a JSON Patch ([RFC 6902](https://datatracker.ietf.org/doc/html/rfc6902)) to some data. A JSON Patch defines update operation to perform on a JSON document. **Data is modified in place.**.
-
-```javascript
-import { jsonpatch } from "json-p3";
-
-const ops = [
-  { op: "add", path: "/some/foo", value: { foo: {} } },
-  { op: "add", path: "/some/foo", value: { bar: [] } },
-  { op: "copy", from: "/some/other", path: "/some/foo/else" },
-  { op: "add", path: "/some/foo/bar/-", value: 1 },
-];
-
-const data = { some: { other: "thing" } };
-jsonpatch.apply(ops, data);
-console.log(data);
-// { some: { other: 'thing', foo: { bar: [Array], else: 'thing' } } }
-```
-
-Use the `JSONPatch` class to create a patch for repeated application.
-
-```javascript
-import { JSONPatch } from "json-p3";
-
-const patch = new JSONPatch([
-  { op: "add", path: "/some/foo", value: { foo: {} } },
-  { op: "add", path: "/some/foo", value: { bar: [] } },
-  { op: "copy", from: "/some/other", path: "/some/foo/else" },
-  { op: "add", path: "/some/foo/bar/-", value: 1 },
-]);
-
-const data = { some: { other: "thing" } };
-patch.apply(data);
-console.log(data);
-// { some: { other: 'thing', foo: { bar: [Array], else: 'thing' } } }
-```
-
-`JSONPatch` also offers a builder API for constructing JSON patch documents. We use strings as JSON Pointers in this example, but existing `JSONPointer` objects are OK too.
-
-```javascript
-import { JSONPatch } from "json-p3";
-
-const data = { some: { other: "thing" } };
-
-const patch = new JSONPatch()
-  .add("/some/foo", { foo: [] })
-  .add("/some/foo", { bar: [] })
-  .copy("/some/other", "/some/foo/else")
-  .add("/some/foo/bar/-", "/some/foo/else");
-
-patch.apply(data);
-console.log(JSON.stringify(data, undefined, "  "));
-```
-
-**Output:**
-
-```json
-{
-  "some": {
-    "other": "thing",
-    "foo": {
-      "bar": ["/some/foo/else"],
-      "else": "thing"
-    }
-  }
-}
-```
+`json-p3` is distributed under the terms of the [MIT](https://spdx.org/licenses/MIT.html) license.

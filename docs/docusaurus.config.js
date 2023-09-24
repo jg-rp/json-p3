@@ -86,6 +86,11 @@ const config = {
             position: "left",
           },
           {
+            to: "/playground/",
+            label: "Try It",
+            position: "left",
+          },
+          {
             href: "https://github.com/jg-rp/json-p3",
             label: "GitHub",
             position: "right",

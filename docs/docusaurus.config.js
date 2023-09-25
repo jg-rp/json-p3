@@ -70,8 +70,8 @@ const config = {
         title: "JSON P3",
         logo: {
           alt: "JSON P3",
-          src: "img/p3_path_plain.svg",
-          srcDark: "img/p3_dark_path_plain.svg",
+          src: "img/p3_v2_dark.svg",
+          srcDark: "img/p3_v2_light.svg",
         },
         items: [
           {

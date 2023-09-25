@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="60mm"
+   height="60mm"
+   viewBox="0 0 60 60"
+   version="1.1"
+   id="svg28230"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs28227" />
+  <g
+     id="layer1"
+     transform="translate(-110.26237,-124.95652)">
+    <g
+       id="g28072"
+       transform="translate(35.436777,17.888872)">
+      <rect
+         style="fill:#1b1b1b;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0;stroke-opacity:1"
+         id="rect21316-9-8"
+         width="60"
+         height="60"
+         x="74.825592"
+         y="107.06765" />
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-weight:normal;font-size:56.4444px;line-height:1.25;font-family:sans-serif;letter-spacing:-5.8286px;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.299825"
+         x="73.357864"
+         y="157.61418"
+         id="text2036-4-4"><tspan
+           id="tspan2034-7-5"
+           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:56.4444px;font-family:monospace;-inkscape-font-specification:'monospace Bold';fill:#ffffff;fill-opacity:1;stroke-width:0.299825"
+           x="73.357864"
+           y="157.61418">P3</tspan></text>
+    </g>
+  </g>
+</svg>

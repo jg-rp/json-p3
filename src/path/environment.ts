@@ -54,7 +54,10 @@ export type JSONPathEnvironmentOptions = {
 };
 
 /**
+ * A configuration object from which JSONPath queries can be evaluated.
  *
+ * An environment is where you'd register custom function extensions or set
+ * the maximum recursion depth limit, for example.
  */
 export class JSONPathEnvironment {
   /**
@@ -94,8 +97,7 @@ export class JSONPathEnvironment {
   private parser: Parser;
 
   /**
-   *
-   * @param options -
+   * @param options - Environment configuration options.
    */
   constructor(options: JSONPathEnvironmentOptions = {}) {
     this.strict = options.strict ?? true;
@@ -107,9 +109,8 @@ export class JSONPathEnvironment {
   }
 
   /**
-   *
-   * @param path -
-   * @returns
+   * @param path - A JSONPath query to parse.
+   * @returns A new {@link JSONPath} object, bound to this environment.
    */
   public compile(path: string): JSONPath {
     return new JSONPath(
@@ -120,9 +121,10 @@ export class JSONPathEnvironment {
 
   /**
    *
-   * @param path -
-   * @param value -
-   * @returns
+   * @param path - A JSONPath query to parse and evaluate against _value_.
+   * @param value - Data to which _path_ will be applied.
+   * @returns The {@link JSONPathNodeList} resulting from applying _path_
+   * to _value_.
    */
   public query(path: string, value: JSONValue): JSONPathNodeList {
     return this.compile(path).query(value);
@@ -141,6 +143,10 @@ export class JSONPathEnvironment {
     return this.compile(path).match(value);
   }
 
+  /**
+   * A hook for setting up the function register. You are encouraged to
+   * override this method in classes extending `JSONPathEnvironment`.
+   */
   protected setupFilterFunctions(): void {
     this.functionRegister.set("count", new CountFilterFunction());
     this.functionRegister.set("length", new LengthFilterFunction());
@@ -150,9 +156,18 @@ export class JSONPathEnvironment {
   }
 
   /**
+   * Check the well-typedness of a function's arguments at compile-time.
    *
-   * @param token -
-   * @param args -
+   * This method is called by the {@link Parser} when parsing function calls.
+   * It is expected to throw a {@link JSONPathTypeError} if the function's
+   * parameters are not well-typed.
+   *
+   * Override this if you want to deviate from the JSONPath Spec's function
+   * extension type system.
+   *
+   * @param token - The {@link Token} starting the function call. `Token.value`
+   * will contain the name of the function.
+   * @param args - One {@link FilterExpression} for each argument.
    */
   // eslint-disable-next-line sonarjs/cognitive-complexity
   public checkWellTypedness(

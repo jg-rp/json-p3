@@ -4,7 +4,7 @@ This page gets you started using JSONPath, JSON Pointer and JSON Patch with Java
 
 ## JSONPath
 
-Find all values matching a JSONPath query with [`jsonpath.query()`](./api/namespaces/jsonpath.md#query). It takes a string (the query) and some data to apply the query to. It always returns an instance of [`JSONPathNodeList`](./api/classes/jsonpath.JSONPathNodeList.md).
+Find all values matching a JSONPath query with [`jsonpath.query()`](./api/namespaces/jsonpath.md#query). It takes a string (the query) and some data to apply the query to. It always returns an instance of [`JSONPathNodeList`](./api/classes/jsonpath.JSONPathNodeList.md). Use [`JSONPathNodeList.values()`](./api/classes/jsonpath.JSONPathNodeList.md#values) to get an array of values matching the query.
 
 ```javascript
 import { jsonpath } from "json-p3";

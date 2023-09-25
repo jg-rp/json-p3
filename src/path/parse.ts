@@ -60,6 +60,9 @@ const BINARY_OPERATORS: Map<TokenKind, string> = new Map([
 
 const COMPARISON_OPERATORS = new Set(["==", ">=", ">", "<=", "<", "!="]);
 
+/**
+ * JSONPath token stream parser.
+ */
 export class Parser {
   protected tokenMap: Map<string, (stream: TokenStream) => FilterExpression>;
 

@@ -23,6 +23,7 @@
     "@monaco-editor/react": "^4.5.2",
     "@mui/material": "^5.14.10",
     "@tsconfig/docusaurus": "^2.0.0",
+    "allotment": "^1.19.3",
     "clsx": "^1.2.1",
     "docusaurus-plugin-typedoc": "^0.20.1",
     "json-p3": "^0.2.0",

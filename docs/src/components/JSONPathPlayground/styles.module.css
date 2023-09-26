@@ -1,13 +1,11 @@
 .heading {
   font-size: 18px;
-  /* font-family: "monospace"; */
   font-weight: lighter;
   margin-bottom: 5px;
   margin-left: 5px;
 }
 
 .version {
-  font-size: 12px;
-  float: right;
+  font-weight: bold;
   
 }

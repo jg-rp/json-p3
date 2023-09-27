@@ -1,5 +1,6 @@
-import React from "react";
-import { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
+
+import { useColorMode } from "@docusaurus/theme-common";
 
 import { Container } from "@mui/material";
 import Grid from "@mui/material/Unstable_Grid2";
@@ -23,17 +24,7 @@ const commonEditorOptions = {
   padding: { bottom: 10, top: 10 },
 };
 
-const theme = "vs-dark";
-
-// function handleEditorDidMount(editor, monaco) {
-//   import("monaco-themes/themes/Tomorrow-Night-Eighties.json")
-//     .then((themeData) => {
-//       monaco.editor.defineTheme("Tomorrow-Night-Eighties", themeData);
-//     })
-//     .then((_) => monaco.editor.setTheme("Tomorrow-Night-Eighties"));
-// }
-
-function QueryEditor({ defaultQuery, onChange }) {
+function QueryEditor({ defaultQuery, theme, onChange }) {
   return (
     <Editor
       height="100%"
@@ -41,12 +32,12 @@ function QueryEditor({ defaultQuery, onChange }) {
       theme={theme}
       defaultValue={defaultQuery}
       onChange={onChange}
-      options={{ ...commonEditorOptions, fontSize: 16 }}
+      options={{ ...commonEditorOptions, fontSize: 16, lineNumbers: "off" }}
     />
   );
 }
 
-function JSONEditor({ onChange }) {
+function JSONEditor({ onChange, theme }) {
   const defaultValue = JSON.stringify(
     {
       users: [
@@ -73,13 +64,14 @@ function JSONEditor({ onChange }) {
   );
 }
 
-function ResultsEditor({ result }) {
+function ResultsEditor({ result, theme, beforeMount }) {
   return (
     <Editor
       height="100%"
       language="json"
       theme={theme}
       value={result}
+      beforeMount={beforeMount}
       options={{
         ...commonEditorOptions,
         wordWrap: "on",
@@ -125,6 +117,28 @@ export default function Playground() {
   const [resultPaths, setResultPaths] = useState(defaultResultNormalizedPaths);
   const [data, setData] = useState(defaultData);
 
+  const { colorMode } = useColorMode();
+  const initTheme = colorMode === "light" ? "light" : "vs-dark";
+  const monacoRef = useRef(null);
+
+  function handleEditorWillMount(monaco) {
+    monacoRef.current = monaco;
+  }
+
+  /**
+   * Synchronize colorMode with editor theme.
+   */
+  useEffect(() => {
+    if (colorMode && monacoRef.current !== null) {
+      monacoRef.current.editor.setTheme(
+        colorMode === "light" ? "light" : "vs-dark",
+      );
+    }
+  }, [colorMode]);
+
+  /**
+   * Compile the query and update the results.
+   */
   function _onQueryChange(value) {
     try {
       const path = jsonpath.compile(value.trim());
@@ -138,6 +152,9 @@ export default function Playground() {
     }
   }
 
+  /**
+   * Compile the query and update the results after a timeout.
+   */
   function onQueryChange(value) {
     clearTimeout(timer);
     timer = setTimeout(() => _onQueryChange(value), timerInterval);
@@ -163,29 +180,31 @@ export default function Playground() {
 
   return (
     <Container maxWidth="xl" className="playground">
-      <Grid container spacing={1} sx={{ m: 1 }}>
+      <Grid container sx={{ m: 1 }}>
         <Grid xs={12}>
           <h1 className={styles.heading}>JSONPath Playground</h1>
-          <hr sx={{ m: 1 }} />
+          <hr className={styles.headingRule} />
         </Grid>
-        <Grid xs={12} sx={{ height: "70vh" }}>
+        <Grid xs={12} sx={{ height: "70vh", border: "1px solid" }}>
           <Allotment minSize={100} vertical>
             <Allotment.Pane preferredSize={60} maxSize={200} minSize={60}>
               <QueryEditor
                 defaultQuery={defaultQuery}
+                theme={initTheme}
                 onChange={onQueryChange}
+                beforeMount={handleEditorWillMount}
               />
             </Allotment.Pane>
             <Allotment.Pane>
               <Allotment minSize={200} horizontal>
                 <Allotment.Pane preferredSize="50%">
-                  <JSONEditor onChange={onDataChange} />
+                  <JSONEditor onChange={onDataChange} theme={initTheme} />
                 </Allotment.Pane>
                 <Allotment.Pane preferredSize="50%">
-                  <ResultsEditor result={result} />
+                  <ResultsEditor result={result} theme={initTheme} />
                 </Allotment.Pane>
                 <Allotment.Pane minSize={0} preferredSize="0%" priority="low">
-                  <ResultsEditor result={resultPaths} />
+                  <ResultsEditor result={resultPaths} theme={initTheme} />
                 </Allotment.Pane>
               </Allotment>
             </Allotment.Pane>
@@ -204,7 +223,7 @@ export default function Playground() {
             <p>
               JSON data is on the left and results are on the right.
               <br />
-              Drag out the third pane on the right to see a normalized path for{" "}
+              Drag out the extra pane on the right to see a normalized path for
               each result.
               <br />
               Results are updated automatically after one second of inactivity.

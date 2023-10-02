@@ -24,14 +24,16 @@ const commonEditorOptions = {
   padding: { bottom: 10, top: 10 },
 };
 
-function QueryEditor({ defaultQuery, theme, onChange }) {
+function QueryEditor({ defaultQuery, theme, beforeMount, onMount, onChange }) {
   return (
     <Editor
       height="100%"
       language="text"
       theme={theme}
       defaultValue={defaultQuery}
+      beforeMount={beforeMount}
       onChange={onChange}
+      onMount={onMount}
       options={{ ...commonEditorOptions, fontSize: 16, lineNumbers: "off" }}
     />
   );
@@ -64,14 +66,13 @@ function JSONEditor({ onChange, theme }) {
   );
 }
 
-function ResultsEditor({ result, theme, beforeMount }) {
+function ResultsEditor({ result, theme }) {
   return (
     <Editor
       height="100%"
       language="json"
       theme={theme}
       value={result}
-      beforeMount={beforeMount}
       options={{
         ...commonEditorOptions,
         wordWrap: "on",
@@ -118,11 +119,19 @@ export default function Playground() {
   const [data, setData] = useState(defaultData);
 
   const { colorMode } = useColorMode();
-  const initTheme = colorMode === "light" ? "light" : "vs-dark";
+  const initTheme = colorMode === "light" ? "Cobalt" : "vs-dark";
   const monacoRef = useRef(null);
 
   function handleEditorWillMount(monaco) {
     monacoRef.current = monaco;
+  }
+
+  function handleEditorDidMount(_, monaco) {
+    import("monaco-themes/themes/Cobalt.json")
+      .then((themeData) => {
+        monaco.editor.defineTheme("Cobalt", themeData);
+      })
+      .then((_) => monaco.editor.setTheme("Cobalt"));
   }
 
   /**
@@ -131,7 +140,7 @@ export default function Playground() {
   useEffect(() => {
     if (colorMode && monacoRef.current !== null) {
       monacoRef.current.editor.setTheme(
-        colorMode === "light" ? "light" : "vs-dark",
+        colorMode === "light" ? "Cobalt" : "vs-dark",
       );
     }
   }, [colorMode]);
@@ -185,14 +194,21 @@ export default function Playground() {
           <h1 className={styles.heading}>JSONPath Playground</h1>
           <hr className={styles.headingRule} />
         </Grid>
-        <Grid xs={12} sx={{ height: "70vh", border: "1px solid" }}>
+        <Grid
+          xs={12}
+          sx={{
+            height: "70vh",
+            border: "1px solid var(--ifm-hr-background-color)",
+          }}
+        >
           <Allotment minSize={100} vertical>
             <Allotment.Pane preferredSize={60} maxSize={200} minSize={60}>
               <QueryEditor
                 defaultQuery={defaultQuery}
                 theme={initTheme}
-                onChange={onQueryChange}
                 beforeMount={handleEditorWillMount}
+                onMount={handleEditorDidMount}
+                onChange={onQueryChange}
               />
             </Allotment.Pane>
             <Allotment.Pane>
@@ -218,6 +234,7 @@ export default function Playground() {
               alignItems: "center",
               fontSize: "14px",
               textAlign: "center",
+              marginTop: "3px",
             }}
           >
             <p>

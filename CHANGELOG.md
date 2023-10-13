@@ -1,5 +1,11 @@
 # JSON P3 Change Log
 
+# Version 0.2.1
+
+**Fixes**
+
+- Fixed JSONPath filter operator precedence. Previously logical _and_ (`&&`) and _or_ (`||`) were binding more tightly than logical negation (`!`).
+
 # Version 0.2.0
 
 **Breaking Changes**

@@ -29,10 +29,10 @@ import {
 import { Token, TokenKind, TokenStream } from "./token";
 
 const PRECEDENCE_LOWEST = 1;
-const PRECEDENCE_LOGICALRIGHT = 3;
 const PRECEDENCE_LOGICAL_AND = 4;
 const PRECEDENCE_LOGICAL_OR = 5;
 const PRECEDENCE_COMPARISON = 6;
+const PRECEDENCE_PREFIX = 7;
 
 const PRECEDENCES: Map<TokenKind, number> = new Map([
   [TokenKind.AND, PRECEDENCE_LOGICAL_AND],
@@ -42,7 +42,7 @@ const PRECEDENCES: Map<TokenKind, number> = new Map([
   [TokenKind.LE, PRECEDENCE_COMPARISON],
   [TokenKind.LT, PRECEDENCE_COMPARISON],
   [TokenKind.NE, PRECEDENCE_COMPARISON],
-  [TokenKind.NOT, PRECEDENCE_LOGICALRIGHT],
+  [TokenKind.NOT, PRECEDENCE_PREFIX],
   [TokenKind.OR, PRECEDENCE_LOGICAL_OR],
   [TokenKind.RPAREN, PRECEDENCE_LOWEST],
 ]);
@@ -312,7 +312,7 @@ export class Parser {
     return new PrefixExpression(
       stream.current,
       "!",
-      this.parseFilterExpression(stream, PRECEDENCE_LOGICALRIGHT),
+      this.parseFilterExpression(stream, PRECEDENCE_PREFIX),
     );
   }
 

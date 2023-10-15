@@ -495,6 +495,7 @@ export class FilterSelector extends JSONPathSelector {
             environment: this.environment,
             currentValue: value,
             rootValue: node.root,
+            lazy: true,
           };
           if (this.expression.evaluate(filterContext)) {
             yield new JSONPathNode(value, node.location.concat(i), node.root);
@@ -506,6 +507,7 @@ export class FilterSelector extends JSONPathSelector {
             environment: this.environment,
             currentValue: value,
             rootValue: node.root,
+            lazy: true,
           };
           if (this.expression.evaluate(filterContext)) {
             yield new JSONPathNode(value, node.location.concat(key), node.root);

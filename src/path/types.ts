@@ -15,6 +15,7 @@ export type FilterContext = {
   environment: JSONPathEnvironment;
   currentValue: JSONValue;
   rootValue: JSONValue;
+  lazy?: boolean;
 };
 
 /**

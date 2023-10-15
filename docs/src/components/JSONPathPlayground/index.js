@@ -12,7 +12,7 @@ import "allotment/dist/style.css";
 
 import styles from "./styles.module.css";
 
-import { jsonpath, version as p3version } from "json-p3/dist/json-p3.esm";
+import { jsonpath, version as p3version } from "@site/../dist/json-p3.esm";
 
 const commonEditorOptions = {
   codeLens: false,

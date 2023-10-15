@@ -190,7 +190,7 @@ export abstract class JSONPathQuery extends FilterExpression {
 
 export class RelativeQuery extends JSONPathQuery {
   public evaluate(context: FilterContext): JSONPathNodeList {
-    return this.path.query(context.currentValue);
+    return this.path.query(context.currentValue); // TODO: lazy query?
   }
 
   public toString(): string {
@@ -200,7 +200,7 @@ export class RelativeQuery extends JSONPathQuery {
 
 export class RootQuery extends JSONPathQuery {
   public evaluate(context: FilterContext): JSONPathNodeList {
-    return this.path.query(context.rootValue);
+    return this.path.query(context.rootValue); // TODO: lazy query?
   }
 
   public toString(): string {

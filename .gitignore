@@ -13,5 +13,9 @@ coverage/
 benchmark/*.log
 benchmark/*.txt
 
+# vscode profiler logs
+*.heapprofile
+*.cpuprofile
+
 # dev
 tests/dev.test.ts

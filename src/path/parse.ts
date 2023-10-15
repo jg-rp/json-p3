@@ -99,40 +99,53 @@ export class Parser {
     inFilter: boolean = false,
   ): JSONPathSelector[] {
     const selectors: JSONPathSelector[] = [];
-    loop: for (;;) {
-      switch (stream.current.kind) {
-        case TokenKind.NAME:
-          selectors.push(
-            new NameSelector(
-              this.environment,
-              stream.current,
-              stream.current.value,
-              true,
-            ),
-          );
-          break;
-        case TokenKind.WILD:
-          selectors.push(
-            new WildcardSelector(this.environment, stream.current, true),
-          );
-          break;
-        case TokenKind.DDOT:
-          selectors.push(
-            new RecursiveDescentSegment(this.environment, stream.current),
-          );
-          break;
-        case TokenKind.LBRACKET:
-          selectors.push(this.parseBracketedSelection(stream));
-          break;
-        default:
-          if (inFilter) {
-            stream.backup();
-          }
-          break loop;
+    for (;;) {
+      const selector = this.parseSegment(stream);
+      if (!selector) {
+        if (inFilter) {
+          stream.backup();
+        }
+        break;
       }
+
+      selectors.push(selector);
       stream.next();
     }
     return selectors;
+  }
+
+  protected parseSegment(stream: TokenStream): JSONPathSelector | null {
+    switch (stream.current.kind) {
+      case TokenKind.NAME:
+        return new NameSelector(
+          this.environment,
+          stream.current,
+          stream.current.value,
+          true,
+        );
+      case TokenKind.WILD:
+        return new WildcardSelector(this.environment, stream.current, true);
+      case TokenKind.DDOT: {
+        const segmentToken = stream.current;
+        stream.next();
+        const selector = this.parseSegment(stream);
+        if (!selector) {
+          throw new JSONPathSyntaxError(
+            "bald descendant segment",
+            stream.current,
+          );
+        }
+        return new RecursiveDescentSegment(
+          this.environment,
+          segmentToken,
+          selector,
+        );
+      }
+      case TokenKind.LBRACKET:
+        return this.parseBracketedSelection(stream);
+      default:
+        return null;
+    }
   }
 
   protected parseIndex(stream: TokenStream): IndexSelector {

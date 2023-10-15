@@ -5,3 +5,4 @@ benchmark
 tests/browser
 docs
 tests/path/cts
+performance/index.js

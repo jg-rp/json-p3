@@ -36,6 +36,21 @@ export class JSONPath {
   }
 
   /**
+   *
+   * @param value -
+   * @returns
+   */
+  public lazyQuery(value: JSONValue): IterableIterator<JSONPathNode> {
+    let nodes: IterableIterator<JSONPathNode> = [
+      new JSONPathNode(value, [], value),
+    ][Symbol.iterator]();
+    for (const selector of this.selectors) {
+      nodes = selector.lazyResolve(nodes);
+    }
+    return nodes;
+  }
+
+  /**
    * Return a {@link JSONPathNode} instance for the first object found in
    * _value_ matching this query.
    *
@@ -44,7 +59,10 @@ export class JSONPath {
    * there are no matches.
    */
   public match(value: JSONValue): JSONPathNode | undefined {
-    return this.query(value).nodes.at(0);
+    const it = this.lazyQuery(value);
+    const rv = it.next();
+    if (rv.done) return undefined;
+    return rv.value;
   }
 
   /**

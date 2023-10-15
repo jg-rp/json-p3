@@ -131,6 +131,22 @@ export class JSONPathEnvironment {
   }
 
   /**
+   * A lazy version of {@link query} which is faster and more memory
+   * efficient when querying some large datasets.
+   *
+   * @param path - A JSONPath query to parse and evaluate against _value_.
+   * @param value - Data to which _path_ will be applied.
+   * @returns A sequence of {@link JSONPathNode} objects resulting from
+   * applying _path_ to _value_.
+   */
+  public lazyQuery(
+    path: string,
+    value: JSONValue,
+  ): IterableIterator<JSONPathNode> {
+    return this.compile(path).lazyQuery(value);
+  }
+
+  /**
    * Return a {@link JSONPathNode} instance for the first object found in
    * _value_ matching _path_.
    *

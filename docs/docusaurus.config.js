@@ -53,6 +53,17 @@ const config = {
   ],
 
   plugins: [
+    async function tailwind() {
+      return {
+        name: "tailwindcss",
+        configurePostCss(postcssOptions) {
+          // Appends TailwindCSS and AutoPrefixer.
+          postcssOptions.plugins.push(require("tailwindcss"));
+          postcssOptions.plugins.push(require("autoprefixer"));
+          return postcssOptions;
+        },
+      };
+    },
     [
       "docusaurus-plugin-typedoc",
       {

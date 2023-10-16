@@ -28,9 +28,24 @@ export class JSONPath {
    * @returns
    */
   public query(value: JSONValue): JSONPathNodeList {
-    let nodes = new JSONPathNodeList([new JSONPathNode(value, [], value)]);
+    let nodes = [new JSONPathNode(value, [], value)];
     for (const selector of this.selectors) {
       nodes = selector.resolve(nodes);
+    }
+    return new JSONPathNodeList(nodes);
+  }
+
+  /**
+   *
+   * @param value -
+   * @returns
+   */
+  public lazyQuery(value: JSONValue): IterableIterator<JSONPathNode> {
+    let nodes: IterableIterator<JSONPathNode> = [
+      new JSONPathNode(value, [], value),
+    ][Symbol.iterator]();
+    for (const selector of this.selectors) {
+      nodes = selector.lazyResolve(nodes);
     }
     return nodes;
   }
@@ -44,7 +59,10 @@ export class JSONPath {
    * there are no matches.
    */
   public match(value: JSONValue): JSONPathNode | undefined {
-    return this.query(value).nodes.at(0);
+    const it = this.lazyQuery(value);
+    const rv = it.next();
+    if (rv.done) return undefined;
+    return rv.value;
   }
 
   /**

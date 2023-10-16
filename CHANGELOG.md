@@ -1,5 +1,16 @@
 # JSON P3 Change Log
 
+## Version 0.3.0 (unreleased)
+
+**Fixes**
+
+- Fixed call stack size issues when querying large datasets with the recursive descent selector. This was mostly due to extending arrays using the spread operator. We now iterate and use `Array.push()`.
+
+**Features**
+
+- Added `jsonpath.lazyQuery()`, a lazy alternative to `jsonpath.query()`. `lazyQuery()` can be faster and more memory efficient if querying large datasets, especially when using recursive descent selectors. Conversely, `query()` is usually the better choice when working with small datasets.
+- `jsonpath.match()` now uses `lazyQuery()` internally, potentially avoiding a lot of unnecessary work.
+
 # Version 0.2.1
 
 **Fixes**

@@ -17,6 +17,7 @@ export {
   Token,
   TokenKind,
   Nothing,
+  lazyQuery,
   query,
   compile,
 } from "./path";

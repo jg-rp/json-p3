@@ -1,7 +1,7 @@
 import { JSONPathEnvironment } from "./environment";
 import { JSONPathIndexError, JSONPathRecursionLimitError } from "./errors";
 import { LogicalExpression } from "./expression";
-import { JSONPathNode, JSONPathNodeList } from "./node";
+import { JSONPathNode } from "./node";
 import { Token } from "./token";
 import { FilterContext, hasStringKey } from "./types";
 import { isArray, isObject, JSONValue } from "../types";
@@ -21,7 +21,14 @@ export abstract class JSONPathSelector {
   /**
    * @param nodes - Nodes matched by preceding selectors.
    */
-  public abstract resolve(nodes: JSONPathNodeList): JSONPathNodeList;
+  public abstract resolve(nodes: JSONPathNode[]): JSONPathNode[];
+
+  /**
+   * @param nodes - Nodes matched by preceding selectors.
+   */
+  public abstract lazyResolve(
+    nodes: Iterable<JSONPathNode>,
+  ): Generator<JSONPathNode>;
 
   /**
    * Return a canonical string representation of this selector.
@@ -42,7 +49,7 @@ export class NameSelector extends JSONPathSelector {
     super(environment, token);
   }
 
-  public resolve(nodes: JSONPathNodeList): JSONPathNodeList {
+  public resolve(nodes: JSONPathNode[]): JSONPathNode[] {
     const rv: JSONPathNode[] = [];
     for (const node of nodes) {
       if (hasStringKey(node.value, this.name)) {
@@ -55,7 +62,19 @@ export class NameSelector extends JSONPathSelector {
         );
       }
     }
-    return new JSONPathNodeList(rv);
+    return rv;
+  }
+
+  public *lazyResolve(nodes: Iterable<JSONPathNode>): Generator<JSONPathNode> {
+    for (const node of nodes) {
+      if (hasStringKey(node.value, this.name)) {
+        yield new JSONPathNode(
+          node.value[this.name],
+          node.location.concat(this.name),
+          node.root,
+        );
+      }
+    }
   }
 
   public toString(): string {
@@ -81,7 +100,7 @@ export class IndexSelector extends JSONPathSelector {
     }
   }
 
-  public resolve(nodes: JSONPathNodeList): JSONPathNodeList {
+  public resolve(nodes: JSONPathNode[]): JSONPathNode[] {
     const rv: JSONPathNode[] = [];
     for (const node of nodes) {
       if (isArray(node.value)) {
@@ -97,7 +116,22 @@ export class IndexSelector extends JSONPathSelector {
         }
       }
     }
-    return new JSONPathNodeList(rv);
+    return rv;
+  }
+
+  public *lazyResolve(nodes: Iterable<JSONPathNode>): Generator<JSONPathNode> {
+    for (const node of nodes) {
+      if (isArray(node.value)) {
+        const normIndex = this.normalizedIndex(node.value.length);
+        if (normIndex in node.value) {
+          yield new JSONPathNode(
+            node.value[normIndex],
+            node.location.concat(normIndex),
+            node.root,
+          );
+        }
+      }
+    }
   }
 
   public toString(): string {
@@ -123,7 +157,7 @@ export class SliceSelector extends JSONPathSelector {
     this.checkRange(start, stop, step);
   }
 
-  public resolve(nodes: JSONPathNodeList): JSONPathNodeList {
+  public resolve(nodes: JSONPathNode[]): JSONPathNode[] {
     const rv: JSONPathNode[] = [];
     for (const node of nodes) {
       if (!isArray(node.value)) continue;
@@ -137,7 +171,22 @@ export class SliceSelector extends JSONPathSelector {
         rv.push(new JSONPathNode(value, node.location.concat(i), node.root));
       }
     }
-    return new JSONPathNodeList(rv);
+    return rv;
+  }
+
+  public *lazyResolve(nodes: Iterable<JSONPathNode>): Generator<JSONPathNode> {
+    for (const node of nodes) {
+      if (!isArray(node.value)) continue;
+
+      for (const [i, value] of this.slice(
+        node.value,
+        this.start,
+        this.stop,
+        this.step,
+      )) {
+        yield new JSONPathNode(value, node.location.concat(i), node.root);
+      }
+    }
   }
 
   public toString(): string {
@@ -218,7 +267,7 @@ export class WildcardSelector extends JSONPathSelector {
     super(environment, token);
   }
 
-  public resolve(nodes: JSONPathNodeList): JSONPathNodeList {
+  public resolve(nodes: JSONPathNode[]): JSONPathNode[] {
     const rv: JSONPathNode[] = [];
     for (const node of nodes) {
       if (node.value instanceof String) continue;
@@ -236,7 +285,26 @@ export class WildcardSelector extends JSONPathSelector {
         }
       }
     }
-    return new JSONPathNodeList(rv);
+    return rv;
+  }
+
+  public *lazyResolve(nodes: Iterable<JSONPathNode>): Generator<JSONPathNode> {
+    for (const node of nodes) {
+      if (node.value instanceof String) continue;
+      if (isArray(node.value)) {
+        for (let i = 0; i < node.value.length; i++) {
+          yield new JSONPathNode(
+            node.value[i],
+            node.location.concat(i),
+            node.root,
+          );
+        }
+      } else if (isObject(node.value)) {
+        for (const [key, value] of Object.entries(node.value)) {
+          yield new JSONPathNode(value, node.location.concat(key), node.root);
+        }
+      }
+    }
   }
 
   public toString(): string {
@@ -245,19 +313,93 @@ export class WildcardSelector extends JSONPathSelector {
 }
 
 export class RecursiveDescentSegment extends JSONPathSelector {
-  public resolve(nodes: JSONPathNodeList): JSONPathNodeList {
+  constructor(
+    readonly environment: JSONPathEnvironment,
+    readonly token: Token,
+    readonly selector: JSONPathSelector,
+  ) {
+    super(environment, token);
+  }
+
+  public resolve(nodes: JSONPathNode[]): JSONPathNode[] {
     const rv: JSONPathNode[] = [];
     for (const node of nodes) {
-      rv.push(node, ...this.visit(node));
+      rv.push(node);
+      for (const _node of this.visit(node)) {
+        rv.push(_node);
+      }
     }
-    return new JSONPathNodeList(rv);
+    return this.selector.resolve(rv);
+  }
+
+  public *lazyResolve(nodes: Iterable<JSONPathNode>): Generator<JSONPathNode> {
+    yield* this.selector.lazyResolve(this._lazyResolve(nodes));
+  }
+
+  // eslint-disable-next-line sonarjs/cognitive-complexity
+  protected *_lazyResolve(
+    nodes: Iterable<JSONPathNode>,
+  ): Generator<JSONPathNode> {
+    for (const _node of nodes) {
+      const stack: Array<{ node: JSONPathNode; depth: number }> = [
+        { node: _node, depth: 0 },
+      ];
+
+      yield _node;
+
+      while (stack.length) {
+        const { node: currentNode, depth } = stack.pop() as {
+          node: JSONPathNode;
+          depth: number;
+        };
+
+        if (depth >= this.environment.maxRecursionDepth) {
+          throw new JSONPathRecursionLimitError(
+            "recursion limit reached",
+            this.token,
+          );
+        }
+
+        if (currentNode.value instanceof String) continue;
+
+        if (isArray(currentNode.value)) {
+          for (let i = 0; i < currentNode.value.length; i++) {
+            const __node = new JSONPathNode(
+              currentNode.value[i],
+              currentNode.location.concat(i),
+              currentNode.root,
+            );
+
+            yield __node;
+
+            if (isObject(__node.value)) {
+              stack.push({ node: __node, depth: depth + 1 });
+            }
+          }
+        } else if (isObject(currentNode.value)) {
+          for (const [key, value] of Object.entries(currentNode.value)) {
+            const __node = new JSONPathNode(
+              value,
+              currentNode.location.concat(key),
+              currentNode.root,
+            );
+
+            yield __node;
+
+            if (isObject(__node.value)) {
+              stack.push({ node: __node, depth: depth + 1 });
+            }
+          }
+        }
+      }
+    }
   }
 
   public toString(): string {
-    return "..";
+    return `..${this.selector.toString()}`;
   }
 
-  private visit(node: JSONPathNode, depth: number = 1): JSONPathNodeList {
+  private visit(node: JSONPathNode, depth: number = 1): JSONPathNode[] {
     if (depth >= this.environment.maxRecursionDepth) {
       throw new JSONPathRecursionLimitError(
         "recursion limit reached",
@@ -265,7 +407,7 @@ export class RecursiveDescentSegment extends JSONPathSelector {
       );
     }
     const rv: JSONPathNode[] = [];
-    if (node.value instanceof String) return new JSONPathNodeList(rv);
+    if (node.value instanceof String) return rv;
     if (isArray(node.value)) {
       for (let i = 0; i < node.value.length; i++) {
         const _node = new JSONPathNode(
@@ -273,7 +415,10 @@ export class RecursiveDescentSegment extends JSONPathSelector {
           node.location.concat(i),
           node.root,
         );
-        rv.push(_node, ...this.visit(_node, depth + 1));
+        rv.push(_node);
+        for (const __node of this.visit(_node, depth + 1)) {
+          rv.push(__node);
+        }
       }
     } else if (isObject(node.value)) {
       for (const [key, value] of Object.entries(node.value)) {
@@ -282,10 +427,14 @@ export class RecursiveDescentSegment extends JSONPathSelector {
           node.location.concat(key),
           node.root,
         );
-        rv.push(_node, ...this.visit(_node, depth + 1));
+        rv.push(_node);
+        for (const __node of this.visit(_node, depth + 1)) {
+          rv.push(__node);
+        }
       }
     }
-    return new JSONPathNodeList(rv);
+
+    return rv;
   }
 }
 
@@ -299,7 +448,7 @@ export class FilterSelector extends JSONPathSelector {
   }
 
   // eslint-disable-next-line sonarjs/cognitive-complexity
-  public resolve(nodes: JSONPathNodeList): JSONPathNodeList {
+  public resolve(nodes: JSONPathNode[]): JSONPathNode[] {
     const rv: JSONPathNode[] = [];
     for (const node of nodes) {
       if (node.value instanceof String) continue;
@@ -332,7 +481,40 @@ export class FilterSelector extends JSONPathSelector {
         }
       }
     }
-    return new JSONPathNodeList(rv);
+    return rv;
+  }
+
+  // eslint-disable-next-line sonarjs/cognitive-complexity
+  public *lazyResolve(nodes: Iterable<JSONPathNode>): Generator<JSONPathNode> {
+    for (const node of nodes) {
+      if (node.value instanceof String) continue;
+      if (isArray(node.value)) {
+        for (let i = 0; i < node.value.length; i++) {
+          const value = node.value[i];
+          const filterContext: FilterContext = {
+            environment: this.environment,
+            currentValue: value,
+            rootValue: node.root,
+            lazy: true,
+          };
+          if (this.expression.evaluate(filterContext)) {
+            yield new JSONPathNode(value, node.location.concat(i), node.root);
+          }
+        }
+      } else if (isObject(node.value)) {
+        for (const [key, value] of Object.entries(node.value)) {
+          const filterContext: FilterContext = {
+            environment: this.environment,
+            currentValue: value,
+            rootValue: node.root,
+            lazy: true,
+          };
+          if (this.expression.evaluate(filterContext)) {
+            yield new JSONPathNode(value, node.location.concat(key), node.root);
+          }
+        }
+      }
+    }
   }
 
   public toString(): string {
@@ -356,15 +538,25 @@ export class BracketedSelection extends JSONPathSelector {
     super(environment, token);
   }
 
-  public resolve(nodes: JSONPathNodeList): JSONPathNodeList {
+  public resolve(nodes: JSONPathNode[]): JSONPathNode[] {
     const rv: JSONPathNode[] = [];
     for (const node of nodes) {
       for (const item of this.items) {
-        rv.push(...item.resolve(new JSONPathNodeList([node])));
+        for (const _node of item.resolve([node])) {
+          rv.push(_node);
+        }
       }
     }
 
-    return new JSONPathNodeList(rv);
+    return rv;
+  }
+
+  public *lazyResolve(nodes: Iterable<JSONPathNode>): Generator<JSONPathNode> {
+    for (const node of nodes) {
+      for (const item of this.items) {
+        yield* item.lazyResolve([node]);
+      }
+    }
   }
 
   public toString(): string {

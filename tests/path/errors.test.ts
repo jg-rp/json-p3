@@ -82,6 +82,9 @@ describe("recursion limit reached", () => {
     arr.push(data);
     expect(() => env.query(query, data)).toThrow(JSONPathRecursionLimitError);
     expect(() => env.query(query, data)).toThrow("recursion limit reached");
+    expect(() => Array.from(env.lazyQuery(query, data))).toThrow(
+      "recursion limit reached",
+    );
   });
 
   test("nested data with low limit", () => {
@@ -90,5 +93,8 @@ describe("recursion limit reached", () => {
     const data = { foo: [{ bar: [1, 2, 3] }] };
     expect(() => env.query(query, data)).toThrow(JSONPathRecursionLimitError);
     expect(() => env.query(query, data)).toThrow("recursion limit reached");
+    expect(() => Array.from(env.lazyQuery(query, data))).toThrow(
+      "recursion limit reached",
+    );
   });
 });

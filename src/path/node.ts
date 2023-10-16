@@ -6,11 +6,6 @@ import { JSONValue, isString } from "../types";
  */
 export class JSONPathNode {
   /**
-   * The normalized path to this node in the target JSON value.
-   */
-  readonly path: string;
-
-  /**
    * @param value - The JSON value found at _location_.
    * @param location - The parts of a normalized path to _value_.
    * @param root - The target value at the top of the JSON node tree.
@@ -19,10 +14,14 @@ export class JSONPathNode {
     readonly value: JSONValue,
     readonly location: Array<string | number>,
     readonly root: JSONValue,
-  ) {
-    this.path =
+  ) {}
+
+  public get path(): string {
+    return (
       // eslint-disable-next-line prefer-template
-      "$" + location.map((s) => (isString(s) ? `['${s}']` : `[${s}]`)).join("");
+      "$" +
+      this.location.map((s) => (isString(s) ? `['${s}']` : `[${s}]`)).join("")
+    );
   }
 
   /**

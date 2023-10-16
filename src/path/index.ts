@@ -50,6 +50,30 @@ export function query(path: string, value: JSONValue): JSONPathNodeList {
 }
 
 /**
+ * Lazily query JSON value _value_ with JSONPath expression _path_.
+ * Lazy queries can be faster and more memory efficient when querying
+ * large datasets, especially when using recursive decent selectors.
+ *
+ * @param path - A JSONPath expression/query.
+ * @param value - The JSON-like value the JSONPath query is applied to.
+ * @returns A sequence of {@link JSONPathNode} objects resulting from
+ * applying _path_ to _value_.
+ *
+ * @throws {@link JSONPathSyntaxError}
+ * If the path does not conform to standard syntax.
+ *
+ * @throws {@link JSONPathTypeError}
+ * If filter function arguments are invalid, or filter expression are
+ * used in an invalid way.
+ */
+export function lazyQuery(
+  path: string,
+  value: JSONValue,
+): IterableIterator<JSONPathNode> {
+  return DEFAULT_ENVIRONMENT.lazyQuery(path, value);
+}
+
+/**
  * Compile JSONPath _path_ for later use.
  * @param path - A JSONPath expression/query.
  * @returns A path object with a `query()` method.

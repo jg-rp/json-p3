@@ -97,6 +97,33 @@ Sally @ $['users'][2]['name']
 Jane @ $['users'][3]['name']
 ```
 
+### Lazy queries
+
+[`lazyQuery()`](./api/namespaces/jsonpath.md#lazyquery) is an alternative to `query()`. `lazyQuery()` can be faster and more memory efficient if querying large datasets, especially when using recursive descent selectors. Conversely, `query()` is usually the better choice when working with small datasets.
+
+`lazyQuery()` returns an iterable sequence of [`JSONPathNode`](./api/classes/jsonpath.JSONPathNode.md) objects which is not a `JSONPathNodeList`.
+
+```javascript
+import { lazyQuery } from "json-p3";
+
+const data = {
+  users: [
+    { name: "Sue", score: 100 },
+    { name: "John", score: 86 },
+    { name: "Sally", score: 84 },
+    { name: "Jane", score: 55 },
+  ],
+};
+
+for (const node of lazyQuery("$.users[?@.score < 100].name", data)) {
+  console.log(node.value);
+}
+
+// John
+// Sally
+// Jane
+```
+
 ### Compilation
 
 `query()` is a convenience function equivalent to `new JSONPathEnvironment().compile(path).query(data)`. Use `jsonpath.compile()` to construct a [`JSONPath`](./api/classes/jsonpath.JSONPath.md) object that can be applied to different data repeatedly.

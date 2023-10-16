@@ -28,11 +28,11 @@ export class JSONPath {
    * @returns
    */
   public query(value: JSONValue): JSONPathNodeList {
-    let nodes = new JSONPathNodeList([new JSONPathNode(value, [], value)]);
+    let nodes = [new JSONPathNode(value, [], value)];
     for (const selector of this.selectors) {
       nodes = selector.resolve(nodes);
     }
-    return nodes;
+    return new JSONPathNodeList(nodes);
   }
 
   /**

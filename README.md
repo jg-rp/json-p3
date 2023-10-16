@@ -39,6 +39,7 @@ console.log(nodes.values()); // [ 'John', 'Sally', 'Jane' ]
 
 - Docs: https://jg-rp.github.io/json-p3/
 - Install: https://jg-rp.github.io/json-p3/#install
+- JSONPath playground: https://jg-rp.github.io/json-p3/playground
 - JSONPath syntax: https://jg-rp.github.io/json-p3/guides/jsonpath-syntax
 - API reference: https://jg-rp.github.io/json-p3/api
 - Change log: https://github.com/jg-rp/json-p3/blob/main/CHANGELOG.md

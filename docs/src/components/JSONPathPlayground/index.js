@@ -86,6 +86,7 @@ export default function Playground() {
   const initTheme = colorMode === "light" ? "GitHub" : "vs-dark";
 
   const editorRef = useRef(null);
+  const dataEditorRef = useRef(null);
 
   function handleEditorDidMount(editor, monaco) {
     editorRef.current = editor;
@@ -208,7 +209,10 @@ export default function Playground() {
                   className="flex flex-col bg-[#F8F8FF] dark:bg-[#1E1E1E]"
                 >
                   <div className="flex h-10 flex-none space-x-0 border-0 bg-slate-300 dark:bg-neutral-800">
-                    <div className="flex cursor-pointer items-center border-none bg-[#F8F8FF] px-4 py-1 text-sm font-medium text-slate-700 dark:bg-[#1E1E1E] dark:text-neutral-300">
+                    <button
+                      className="flex cursor-pointer items-center border-none bg-[#F8F8FF] px-4 py-1 text-sm font-medium text-slate-700 dark:bg-[#1E1E1E] dark:text-neutral-300"
+                      onClick={() => dataEditorRef.current?.focus()}
+                    >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         width="16"
@@ -220,7 +224,7 @@ export default function Playground() {
                         <path d="M2.114 8.063V7.9c1.005-.102 1.497-.615 1.497-1.6V4.503c0-1.094.39-1.538 1.354-1.538h.273V2h-.376C3.25 2 2.49 2.759 2.49 4.352v1.524c0 1.094-.376 1.456-1.49 1.456v1.299c1.114 0 1.49.362 1.49 1.456v1.524c0 1.593.759 2.352 2.372 2.352h.376v-.964h-.273c-.964 0-1.354-.444-1.354-1.538V9.663c0-.984-.492-1.497-1.497-1.6zM13.886 7.9v.163c-1.005.103-1.497.616-1.497 1.6v1.798c0 1.094-.39 1.538-1.354 1.538h-.273v.964h.376c1.613 0 2.372-.759 2.372-2.352v-1.524c0-1.094.376-1.456 1.49-1.456V7.332c-1.114 0-1.49-.362-1.49-1.456V4.352C13.51 2.759 12.75 2 11.138 2h-.376v.964h.273c.964 0 1.354.444 1.354 1.538V6.3c0 .984.492 1.497 1.497 1.6z" />
                       </svg>
                       data.json
-                    </div>
+                    </button>
                   </div>
                   <div className="flex-1">
                     <Editor
@@ -229,6 +233,7 @@ export default function Playground() {
                       theme={initTheme}
                       defaultValue={defaultDataString}
                       onChange={onDataChange}
+                      onMount={(editor) => (dataEditorRef.current = editor)}
                       options={commonEditorOptions}
                     />
                   </div>

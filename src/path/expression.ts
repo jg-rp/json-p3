@@ -237,7 +237,7 @@ export class FunctionExtension extends FilterExpression {
       .map((arg, idx) =>
         func.argTypes[idx] !== FunctionExpressionType.NodesType &&
         arg instanceof JSONPathNodeList
-          ? arg.valuesOrSingular()
+          ? this.unpack_node_list(arg)
           : arg,
       );
     return func.call(...args);
@@ -245,6 +245,21 @@ export class FunctionExtension extends FilterExpression {
 
   public toString(): string {
     return `${this.name}(${this.args.map((e) => e.toString()).join(", ")})`;
+  }
+
+  private unpack_node_list(arg: JSONPathNodeList): unknown {
+    switch (arg.length) {
+      case 0:
+        // If the query results in an empty node list, the argument
+        // is the special result Nothing.
+        return Nothing;
+      case 1:
+        // If the query results in a node list consisting of a single
+        // node, the argument is the value of the node
+        return arg.nodes[0].value;
+      default:
+        return arg;
+    }
   }
 }
 

@@ -1,5 +1,11 @@
 # JSON P3 Change Log
 
+# Version 0.3.1
+
+**Fixes**
+
+- Fixed handling of relative and root queries when used as arguments to filter functions. Previously, when those queries resulted in an empty node list, we were converting it to an empty array before passing it to functions that accept _ValueType_ arguments. Now, in such cases, we convert empty node lists to the special result _Nothing_, which is required by the spec.
+
 ## Version 0.3.0
 
 **Fixes**

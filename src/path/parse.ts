@@ -342,11 +342,9 @@ export class Parser {
       throw new JSONPathSyntaxError(`unknown operator '${tok.kind}'`, tok);
     }
 
-    this.throwForNonSingularQuery(left);
-    this.throwForNonSingularQuery(right);
     if (COMPARISON_OPERATORS.has(operator)) {
-      this.throwForNonComparableFunction(left);
-      this.throwForNonComparableFunction(right);
+      this.throwForNonComparable(left);
+      this.throwForNonComparable(right);
     }
     return new InfixExpression(tok, left, operator, right);
   }
@@ -481,26 +479,25 @@ export class Parser {
     }
   }
 
-  protected throwForNonSingularQuery(expr: FilterExpression): void {
+  protected throwForNonComparable(expr: FilterExpression): void {
     if (
       (expr instanceof RootQuery || expr instanceof RelativeQuery) &&
       !expr.path.singularQuery()
     ) {
-      throw new JSONPathSyntaxError(
+      throw new JSONPathTypeError(
         "non-singular query is not comparable",
         expr.token,
       );
     }
-  }
 
-  protected throwForNonComparableFunction(expr: FilterExpression): void {
-    if (!(expr instanceof FunctionExtension)) return;
-    const func = this.environment.functionRegister.get(expr.name);
-    if (func && func.returnType !== FunctionExpressionType.ValueType) {
-      throw new JSONPathTypeError(
-        `result of ${expr.name}() is not comparable`,
-        expr.token,
-      );
+    if (expr instanceof FunctionExtension) {
+      const func = this.environment.functionRegister.get(expr.name);
+      if (func && func.returnType !== FunctionExpressionType.ValueType) {
+        throw new JSONPathTypeError(
+          `result of ${expr.name}() is not comparable`,
+          expr.token,
+        );
+      }
     }
   }
 }

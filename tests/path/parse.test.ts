@@ -27,6 +27,11 @@ const TEST_CASES: TestCase[] = [
     path: "$[?!(@.a && !@.b)]",
     want: "$[?!(@['a'] && !@['b'])]",
   },
+  {
+    description: "non-singular query in logical expression",
+    path: "$[?@.* && @.b]",
+    want: "$[?(@[*] && @['b'])]",
+  },
 ];
 
 describe("parse", () => {

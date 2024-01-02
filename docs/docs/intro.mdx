@@ -80,7 +80,7 @@ Download and include JSON P3 in a script tag:
     players: [{ name: "Sue" }, { name: "John" }, { name: "Sally" }],
     visitors: [{ name: "Brian" }, { name: "Roy" }],
   };
-  const nodes = json_p3.query("$..name");
+  const nodes = json_p3.query("$..name", data);
   console.log(nodes.values());
   // [ 'Sue', 'John', 'Sally', 'Brian', 'Roy' ]
 </script>
@@ -95,7 +95,7 @@ Or use a CDN
     players: [{ name: "Sue" }, { name: "John" }, { name: "Sally" }],
     visitors: [{ name: "Brian" }, { name: "Roy" }],
   };
-  const nodes = json_p3.query("$..name");
+  const nodes = json_p3.query("$..name", data);
   console.log(nodes.values());
   // [ 'Sue', 'John', 'Sally', 'Brian', 'Roy' ]
 </script>

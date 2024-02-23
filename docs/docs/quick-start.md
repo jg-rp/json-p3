@@ -209,7 +209,7 @@ console.log(rv); // -1
 
 ### Relative JSON Pointers
 
-We support [Relative JSON Pointers](https://www.ietf.org/id/draft-hha-relative-json-pointer-00.html) via the [`to(rel)`](./api/classes/jsonpointer.JSONPointer.md#to) method of `JSONPointer`, where `rel` is a relative JSON pointer string, and a new `JSONPointer` is returned.
+We support [Relative JSON Pointers](https://datatracker.ietf.org/doc/html/draft-hha-relative-json-pointer) via the [`to(rel)`](./api/classes/jsonpointer.JSONPointer.md#to) method of `JSONPointer`, where `rel` is a relative JSON pointer string, and a new `JSONPointer` is returned.
 
 ```javascript
 import { JSONPointer } from "json-p3";

@@ -278,7 +278,7 @@ const RE_INT = /(0|[1-9][0-9]*)/;
 /**
  * A relative JSON Pointer.
  *
- * See https://www.ietf.org/id/draft-hha-relative-json-pointer-00.html
+ * See https://datatracker.ietf.org/doc/html/draft-hha-relative-json-pointer
  */
 export class RelativeJSONPointer {
   readonly origin: number;

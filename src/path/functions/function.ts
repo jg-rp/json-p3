@@ -1,6 +1,6 @@
 /**
  * The type of a JSONPath filter function parameter or return value, as
- * described in See section 2.4.1 of draft-ietf-jsonpath-base-20.
+ * described in See section 2.4.1 of RFC 9535.
  */
 export enum FunctionExpressionType {
   ValueType = "ValueType",

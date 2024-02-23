@@ -5,7 +5,7 @@ JSON Pointer ([RFC 6901](https://datatracker.ietf.org/doc/html/rfc6901)) is a sy
 A JSON Pointer is a Unicode string containing slash (`/`) separated tokens. Each token is either a potential property name for a JSON object, or a potential index for a JSON array. When a property name contains a slash (`/`) or a tilde (`~`), they are encoded as `~1` and `~0`, respectively.
 
 :::info
-We have extended RFC 6901 to handle index/property pointers from [Relative JSON Pointer](https://www.ietf.org/id/draft-hha-relative-json-pointer-00.html).
+We have extended RFC 6901 to handle index/property pointers from [Relative JSON Pointer](https://datatracker.ietf.org/doc/html/draft-hha-relative-json-pointer).
 :::
 
 ## Pointer resolution
@@ -158,7 +158,7 @@ console.log(anotherPointer.isRelativeTo(pointer)); // false
 
 ## Relative JSON Pointer
 
-Use [Relative JSON Pointer](https://www.ietf.org/id/draft-hha-relative-json-pointer-00.html) syntax with [`JSONPointer.to(rel)`](../api/classes/jsonpointer.JSONPointer.md#to) to create a new pointer relative to an existing one.
+Use [Relative JSON Pointer](https://datatracker.ietf.org/doc/html/draft-hha-relative-json-pointer) syntax with [`JSONPointer.to(rel)`](../api/classes/jsonpointer.JSONPointer.md#to) to create a new pointer relative to an existing one.
 
 ```javascript
 import { JSONPointer } from "json-p3";

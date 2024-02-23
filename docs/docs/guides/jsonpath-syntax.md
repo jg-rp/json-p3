@@ -1,6 +1,6 @@
 # JSONPath Query Syntax
 
-This page provides a short introduction to JSONPath syntax described in the [IETF JSONPath draft](https://datatracker.ietf.org/doc/html/draft-ietf-jsonpath-base-20) specification. We follow it strictly, and test against the [JSONPath Compliance Test Suite](https://github.com/jsonpath-standard/jsonpath-compliance-test-suite).
+This page provides a short introduction to JSONPath syntax. We follow [RFC 6535](https://datatracker.ietf.org/doc/html/rfc9535) closely and test against the [JSONPath Compliance Test Suite](https://github.com/jsonpath-standard/jsonpath-compliance-test-suite).
 
 Imagine a JSON document as a tree structure, where each JSON object and array can contain more objects, arrays and scalar values. Every object, array and scalar value is a node in the tree, and the outermost value is the "root" node.
 
@@ -9,7 +9,7 @@ Every query must start with either the root node identifier (`$`) or, within a [
 The result of a query is always a list of selected nodes after all selectors have been applied.
 
 :::info
-Strictly, using terminology from the [IETF JSONPath draft](https://datatracker.ietf.org/doc/html/draft-ietf-jsonpath-base-20), we chain _segments_, and those segments contain one or more _selectors_.
+Strictly, using terminology from [RFC 9535](https://datatracker.ietf.org/doc/html/rfc9535), we chain _segments_, and those segments contain one or more _selectors_.
 
 We use the terms "target JSON document", "target document" and "query argument" interchangeably to mean the JSON value a query is applied to.  
 :::

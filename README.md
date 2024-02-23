@@ -2,6 +2,8 @@
 
 <p align="center">
 JSONPath, JSON Patch and JSON Pointer for JavaScript.
+<br>
+We follow <a href="https://datatracker.ietf.org/doc/html/rfc9535">RFC 9535</a> and test against the <a href="https://github.com/jsonpath-standard/jsonpath-compliance-test-suite">JSONPath Compliance Test Suite</a>.
 </p>
 
 <p align="center">

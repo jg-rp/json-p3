@@ -1,3 +1,7 @@
 [submodule "tests/path/cts"]
 	path = tests/path/cts
 	url = https://github.com/jsonpath-standard/jsonpath-compliance-test-suite.git
+[submodule "tests/path/cts_nondeterministic"]
+	path = tests/path/cts_nondeterministic
+	url = git@github.com:glyn/jsonpath-compliance-test-suite.git
+	branch = nondeterminism

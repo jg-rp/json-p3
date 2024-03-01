@@ -278,7 +278,7 @@ export class WildcardSelector extends JSONPathSelector {
           );
         }
       } else if (isObject(node.value)) {
-        for (const [key, value] of Object.entries(node.value)) {
+        for (const [key, value] of this.environment.entries(node.value)) {
           rv.push(
             new JSONPathNode(value, node.location.concat(key), node.root),
           );
@@ -300,7 +300,7 @@ export class WildcardSelector extends JSONPathSelector {
           );
         }
       } else if (isObject(node.value)) {
-        for (const [key, value] of Object.entries(node.value)) {
+        for (const [key, value] of this.environment.entries(node.value)) {
           yield new JSONPathNode(value, node.location.concat(key), node.root);
         }
       }
@@ -377,7 +377,9 @@ export class RecursiveDescentSegment extends JSONPathSelector {
             }
           }
         } else if (isObject(currentNode.value)) {
-          for (const [key, value] of Object.entries(currentNode.value)) {
+          for (const [key, value] of this.environment.entries(
+            currentNode.value,
+          )) {
             const __node = new JSONPathNode(
               value,
               currentNode.location.concat(key),
@@ -421,7 +423,7 @@ export class RecursiveDescentSegment extends JSONPathSelector {
         }
       }
     } else if (isObject(node.value)) {
-      for (const [key, value] of Object.entries(node.value)) {
+      for (const [key, value] of this.environment.entries(node.value)) {
         const _node = new JSONPathNode(
           value,
           node.location.concat(key),
@@ -467,7 +469,7 @@ export class FilterSelector extends JSONPathSelector {
           }
         }
       } else if (isObject(node.value)) {
-        for (const [key, value] of Object.entries(node.value)) {
+        for (const [key, value] of this.environment.entries(node.value)) {
           const filterContext: FilterContext = {
             environment: this.environment,
             currentValue: value,
@@ -502,7 +504,7 @@ export class FilterSelector extends JSONPathSelector {
           }
         }
       } else if (isObject(node.value)) {
-        for (const [key, value] of Object.entries(node.value)) {
+        for (const [key, value] of this.environment.entries(node.value)) {
           const filterContext: FilterContext = {
             environment: this.environment,
             currentValue: value,

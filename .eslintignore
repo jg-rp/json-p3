@@ -5,4 +5,5 @@ benchmark
 tests/browser
 docs
 tests/path/cts
+tests/path/cts_nondeterministic
 performance/index.js

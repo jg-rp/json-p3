@@ -51,6 +51,11 @@ export type JSONPathEnvironmentOptions = {
    * can visit before a `JSONPathRecursionLimitError` is thrown.
    */
   maxRecursionDepth?: number;
+
+  /**
+   * If `true`, enable nondeterministic ordering when iterating JSON object data.
+   */
+  nondeterministic?: boolean;
 };
 
 /**
@@ -89,6 +94,11 @@ export class JSONPathEnvironment {
   readonly maxRecursionDepth: number;
 
   /**
+   * If `true`, enable nondeterministic ordering when iterating JSON object data.
+   */
+  readonly nondeterministic: boolean;
+
+  /**
    * A map of function names to objects implementing the {@link FilterFunction}
    * interface. You are free to set or delete custom filter functions directly.
    */
@@ -104,6 +114,7 @@ export class JSONPathEnvironment {
     this.maxIntIndex = options.maxIntIndex ?? Math.pow(2, 53) - 1;
     this.minIntIndex = options.maxIntIndex ?? -Math.pow(2, 53) - 1;
     this.maxRecursionDepth = options.maxRecursionDepth ?? 50;
+    this.nondeterministic = options.nondeterministic ?? false;
     this.parser = new Parser(this);
     this.setupFilterFunctions();
   }
@@ -283,6 +294,10 @@ export class JSONPathEnvironment {
       return entries;
     }
 
-    return shuffle(Object.entries(obj));
+    if (this.nondeterministic) {
+      return shuffle(Object.entries(obj));
+    }
+
+    return Object.entries(obj);
   }
 }

@@ -51,6 +51,11 @@ export type JSONPathEnvironmentOptions = {
    * can visit before a `JSONPathRecursionLimitError` is thrown.
    */
   maxRecursionDepth?: number;
+
+  /**
+   * If `true`, enable nondeterministic ordering when iterating JSON object data.
+   */
+  nondeterministic?: boolean;
 };
 
 /**
@@ -89,6 +94,11 @@ export class JSONPathEnvironment {
   readonly maxRecursionDepth: number;
 
   /**
+   * If `true`, enable nondeterministic ordering when iterating JSON object data.
+   */
+  readonly nondeterministic: boolean;
+
+  /**
    * A map of function names to objects implementing the {@link FilterFunction}
    * interface. You are free to set or delete custom filter functions directly.
    */
@@ -104,6 +114,7 @@ export class JSONPathEnvironment {
     this.maxIntIndex = options.maxIntIndex ?? Math.pow(2, 53) - 1;
     this.minIntIndex = options.maxIntIndex ?? -Math.pow(2, 53) - 1;
     this.maxRecursionDepth = options.maxRecursionDepth ?? 50;
+    this.nondeterministic = options.nondeterministic ?? false;
     this.parser = new Parser(this);
     this.setupFilterFunctions();
   }
@@ -261,5 +272,32 @@ export class JSONPathEnvironment {
     }
 
     return args;
+  }
+
+  /**
+   * Return an array of key/values of the enumerable properties in _obj_.
+   *
+   * If you want to introduce some nondeterminism to iterating JSON-like
+   * objects, do it here. The wildcard selector, descendent segment and
+   * filter selector all use `this.environment.entries`.
+   *
+   * @param obj - A JSON-like object.
+   */
+  public entries(obj: {
+    [key: string]: JSONValue;
+  }): Array<[string, JSONValue]> {
+    function shuffle(entries: Array<[string, JSONValue]>) {
+      for (let i = entries.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [entries[i], entries[j]] = [entries[j], entries[i]];
+      }
+      return entries;
+    }
+
+    if (this.nondeterministic) {
+      return shuffle(Object.entries(obj));
+    }
+
+    return Object.entries(obj);
   }
 }

@@ -30,4 +30,4 @@ function perf(repeat) {
   return (stop - start) / 1e3;
 }
 
-console.log(perf(1000));
+console.log(perf(10000));

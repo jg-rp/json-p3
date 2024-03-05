@@ -16,7 +16,7 @@
     "strict": true,
     "target": "es2022",
     "noImplicitAny": true,
-    "types": ["jest"],
+    "types": ["jest", "node"],
     "incremental": true,
     "importHelpers": true,
     "isolatedModules": true,

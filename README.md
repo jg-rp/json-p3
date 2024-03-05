@@ -67,7 +67,7 @@ These environment variables control the location of the compliance test suite un
 
 | Environment Variable          | Description                                                                                                           |
 | ----------------------------- | --------------------------------------------------------------------------------------------------------------------- |
-| `JSONP3_CTS`                  | The path to `cts.json` used by `compliance.test.ts`. Defaults to `tests/path/cts/cts.json`.                           |
+| `JSONP3_CTS_PATH`             | The path to `cts.json` used by `compliance.test.ts`. Defaults to `tests/path/cts/cts.json`.                           |
 | `JSONP3_CTS_NONDETERMINISTIC` | When set to `true`, enables nondeterministic iteration of JSON objects for `compliance.test.ts`. Defaults to `false`. |
 
 ## Contributing

@@ -14,7 +14,7 @@ type Case = {
 };
 
 const cts = JSON.parse(
-  readFileSync(process.env.JSONP3_CTS || "tests/path/cts/cts.json", {
+  readFileSync(process.env.JSONP3_CTS_PATH || "tests/path/cts/cts.json", {
     encoding: "utf8",
   }),
 );

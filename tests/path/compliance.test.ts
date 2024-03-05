@@ -20,7 +20,7 @@ const cts = JSON.parse(
 );
 
 const env = new JSONPathEnvironment({
-  nondeterministic: process.env.JSONP3_NONDETERMINISTIC === "true",
+  nondeterministic: process.env.JSONP3_CTS_NONDETERMINISTIC === "true",
 });
 
 describe("compliance test suite", () => {

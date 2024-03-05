@@ -1,5 +1,11 @@
 # JSON P3 Change Log
 
+# Version 1.1.0 (unreleased)
+
+**Features**
+
+- Added `nondeterministic` to `JSONPathEnvironmentOptions` and environment variables to control nondeterminism and the location of `cts.json` when testing for compliance. See the [README](https://github.com/jg-rp/json-p3/blob/main/README.md) for a description of these environment variables.
+
 # Version 1.0.0
 
 [RFC 9535](https://datatracker.ietf.org/doc/html/rfc9535) has been published, replacing the [draft IETF JSONPath base](https://datatracker.ietf.org/doc/html/draft-ietf-jsonpath-base-21).

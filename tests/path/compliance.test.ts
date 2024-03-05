@@ -23,7 +23,9 @@ const env = new JSONPathEnvironment({
   nondeterministic: process.env.JSONP3_CTS_NONDETERMINISTIC === "true",
 });
 
-describe("compliance test suite", () => {
+const testSuiteName = env.nondeterministic ? "compliance test suite (nondeterministic)" : "compliance test suite";
+
+describe(testSuiteName, () => {
   test.each<Case>(cts.tests)(
     "$name",
     ({ selector, document, result, results, invalid_selector }: Case) => {

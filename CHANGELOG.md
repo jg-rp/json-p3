@@ -2,6 +2,10 @@
 
 # Version 1.1.0 (unreleased)
 
+**Fixes**
+
+- Fixed logical operator precedence in JSONPath filter expressions. Previously, logical _or_ (`||`) had a higher precedence than logical _and_ (`&&`). Now `&&` binds more tightly than `||`.
+
 **Features**
 
 - Added `nondeterministic` to `JSONPathEnvironmentOptions` and environment variables to control nondeterminism and the location of `cts.json` when testing for compliance. See the [README](https://github.com/jg-rp/json-p3/blob/main/README.md) for a description of these environment variables.

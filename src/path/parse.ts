@@ -29,8 +29,8 @@ import {
 import { Token, TokenKind, TokenStream } from "./token";
 
 const PRECEDENCE_LOWEST = 1;
-const PRECEDENCE_LOGICAL_AND = 4;
-const PRECEDENCE_LOGICAL_OR = 5;
+const PRECEDENCE_LOGICAL_OR = 4;
+const PRECEDENCE_LOGICAL_AND = 5;
 const PRECEDENCE_COMPARISON = 6;
 const PRECEDENCE_PREFIX = 7;
 

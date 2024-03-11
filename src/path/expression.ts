@@ -132,11 +132,19 @@ export class InfixExpression extends FilterExpression {
 
   public evaluate(context: FilterContext): boolean {
     let left = this.left.evaluate(context);
-    if (!this.logical && left instanceof JSONPathNodeList && left.nodes.length === 1)
+    if (
+      !this.logical &&
+      left instanceof JSONPathNodeList &&
+      left.nodes.length === 1
+    )
       left = left.nodes[0].value;
 
     let right = this.right.evaluate(context);
-    if (!this.logical && right instanceof JSONPathNodeList && right.nodes.length === 1)
+    if (
+      !this.logical &&
+      right instanceof JSONPathNodeList &&
+      right.nodes.length === 1
+    )
       right = right.nodes[0].value;
 
     if (this.operator === "&&") {

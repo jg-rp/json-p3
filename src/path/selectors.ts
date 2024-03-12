@@ -470,7 +470,7 @@ export class RecursiveDescentSegment extends JSONPathSelector {
 
         rv.push(_node);
 
-        for (const __node of this.visitor(_node, depth + 1)) {
+        for (const __node of this.nondeterministicVisitor(_node, depth + 1)) {
           // Randomly choose to defer inclusion of this child node.
           if (Math.random() < 0.5) {
             deferredChildren.push(__node);
@@ -492,7 +492,7 @@ export class RecursiveDescentSegment extends JSONPathSelector {
           node.root,
         );
         rv.push(_node);
-        for (const __node of this.visitor(_node, depth + 1)) {
+        for (const __node of this.nondeterministicVisitor(_node, depth + 1)) {
           rv.push(__node);
         }
       }

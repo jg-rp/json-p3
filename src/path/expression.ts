@@ -118,6 +118,8 @@ export class PrefixExpression extends FilterExpression {
 }
 
 export class InfixExpression extends FilterExpression {
+  readonly logical: boolean;
+
   constructor(
     readonly token: Token,
     readonly left: FilterExpression,
@@ -125,15 +127,24 @@ export class InfixExpression extends FilterExpression {
     readonly right: FilterExpression,
   ) {
     super(token);
+    this.logical = operator === "&&" || operator === "||";
   }
 
   public evaluate(context: FilterContext): boolean {
     let left = this.left.evaluate(context);
-    if (left instanceof JSONPathNodeList && left.nodes.length === 1)
+    if (
+      !this.logical &&
+      left instanceof JSONPathNodeList &&
+      left.nodes.length === 1
+    )
       left = left.nodes[0].value;
 
     let right = this.right.evaluate(context);
-    if (right instanceof JSONPathNodeList && right.nodes.length === 1)
+    if (
+      !this.logical &&
+      right instanceof JSONPathNodeList &&
+      right.nodes.length === 1
+    )
       right = right.nodes[0].value;
 
     if (this.operator === "&&") {
@@ -148,7 +159,7 @@ export class InfixExpression extends FilterExpression {
   }
 
   public toString(): string {
-    if (this.operator === "&&" || this.operator === "||") {
+    if (this.logical) {
       return `(${this.left.toString()} ${
         this.operator
       } ${this.right.toString()})`;

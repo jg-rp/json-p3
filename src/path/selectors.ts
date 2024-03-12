@@ -323,12 +323,18 @@ export class RecursiveDescentSegment extends JSONPathSelector {
 
   public resolve(nodes: JSONPathNode[]): JSONPathNode[] {
     const rv: JSONPathNode[] = [];
+    const visitor = this.environment.nondeterministic
+      ? this.nondeterministicVisitor.bind(this)
+      : this.visitor.bind(this);
+
     for (const node of nodes) {
       rv.push(node);
-      for (const _node of this.visit(node)) {
+      for (const _node of visitor(node)) {
         rv.push(_node);
       }
     }
+
+    // console.log(JSON.stringify(rv.map((n: any) => n.value)));
     return this.selector.resolve(rv);
   }
 
@@ -401,7 +407,7 @@ export class RecursiveDescentSegment extends JSONPathSelector {
     return `..${this.selector.toString()}`;
   }
 
-  private visit(node: JSONPathNode, depth: number = 1): JSONPathNode[] {
+  private visitor(node: JSONPathNode, depth: number = 1): JSONPathNode[] {
     if (depth >= this.environment.maxRecursionDepth) {
       throw new JSONPathRecursionLimitError(
         "recursion limit reached",
@@ -418,7 +424,7 @@ export class RecursiveDescentSegment extends JSONPathSelector {
           node.root,
         );
         rv.push(_node);
-        for (const __node of this.visit(_node, depth + 1)) {
+        for (const __node of this.visitor(_node, depth + 1)) {
           rv.push(__node);
         }
       }
@@ -430,7 +436,63 @@ export class RecursiveDescentSegment extends JSONPathSelector {
           node.root,
         );
         rv.push(_node);
-        for (const __node of this.visit(_node, depth + 1)) {
+        for (const __node of this.visitor(_node, depth + 1)) {
+          rv.push(__node);
+        }
+      }
+    }
+
+    return rv;
+  }
+
+  // eslint-disable-next-line sonarjs/cognitive-complexity
+  protected nondeterministicVisitor(
+    node: JSONPathNode,
+    depth: number = 1,
+  ): JSONPathNode[] {
+    if (depth >= this.environment.maxRecursionDepth) {
+      throw new JSONPathRecursionLimitError(
+        "recursion limit reached",
+        this.token,
+      );
+    }
+    const rv: JSONPathNode[] = [];
+    if (node.value instanceof String) return rv;
+    if (isArray(node.value)) {
+      const deferredChildren: JSONPathNode[] = [];
+
+      for (let i = 0; i < node.value.length; i++) {
+        const _node = new JSONPathNode(
+          node.value[i],
+          node.location.concat(i),
+          node.root,
+        );
+
+        rv.push(_node);
+
+        for (const __node of this.visitor(_node, depth + 1)) {
+          // Randomly choose to defer inclusion of this child node.
+          if (Math.random() < 0.5) {
+            deferredChildren.push(__node);
+          } else {
+            rv.push(__node);
+          }
+        }
+      }
+
+      // Include deferred children.
+      for (const child of deferredChildren) {
+        rv.push(child);
+      }
+    } else if (isObject(node.value)) {
+      for (const [key, value] of this.environment.entries(node.value)) {
+        const _node = new JSONPathNode(
+          value,
+          node.location.concat(key),
+          node.root,
+        );
+        rv.push(_node);
+        for (const __node of this.visitor(_node, depth + 1)) {
           rv.push(__node);
         }
       }

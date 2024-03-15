@@ -447,53 +447,44 @@ export class RecursiveDescentSegment extends JSONPathSelector {
 
   // eslint-disable-next-line sonarjs/cognitive-complexity
   protected nondeterministicVisitor(
-    node: JSONPathNode,
-    depth: number = 1,
+    root: JSONPathNode,
+    _: number = 1,
   ): JSONPathNode[] {
-    if (depth >= this.environment.maxRecursionDepth) {
-      throw new JSONPathRecursionLimitError(
-        "recursion limit reached",
-        this.token,
-      );
-    }
-    const rv: JSONPathNode[] = [];
-    if (node.value instanceof String) return rv;
-    if (isArray(node.value)) {
-      const deferredChildren: JSONPathNode[] = [];
-
-      for (let i = 0; i < node.value.length; i++) {
-        const _node = new JSONPathNode(
-          node.value[i],
-          node.location.concat(i),
-          node.root,
-        );
-
-        rv.push(_node);
-
-        for (const __node of this.nondeterministicVisitor(_node, depth + 1)) {
-          // Randomly choose to defer inclusion of this child node.
-          if (Math.random() < 0.5) {
-            deferredChildren.push(__node);
-          } else {
-            rv.push(__node);
-          }
+    function children(node: JSONPathNode): JSONPathNode[] {
+      const _rv: JSONPathNode[] = [];
+      if (node.value instanceof String) return rv;
+      if (isArray(node.value)) {
+        for (let i = 0; i < node.value.length; i++) {
+          _rv.push(
+            new JSONPathNode(node.value[i], node.location.concat(i), node.root),
+          );
+        }
+      } else if (isObject(node.value)) {
+        for (const [key, value] of Object.entries(node.value)) {
+          _rv.push(
+            new JSONPathNode(value, node.location.concat(key), node.root),
+          );
         }
       }
 
-      // Include deferred children.
-      for (const child of deferredChildren) {
-        rv.push(child);
-      }
-    } else if (isObject(node.value)) {
-      for (const [key, value] of this.environment.entries(node.value)) {
-        const _node = new JSONPathNode(
-          value,
-          node.location.concat(key),
-          node.root,
-        );
-        rv.push(_node);
-        for (const __node of this.nondeterministicVisitor(_node, depth + 1)) {
-          rv.push(__node);
+      return _rv;
+    }
+
+    const queue: JSONPathNode[] = children(root);
+    const rv: JSONPathNode[] = [];
+
+    while (queue.length) {
+      const node = queue.shift() as JSONPathNode;
+      rv.push(node);
+      for (const child of children(node)) {
+        // Queue the child node or visit now?
+        if (Math.random() < 0.5) {
+          queue.push(child);
+        } else {
+          rv.push(child);
+          for (const _child of children(child)) {
+            queue.push(_child);
+          }
         }
       }
     }

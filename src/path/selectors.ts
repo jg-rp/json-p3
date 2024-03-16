@@ -476,15 +476,16 @@ export class RecursiveDescentSegment extends JSONPathSelector {
     while (queue.length) {
       const node = queue.shift() as JSONPathNode;
       rv.push(node);
+      // Visit child nodes now or queue them for later?
+      const visit_children = Math.random() < 0.5;
       for (const child of children(node)) {
-        // Queue the child node or visit now?
-        if (Math.random() < 0.5) {
-          queue.push(child);
-        } else {
+        if (visit_children) {
           rv.push(child);
           for (const _child of children(child)) {
             queue.push(_child);
           }
+        } else {
+          queue.push(child);
         }
       }
     }

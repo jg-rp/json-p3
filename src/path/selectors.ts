@@ -323,14 +323,19 @@ export class RecursiveDescentSegment extends JSONPathSelector {
 
   public resolve(nodes: JSONPathNode[]): JSONPathNode[] {
     const rv: JSONPathNode[] = [];
-    const visitor = this.environment.nondeterministic
-      ? this.nondeterministicVisitor.bind(this)
-      : this.visitor.bind(this);
 
-    for (const node of nodes) {
-      rv.push(node);
-      for (const _node of visitor(node)) {
-        rv.push(_node);
+    if (this.environment.nondeterministic) {
+      for (const root of nodes) {
+        for (const node of this.nondeterministicVisitor(root)) {
+          rv.push(node);
+        }
+      }
+    } else {
+      for (const node of nodes) {
+        rv.push(node);
+        for (const _node of this.visitor(node)) {
+          rv.push(_node);
+        }
       }
     }
 
@@ -448,49 +453,60 @@ export class RecursiveDescentSegment extends JSONPathSelector {
   // eslint-disable-next-line sonarjs/cognitive-complexity
   protected nondeterministicVisitor(
     root: JSONPathNode,
-    _: number = 1,
+    depth: number = 1,
   ): JSONPathNode[] {
-    function children(node: JSONPathNode): JSONPathNode[] {
-      const _rv: JSONPathNode[] = [];
-      if (node.value instanceof String) return rv;
-      if (isArray(node.value)) {
-        for (let i = 0; i < node.value.length; i++) {
-          _rv.push(
-            new JSONPathNode(node.value[i], node.location.concat(i), node.root),
-          );
-        }
-      } else if (isObject(node.value)) {
-        for (const [key, value] of Object.entries(node.value)) {
-          _rv.push(
-            new JSONPathNode(value, node.location.concat(key), node.root),
-          );
-        }
-      }
-
-      return _rv;
-    }
-
-    const queue: JSONPathNode[] = children(root);
-    const rv: JSONPathNode[] = [];
+    const rv: JSONPathNode[] = [root];
+    let queue: Array<[JSONPathNode, number]> = this.nondeterministicChildren(
+      root,
+    ).map((node) => [node, depth]);
 
     while (queue.length) {
-      const node = queue.shift() as JSONPathNode;
+      const [node, depth] = queue.shift() as [JSONPathNode, number];
       rv.push(node);
+
+      if (depth >= this.environment.maxRecursionDepth) {
+        throw new JSONPathRecursionLimitError(
+          "recursion limit reached",
+          this.token,
+        );
+      }
+
       // Visit child nodes now or queue them for later?
-      const visit_children = Math.random() < 0.5;
-      for (const child of children(node)) {
-        if (visit_children) {
+      const visitChildren = Math.random() < 0.5;
+
+      for (const child of this.nondeterministicChildren(node)) {
+        if (visitChildren) {
           rv.push(child);
-          for (const _child of children(child)) {
-            queue.push(_child);
-          }
+
+          const grandchildren: Array<[JSONPathNode, number]> =
+            this.nondeterministicChildren(child).map((n) => [n, depth + 2]);
+
+          queue = interleave(queue, grandchildren);
         } else {
-          queue.push(child);
+          queue.push([child, depth + 1]);
         }
       }
     }
 
     return rv;
+  }
+
+  protected nondeterministicChildren(node: JSONPathNode): JSONPathNode[] {
+    const _rv: JSONPathNode[] = [];
+    if (node.value instanceof String) return _rv;
+    if (isArray(node.value)) {
+      for (let i = 0; i < node.value.length; i++) {
+        _rv.push(
+          new JSONPathNode(node.value[i], node.location.concat(i), node.root),
+        );
+      }
+    } else if (isObject(node.value)) {
+      for (const [key, value] of this.environment.entries(node.value)) {
+        _rv.push(new JSONPathNode(value, node.location.concat(key), node.root));
+      }
+    }
+
+    return _rv;
   }
 }
 
@@ -618,4 +634,44 @@ export class BracketedSelection extends JSONPathSelector {
   public toString(): string {
     return `[${this.items.map((itm) => itm.toString()).join(", ")}]`;
   }
+}
+
+/**
+ * Randomly interleave elements from two arrays while maintaining relative
+ * order of each input array.
+ *
+ * If _arrayA_ is empty, _arrayB_ is returned, and vice versa.
+ */
+function interleave<T, U>(arrayA: T[], arrayB: U[]): Array<T | U> {
+  if (arrayA.length === 0) {
+    return arrayB;
+  }
+
+  if (arrayB.length === 0) {
+    return arrayA;
+  }
+
+  // An array of iterators
+  const iterators: Array<Iterator<T> | Iterator<U>> = [];
+  const itA = arrayA[Symbol.iterator]();
+  const itB = arrayB[Symbol.iterator]();
+
+  for (let i = 0; i < arrayA.length; i++) {
+    iterators.push(itA);
+  }
+
+  for (let i = 0; i < arrayB.length; i++) {
+    iterators.push(itB);
+  }
+
+  shuffle(iterators);
+  return iterators.map((it) => it.next().value);
+}
+
+function shuffle<T>(entries: T[]): T[] {
+  for (let i = entries.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [entries[i], entries[j]] = [entries[j], entries[i]];
+  }
+  return entries;
 }

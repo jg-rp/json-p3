@@ -450,7 +450,6 @@ export class RecursiveDescentSegment extends JSONPathSelector {
     return rv;
   }
 
-  // eslint-disable-next-line sonarjs/cognitive-complexity
   protected nondeterministicVisitor(
     root: JSONPathNode,
     depth: number = 1,
@@ -461,10 +460,10 @@ export class RecursiveDescentSegment extends JSONPathSelector {
     ).map((node) => [node, depth]);
 
     while (queue.length) {
-      const [node, depth] = queue.shift() as [JSONPathNode, number];
+      const [node, _depth] = queue.shift() as [JSONPathNode, number];
       rv.push(node);
 
-      if (depth >= this.environment.maxRecursionDepth) {
+      if (_depth >= this.environment.maxRecursionDepth) {
         throw new JSONPathRecursionLimitError(
           "recursion limit reached",
           this.token,
@@ -479,11 +478,11 @@ export class RecursiveDescentSegment extends JSONPathSelector {
           rv.push(child);
 
           const grandchildren: Array<[JSONPathNode, number]> =
-            this.nondeterministicChildren(child).map((n) => [n, depth + 2]);
+            this.nondeterministicChildren(child).map((n) => [n, _depth + 2]);
 
           queue = interleave(queue, grandchildren);
         } else {
-          queue.push([child, depth + 1]);
+          queue.push([child, _depth + 1]);
         }
       }
     }

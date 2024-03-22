@@ -98,3 +98,14 @@ describe("recursion limit reached", () => {
     );
   });
 });
+
+describe("filter expression EOF", () => {
+  const env = new JSONPathEnvironment();
+  test("unclosed bracketed selection", () => {
+    const query = "$.users[?@.score > 85";
+    expect(() => env.query(query, {})).toThrow(JSONPathSyntaxError);
+    expect(() => env.query(query, {})).toThrow(
+      "unclosed bracketed selection ('core > 85':21)",
+    );
+  });
+});

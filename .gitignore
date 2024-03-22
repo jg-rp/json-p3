@@ -19,3 +19,5 @@ benchmark/*.txt
 
 # dev
 tests/dev.test.ts
+dev.js
+dev.mjs

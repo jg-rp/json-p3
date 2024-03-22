@@ -339,6 +339,8 @@ function lexInsideFilter(l: Lexer): StateFn | null {
     const ch = l.next();
     switch (ch) {
       case "":
+        l.error("unclosed bracketed selection");
+        return null;
       case "]":
         l.filterLevel -= 1;
         if (l.parenStack.length === 1) {

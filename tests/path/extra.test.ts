@@ -131,6 +131,8 @@ describe("extra features", () => {
     expect(env.query(nodes.nodes[0].path, data).values()).toStrictEqual(["b"]);
     expect(env.query(nodes.nodes[1].path, data).values()).toStrictEqual(["c"]);
   });
+
+  // TODO: test custom keys pattern.
 });
 
 describe("extra errors", () => {

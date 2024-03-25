@@ -13,10 +13,7 @@ import { Match as MatchFilterFunction } from "./functions/match";
 import { Search as SearchFilterFunction } from "./functions/search";
 import { Value as ValueFilterFunction } from "./functions/value";
 import { tokenize } from "./lex";
-import {
-  tokenize as non_standard_tokenize,
-  Parser as NonStandardParser,
-} from "./extra";
+import { tokenize as non_standard_tokenize } from "./extra/lex";
 import { JSONPathNode, JSONPathNodeList } from "./node";
 import { Parser } from "./parse";
 import { JSONPath } from "./path";
@@ -31,11 +28,15 @@ import { CurrentKey } from "./extra/expression";
 export type JSONPathEnvironmentOptions = {
   /**
    * Indicates if the environment should to be strict about its compliance with
-   * JSONPath standards.
+   * RFC 9535.
    *
-   * Defaults to `true`. Setting `strict` to `false` currently has no effect.
-   * If/when we add non-standard features, the environment's strictness will
-   * control their availability.
+   * Defaults to `true`. Setting `strict` to `false` enables non-standard
+   * features. Non-standard features are subject to change if:
+   *
+   * - conflicting features are included in a future JSONPath standard or a
+   *   draft standard.
+   * - an overwhelming consensus amongst the JSONPath community emerges for
+   *   conflicting features
    */
   strict?: boolean;
 
@@ -59,8 +60,17 @@ export type JSONPathEnvironmentOptions = {
 
   /**
    * If `true`, enable nondeterministic ordering when iterating JSON object data.
+   *
+   * This is mainly useful for validating the JSONPath Compliance Test Suite.
    */
   nondeterministic?: boolean;
+
+  /**
+   * The pattern to use for the non-standard _keys selector_.
+   *
+   * The lexer expects the sticky bit to be set. Defaults to `/~/y`.
+   */
+  keysPattern?: RegExp;
 };
 
 /**
@@ -104,14 +114,18 @@ export class JSONPathEnvironment {
   readonly nondeterministic: boolean;
 
   /**
+   * The pattern to use for the non-standard _keys selector_.
+   */
+  readonly keysPattern: RegExp;
+
+  /**
    * A map of function names to objects implementing the {@link FilterFunction}
    * interface. You are free to set or delete custom filter functions directly.
    */
   public functionRegister: Map<string, FilterFunction> = new Map();
 
-  // TODO: have non-standard parser inherit from Parser?
-  private parser: Parser | NonStandardParser;
-  private tokenize: (path: string) => Token[];
+  private parser: Parser;
+  private tokenize: (environment: JSONPathEnvironment, path: string) => Token[];
 
   /**
    * @param options - Environment configuration options.
@@ -122,15 +136,10 @@ export class JSONPathEnvironment {
     this.minIntIndex = options.maxIntIndex ?? -Math.pow(2, 53) - 1;
     this.maxRecursionDepth = options.maxRecursionDepth ?? 50;
     this.nondeterministic = options.nondeterministic ?? false;
+    this.keysPattern = options.keysPattern ?? /~/y;
 
-    if (this.strict) {
-      this.parser = new Parser(this);
-      this.tokenize = tokenize;
-    } else {
-      this.parser = new NonStandardParser(this);
-      this.tokenize = non_standard_tokenize;
-    }
-
+    this.parser = new Parser(this);
+    this.tokenize = this.strict ? tokenize : non_standard_tokenize;
     this.setupFilterFunctions();
   }
 
@@ -141,7 +150,7 @@ export class JSONPathEnvironment {
   public compile(path: string): JSONPath {
     return new JSONPath(
       this,
-      this.parser.parse(new TokenStream(this.tokenize(path))),
+      this.parser.parse(new TokenStream(this.tokenize(this, path))),
     );
   }
 

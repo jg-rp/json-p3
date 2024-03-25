@@ -23,14 +23,22 @@ export class KeysSelector extends JSONPathSelector {
       if (isArray(node.value)) {
         for (let i = 0; i < node.value.length; i++) {
           rv.push(
-            new JSONPathNode(i, node.location.concat(`[~][${i}]`), node.root),
+            new JSONPathNode(
+              i,
+              node.location.concat("[~]", `[${i}]`),
+              node.root,
+            ),
           );
         }
       } else if (isObject(node.value)) {
         let i = 0;
         for (const [key, _] of this.environment.entries(node.value)) {
           rv.push(
-            new JSONPathNode(key, node.location.concat(`[~][${i}]`), node.root),
+            new JSONPathNode(
+              key,
+              node.location.concat("[~]", `[${i}]`),
+              node.root,
+            ),
           );
           i++;
         }
@@ -46,7 +54,7 @@ export class KeysSelector extends JSONPathSelector {
         for (let i = 0; i < node.value.length; i++) {
           yield new JSONPathNode(
             i,
-            node.location.concat(`[~][${i}]`),
+            node.location.concat("[~]", `[${i}]`),
             node.root,
           );
         }
@@ -55,7 +63,7 @@ export class KeysSelector extends JSONPathSelector {
         for (const [key, _] of this.environment.entries(node.value)) {
           yield new JSONPathNode(
             key,
-            node.location.concat(`[~][${i}]`),
+            node.location.concat("[~]", `[${i}]`),
             node.root,
           );
           i++;

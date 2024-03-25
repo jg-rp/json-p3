@@ -1,3 +1,4 @@
+import { JSONPathEnvironment } from "./environment";
 import { JSONPathLexerError, JSONPathSyntaxError } from "./errors";
 import { Token, TokenKind } from "./token";
 
@@ -39,9 +40,13 @@ class Lexer {
   #pos: number = 0;
 
   /**
+   * @param environment - The JSONPathEnvironment this lexer is bound to.
    * @param path - A JSONPath query.
    */
-  constructor(readonly path: string) {}
+  constructor(
+    readonly environment: JSONPathEnvironment,
+    readonly path: string,
+  ) {}
 
   public get pos(): number {
     return this.#pos;
@@ -173,8 +178,11 @@ type StateFn = (l: Lexer) => StateFn | null;
  * @returns A two-tuple containing a lexer for _path_ and an array to populate
  * with tokens.
  */
-export function lex(path: string): [Lexer, Token[]] {
-  const lexer = new Lexer(path);
+export function lex(
+  environment: JSONPathEnvironment,
+  path: string,
+): [Lexer, Token[]] {
+  const lexer = new Lexer(environment, path);
   return [lexer, lexer.tokens];
 }
 
@@ -183,8 +191,11 @@ export function lex(path: string): [Lexer, Token[]] {
  * @param path - A JSONPath query.
  * @returns Tokens to be parsed by the parser.
  */
-export function tokenize(path: string): Token[] {
-  const [lexer, tokens] = lex(path);
+export function tokenize(
+  environment: JSONPathEnvironment,
+  path: string,
+): Token[] {
+  const [lexer, tokens] = lex(environment, path);
   lexer.run();
   if (tokens.length && tokens[tokens.length - 1].kind === TokenKind.ERROR) {
     throw new JSONPathSyntaxError(

@@ -1,4 +1,5 @@
 /** A lexer that accepts additional, non-standard tokens. */
+import { JSONPathEnvironment } from "../environment";
 import { JSONPathLexerError, JSONPathSyntaxError } from "../errors";
 import { Token, TokenKind } from "../token";
 
@@ -9,7 +10,6 @@ const functionNamePattern = /[a-z][a-z_0-9]*/y;
 const indexPattern = /-?\d+/y;
 const intPattern = /-?[0-9]+/y;
 const namePattern = /[\u0080-\uFFFFa-zA-Z_][\u0080-\uFFFFa-zA-Z0-9_-]*/y;
-const keysPattern = /~/y;
 const whitespace = new Set([" ", "\n", "\t", "\r"]);
 
 /**
@@ -43,7 +43,10 @@ class Lexer {
   /**
    * @param path - A JSONPath query.
    */
-  constructor(readonly path: string) {}
+  constructor(
+    readonly environment: JSONPathEnvironment,
+    readonly path: string,
+  ) {}
 
   public get pos(): number {
     return this.#pos;
@@ -175,8 +178,11 @@ type StateFn = (l: Lexer) => StateFn | null;
  * @returns A two-tuple containing a lexer for _path_ and an array to populate
  * with tokens.
  */
-export function lex(path: string): [Lexer, Token[]] {
-  const lexer = new Lexer(path);
+export function lex(
+  environment: JSONPathEnvironment,
+  path: string,
+): [Lexer, Token[]] {
+  const lexer = new Lexer(environment, path);
   return [lexer, lexer.tokens];
 }
 
@@ -185,8 +191,11 @@ export function lex(path: string): [Lexer, Token[]] {
  * @param path - A JSONPath query.
  * @returns Tokens to be parsed by the parser.
  */
-export function tokenize(path: string): Token[] {
-  const [lexer, tokens] = lex(path);
+export function tokenize(
+  environment: JSONPathEnvironment,
+  path: string,
+): Token[] {
+  const [lexer, tokens] = lex(environment, path);
   lexer.run();
   if (tokens.length && tokens[tokens.length - 1].kind === TokenKind.ERROR) {
     throw new JSONPathSyntaxError(
@@ -262,7 +271,7 @@ function lexDescendantSelection(l: Lexer): StateFn | null {
         return lexSegment;
       }
 
-      if (l.acceptMatchRun(keysPattern)) {
+      if (l.acceptMatchRun(l.environment.keysPattern)) {
         l.emit(TokenKind.KEYS);
         return lexSegment;
       }
@@ -288,7 +297,8 @@ function lexDotSelector(l: Lexer): StateFn | null {
 
   l.backup();
 
-  if (l.acceptMatchRun(keysPattern)) {
+  // TODO: move this above "*"
+  if (l.acceptMatchRun(l.environment.keysPattern)) {
     l.emit(TokenKind.KEYS);
     return lexSegment;
   }
@@ -339,7 +349,7 @@ function lexInsideBracketedSelection(l: Lexer): StateFn | null {
           continue;
         }
 
-        if (l.acceptMatchRun(keysPattern)) {
+        if (l.acceptMatchRun(l.environment.keysPattern)) {
           l.emit(TokenKind.KEYS);
           continue;
         }

@@ -132,7 +132,27 @@ describe("extra features", () => {
     expect(env.query(nodes.nodes[1].path, data).values()).toStrictEqual(["c"]);
   });
 
-  // TODO: test custom keys pattern.
+  test("custom keys pattern", () => {
+    const path = "$.some[*~]";
+    const data = { some: { other: "foo", thing: "bar" } };
+    const laxEnv = new JSONPathEnvironment({
+      strict: false,
+      keysPattern: /\*~/y,
+    });
+    const nodes = laxEnv.query(path, data);
+    expect(nodes.values()).toStrictEqual(["other", "thing"]);
+  });
+
+  test("custom keys pattern, shorthand", () => {
+    const path = "$.some.*~";
+    const data = { some: { other: "foo", thing: "bar" } };
+    const laxEnv = new JSONPathEnvironment({
+      strict: false,
+      keysPattern: /\*~/y,
+    });
+    const nodes = laxEnv.query(path, data);
+    expect(nodes.values()).toStrictEqual(["other", "thing"]);
+  });
 });
 
 describe("extra errors", () => {

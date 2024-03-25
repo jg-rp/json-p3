@@ -30,12 +30,10 @@ export type JSONPathEnvironmentOptions = {
    * RFC 9535.
    *
    * Defaults to `true`. Setting `strict` to `false` enables non-standard
-   * features. Non-standard features are subject to change if:
-   *
-   * - conflicting features are included in a future JSONPath standard or a
-   *   draft standard.
-   * - an overwhelming consensus amongst the JSONPath community emerges for
-   *   conflicting features
+   * features. Non-standard features are subject to change if conflicting
+   * features are included in a future JSONPath standard or draft standard, or
+   * an overwhelming consensus amongst the JSONPath community emerges that
+   * differs from this implementation.
    */
   strict?: boolean;
 

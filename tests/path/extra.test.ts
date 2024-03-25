@@ -104,8 +104,33 @@ describe("extra features", () => {
     "$description",
     ({ path, data, want }: TestCase) => {
       expect(env.query(path, data).values()).toStrictEqual(want);
+      expect(
+        Array.from(env.lazyQuery(path, data)).map((n) => n.value),
+      ).toStrictEqual(want);
     },
   );
+
+  test("keys from an array, location is valid", () => {
+    const path = "$.some[?# > 1]";
+    const data = { some: ["other", "thing", "foo", "bar"] };
+    const nodes = env.query(path, data);
+    expect(nodes.values()).toStrictEqual(["foo", "bar"]);
+    expect(env.query(nodes.nodes[0].path, data).values()).toStrictEqual([
+      "foo",
+    ]);
+    expect(env.query(nodes.nodes[1].path, data).values()).toStrictEqual([
+      "bar",
+    ]);
+  });
+
+  test("keys from an object, location is valid", () => {
+    const path = "$.some[?match(#, '^b.*')]";
+    const data = { some: { foo: "a", bar: "b", baz: "c", qux: "d" } };
+    const nodes = env.query(path, data);
+    expect(nodes.values()).toStrictEqual(["b", "c"]);
+    expect(env.query(nodes.nodes[0].path, data).values()).toStrictEqual(["b"]);
+    expect(env.query(nodes.nodes[1].path, data).values()).toStrictEqual(["c"]);
+  });
 });
 
 describe("extra errors", () => {

@@ -34,6 +34,10 @@ Output using example data from the [previous page](./jsonpath-syntax.md):
 
 When applied to an array or primitive value, the keys selector select nothing.
 
+:::warning
+Creating a [JSON Pointer](./json-pointer.md) from a [`JSONPathNode`](../api/classes/jsonpath.JSONPathNode.md#topointer) built using the keys selector will result in an unresolvable pointer. JSON Pointer does not support pointing to property names.
+:::
+
 ### Custom keys token
 
 The token representing the keys selector can be customized by setting the `keysPattern` option on a `JSONPathEnvironment` to a regular expression with the sticky flag set. For example, to change the keys selector to be `*~` instead of `~`:

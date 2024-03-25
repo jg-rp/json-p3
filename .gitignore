@@ -21,3 +21,6 @@ benchmark/*.txt
 tests/dev.test.ts
 dev.js
 dev.mjs
+
+# system
+.DS_Store

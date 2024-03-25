@@ -13,11 +13,14 @@ import { Match as MatchFilterFunction } from "./functions/match";
 import { Search as SearchFilterFunction } from "./functions/search";
 import { Value as ValueFilterFunction } from "./functions/value";
 import { tokenize } from "./lex";
+import { tokenize as non_standard_tokenize } from "./extra";
 import { JSONPathNode, JSONPathNodeList } from "./node";
 import { Parser } from "./parse";
+import { Parser as NonStandardParser } from "./extra";
 import { JSONPath } from "./path";
 import { Token, TokenStream } from "./token";
 import { JSONValue } from "../types";
+import { CurrentKey } from "./extra/expression";
 
 /**
  * JSONPath environment options. The defaults are in compliance with JSONPath
@@ -104,7 +107,9 @@ export class JSONPathEnvironment {
    */
   public functionRegister: Map<string, FilterFunction> = new Map();
 
-  private parser: Parser;
+  // TODO: have non-standard parser inherit from Parser?
+  private parser: Parser | NonStandardParser;
+  private tokenize: (path: string) => Token[];
 
   /**
    * @param options - Environment configuration options.
@@ -115,7 +120,15 @@ export class JSONPathEnvironment {
     this.minIntIndex = options.maxIntIndex ?? -Math.pow(2, 53) - 1;
     this.maxRecursionDepth = options.maxRecursionDepth ?? 50;
     this.nondeterministic = options.nondeterministic ?? false;
-    this.parser = new Parser(this);
+
+    if (this.strict) {
+      this.parser = new Parser(this);
+      this.tokenize = tokenize;
+    } else {
+      this.parser = new NonStandardParser(this);
+      this.tokenize = non_standard_tokenize;
+    }
+
     this.setupFilterFunctions();
   }
 
@@ -126,7 +139,7 @@ export class JSONPathEnvironment {
   public compile(path: string): JSONPath {
     return new JSONPath(
       this,
-      this.parser.parse(new TokenStream(tokenize(path))),
+      this.parser.parse(new TokenStream(this.tokenize(path))),
     );
   }
 
@@ -232,6 +245,7 @@ export class JSONPathEnvironment {
           if (
             !(
               arg instanceof FilterExpressionLiteral ||
+              arg instanceof CurrentKey ||
               (arg instanceof JSONPathQuery && arg.path.singularQuery()) ||
               (arg instanceof FunctionExtension &&
                 this.functionRegister.get(arg.name)?.returnType ===

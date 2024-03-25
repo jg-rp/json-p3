@@ -13,10 +13,12 @@ import { Match as MatchFilterFunction } from "./functions/match";
 import { Search as SearchFilterFunction } from "./functions/search";
 import { Value as ValueFilterFunction } from "./functions/value";
 import { tokenize } from "./lex";
-import { tokenize as non_standard_tokenize } from "./extra";
+import {
+  tokenize as non_standard_tokenize,
+  Parser as NonStandardParser,
+} from "./extra";
 import { JSONPathNode, JSONPathNodeList } from "./node";
 import { Parser } from "./parse";
-import { Parser as NonStandardParser } from "./extra";
 import { JSONPath } from "./path";
 import { Token, TokenStream } from "./token";
 import { JSONValue } from "../types";

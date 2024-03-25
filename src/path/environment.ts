@@ -13,7 +13,6 @@ import { Match as MatchFilterFunction } from "./functions/match";
 import { Search as SearchFilterFunction } from "./functions/search";
 import { Value as ValueFilterFunction } from "./functions/value";
 import { tokenize } from "./lex";
-import { tokenize as non_standard_tokenize } from "./extra/lex";
 import { JSONPathNode, JSONPathNodeList } from "./node";
 import { Parser } from "./parse";
 import { JSONPath } from "./path";
@@ -125,7 +124,6 @@ export class JSONPathEnvironment {
   public functionRegister: Map<string, FilterFunction> = new Map();
 
   private parser: Parser;
-  private tokenize: (environment: JSONPathEnvironment, path: string) => Token[];
 
   /**
    * @param options - Environment configuration options.
@@ -139,7 +137,6 @@ export class JSONPathEnvironment {
     this.keysPattern = options.keysPattern ?? /~/y;
 
     this.parser = new Parser(this);
-    this.tokenize = this.strict ? tokenize : non_standard_tokenize;
     this.setupFilterFunctions();
   }
 
@@ -150,7 +147,7 @@ export class JSONPathEnvironment {
   public compile(path: string): JSONPath {
     return new JSONPath(
       this,
-      this.parser.parse(new TokenStream(this.tokenize(this, path))),
+      this.parser.parse(new TokenStream(tokenize(this, path))),
     );
   }
 

@@ -19,18 +19,8 @@ export class KeysSelector extends JSONPathSelector {
   public resolve(nodes: JSONPathNode[]): JSONPathNode[] {
     const rv: JSONPathNode[] = [];
     for (const node of nodes) {
-      if (node.value instanceof String) continue;
-      if (isArray(node.value)) {
-        for (let i = 0; i < node.value.length; i++) {
-          rv.push(
-            new JSONPathNode(
-              i,
-              node.location.concat("[~]", `[${i}]`),
-              node.root,
-            ),
-          );
-        }
-      } else if (isObject(node.value)) {
+      if (node.value instanceof String || isArray(node.value)) continue;
+      if (isObject(node.value)) {
         let i = 0;
         for (const [key, _] of this.environment.entries(node.value)) {
           rv.push(
@@ -49,16 +39,8 @@ export class KeysSelector extends JSONPathSelector {
 
   public *lazyResolve(nodes: Iterable<JSONPathNode>): Generator<JSONPathNode> {
     for (const node of nodes) {
-      if (node.value instanceof String) continue;
-      if (isArray(node.value)) {
-        for (let i = 0; i < node.value.length; i++) {
-          yield new JSONPathNode(
-            i,
-            node.location.concat("[~]", `[${i}]`),
-            node.root,
-          );
-        }
-      } else if (isObject(node.value)) {
+      if (node.value instanceof String || isArray(node.value)) continue;
+      if (isObject(node.value)) {
         let i = 0;
         for (const [key, _] of this.environment.entries(node.value)) {
           yield new JSONPathNode(

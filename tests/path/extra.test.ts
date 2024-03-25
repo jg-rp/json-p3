@@ -71,13 +71,13 @@ const TEST_CASES: TestCase[] = [
     description: "keys from an array",
     path: "$.some[~]",
     data: { some: ["other", "thing"] },
-    want: [0, 1],
+    want: [],
   },
   {
     description: "shorthand keys from an array",
     path: "$.some.~",
     data: { some: ["other", "thing"] },
-    want: [0, 1],
+    want: [],
   },
   {
     description: "recurse object keys",

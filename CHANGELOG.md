@@ -8,8 +8,8 @@
 
 **Features**
 
-- Added a non-standard _keys_ selector (`~`). The keys selector selects property names from an object or indexes from an array. It is only enabled when setting the `strict` option to `false` when constructing a `JSONPathEnvironment`.
-- Added a non-standard _current key_ identifier (`#`). `#` will be the key or index corresponding to `@` in a filter expression. The current key identifier is only enabled when setting the `strict` option to `false` when constructing a `JSONPathEnvironment`.
+- Added a non-standard _keys_ selector (`~`), selecting property names from objects. The keys selector is only enabled when setting `JSONPathEnvironment`'s `strict` option to `false`.
+- Added a non-standard _current key_ identifier (`#`). `#` will be the key or index corresponding to `@` in a filter expression. The current key identifier is only enabled when setting `JSONPathEnvironment`'s `strict` option to `false`.
 
 ## Version 1.1.1
 

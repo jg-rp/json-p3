@@ -1,6 +1,6 @@
 # JSON P3 Change Log
 
-## Version 1.2.0 (unreleased)
+## Version 1.2.0
 
 **Fixes**
 
@@ -8,8 +8,8 @@
 
 **Features**
 
-- Added a non-standard _keys_ selector (`~`), selecting property names from objects. The keys selector is only enabled when setting `JSONPathEnvironment`'s `strict` option to `false`.
-- Added a non-standard _current key_ identifier (`#`). `#` will be the key or index corresponding to `@` in a filter expression. The current key identifier is only enabled when setting `JSONPathEnvironment`'s `strict` option to `false`.
+- Added a non-standard _keys_ selector (`~`), selecting property names from objects. The keys selector is only enabled when setting `JSONPathEnvironment`'s `strict` option to `false` ([docs](https://jg-rp.github.io/json-p3/guides/jsonpath-extra#keys-selector), [source](https://github.com/jg-rp/json-p3/blob/baa705b20895c5a6f8e52679f8839f4d260ee030/src/path/extra/selectors.ts#L10)).
+- Added a non-standard _current key_ identifier (`#`). `#` will be the key or index corresponding to `@` in a filter expression. The current key identifier is only enabled when setting `JSONPathEnvironment`'s `strict` option to `false` ([docs](https://jg-rp.github.io/json-p3/guides/jsonpath-extra#current-key-identifier), [source](https://github.com/jg-rp/json-p3/blob/baa705b20895c5a6f8e52679f8839f4d260ee030/src/path/extra/expression.ts#L4)).
 
 ## Version 1.1.1
 

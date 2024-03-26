@@ -2,7 +2,7 @@
 
 **_New in version 1.2.0_**
 
-JSON P3 includes some extra, non-standard JSONPath syntax that is not enabled by default. Setting the [`strict`](../api/namespaces/jsonpath.md#jsonpathenvironmentoptions) option to `false` when instantiating a [`JSONPathEnvironment`](../api/classes/jsonpath.JSONPathEnvironment.md) will enable all non-standard syntax.
+JSON P3 includes some extra, non-standard JSONPath syntax that is disabled by default. Setting the [`strict`](../api/namespaces/jsonpath.md#jsonpathenvironmentoptions) option to `false` when instantiating a [`JSONPathEnvironment`](../api/classes/jsonpath.JSONPathEnvironment.md) will enable all non-standard syntax.
 
 ```javascript
 import { JSONPathEnvironment } from "json-p3";
@@ -15,7 +15,7 @@ values = env.query("$.some.path", data).values();
 Non-standard features are subject to change if:
 
 - conflicting syntax is included in a future JSONPath standard or draft standard.
-- an overwhelming consensus amongst the JSONPath community emerges that differs from our choices.
+- an overwhelming consensus from the JSONPath community emerges that differs from our choices.
   :::
 
 ## Keys selector

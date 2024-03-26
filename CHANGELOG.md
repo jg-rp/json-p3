@@ -1,10 +1,15 @@
 # JSON P3 Change Log
 
-## Version 1.1.2 (unreleased)
+## Version 1.2.0 (unreleased)
 
 **Fixes**
 
 - Fixed the error and error message arising from JSONPath queries with filter expressions and a missing closing bracket for the segment. Previously we would get a `JSONPathLexerError`, stating we "can't backup beyond start", which is meant to be an internal error. We now get a `JSONPathSyntaxError` with the message "unclosed bracketed selection".
+
+**Features**
+
+- Added a non-standard _keys_ selector (`~`), selecting property names from objects. The keys selector is only enabled when setting `JSONPathEnvironment`'s `strict` option to `false`.
+- Added a non-standard _current key_ identifier (`#`). `#` will be the key or index corresponding to `@` in a filter expression. The current key identifier is only enabled when setting `JSONPathEnvironment`'s `strict` option to `false`.
 
 ## Version 1.1.1
 

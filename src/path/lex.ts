@@ -1,3 +1,5 @@
+/** A lexer that accepts additional, non-standard tokens. */
+import { JSONPathEnvironment } from "./environment";
 import { JSONPathLexerError, JSONPathSyntaxError } from "./errors";
 import { Token, TokenKind } from "./token";
 
@@ -41,7 +43,10 @@ class Lexer {
   /**
    * @param path - A JSONPath query.
    */
-  constructor(readonly path: string) {}
+  constructor(
+    readonly environment: JSONPathEnvironment,
+    readonly path: string,
+  ) {}
 
   public get pos(): number {
     return this.#pos;
@@ -173,8 +178,11 @@ type StateFn = (l: Lexer) => StateFn | null;
  * @returns A two-tuple containing a lexer for _path_ and an array to populate
  * with tokens.
  */
-export function lex(path: string): [Lexer, Token[]] {
-  const lexer = new Lexer(path);
+export function lex(
+  environment: JSONPathEnvironment,
+  path: string,
+): [Lexer, Token[]] {
+  const lexer = new Lexer(environment, path);
   return [lexer, lexer.tokens];
 }
 
@@ -183,8 +191,11 @@ export function lex(path: string): [Lexer, Token[]] {
  * @param path - A JSONPath query.
  * @returns Tokens to be parsed by the parser.
  */
-export function tokenize(path: string): Token[] {
-  const [lexer, tokens] = lex(path);
+export function tokenize(
+  environment: JSONPathEnvironment,
+  path: string,
+): Token[] {
+  const [lexer, tokens] = lex(environment, path);
   lexer.run();
   if (tokens.length && tokens[tokens.length - 1].kind === TokenKind.ERROR) {
     throw new JSONPathSyntaxError(
@@ -242,6 +253,18 @@ function lexSegment(l: Lexer): StateFn | null {
  * @returns -
  */
 function lexDescendantSelection(l: Lexer): StateFn | null {
+  if (l.acceptMatchRun(namePattern)) {
+    // Shorthand name
+    l.emit(TokenKind.NAME);
+    return lexSegment;
+  }
+
+  if (!l.environment.strict && l.acceptMatchRun(l.environment.keysPattern)) {
+    // Non-standard keys selector
+    l.emit(TokenKind.KEYS);
+    return lexSegment;
+  }
+
   const ch = l.next();
   switch (ch) {
     case "":
@@ -255,13 +278,8 @@ function lexDescendantSelection(l: Lexer): StateFn | null {
       return lexInsideBracketedSelection;
     default:
       l.backup();
-      if (l.acceptMatchRun(namePattern)) {
-        l.emit(TokenKind.NAME);
-        return lexSegment;
-      } else {
-        l.error(`unexpected descendent selection token '${ch}'`);
-        return null;
-      }
+      l.error(`unexpected descendent selection token '${ch}'`);
+      return null;
   }
 }
 
@@ -273,6 +291,16 @@ function lexDotSelector(l: Lexer): StateFn | null {
     return null;
   }
 
+  if (!l.environment.strict && l.acceptMatchRun(l.environment.keysPattern)) {
+    l.emit(TokenKind.KEYS);
+    return lexSegment;
+  }
+
+  if (l.acceptMatchRun(namePattern)) {
+    l.emit(TokenKind.NAME);
+    return lexSegment;
+  }
+
   const ch = l.next();
   if (ch === "*") {
     l.emit(TokenKind.WILD);
@@ -280,18 +308,24 @@ function lexDotSelector(l: Lexer): StateFn | null {
   }
 
   l.backup();
-  if (l.acceptMatchRun(namePattern)) {
-    l.emit(TokenKind.NAME);
-    return lexSegment;
-  } else {
-    l.error(`unexpected shorthand selector '${ch}'`);
-    return null;
-  }
+  l.error(`unexpected shorthand selector '${ch}'`);
+  return null;
 }
 
 function lexInsideBracketedSelection(l: Lexer): StateFn | null {
   for (;;) {
     l.ignoreWhitespace();
+
+    if (l.acceptMatchRun(indexPattern)) {
+      l.emit(TokenKind.INDEX);
+      continue;
+    }
+
+    if (!l.environment.strict && l.acceptMatchRun(l.environment.keysPattern)) {
+      l.emit(TokenKind.KEYS);
+      continue;
+    }
+
     const ch = l.next();
     switch (ch) {
       case "]":
@@ -320,12 +354,6 @@ function lexInsideBracketedSelection(l: Lexer): StateFn | null {
         return lexDoubleQuoteStringInsideBracketSelection;
       default:
         l.backup();
-
-        if (l.acceptMatchRun(indexPattern)) {
-          l.emit(TokenKind.INDEX);
-          continue;
-        }
-
         l.error(`unexpected token '${ch}' in bracketed selection`);
         return null;
     }
@@ -381,6 +409,9 @@ function lexInsideFilter(l: Lexer): StateFn | null {
         return lexSegment;
       case "@":
         l.emit(TokenKind.CURRENT);
+        return lexSegment;
+      case "#":
+        l.emit(TokenKind.KEY);
         return lexSegment;
       case ".":
         l.backup();

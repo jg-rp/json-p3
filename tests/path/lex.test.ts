@@ -1,10 +1,11 @@
+import { DEFAULT_ENVIRONMENT } from "../../src";
 import { lex } from "../../src/path/lex";
 import { Token, TokenKind } from "../../src/path/token";
 
 describe("tokenize path", () => {
   test("basic shorthand name", () => {
     const path = "$.foo.bar";
-    const [lexer, tokens] = lex(path);
+    const [lexer, tokens] = lex(DEFAULT_ENVIRONMENT, path);
     lexer.run();
     expect(tokens).toStrictEqual([
       new Token(TokenKind.ROOT, "$", 0, path),
@@ -15,7 +16,7 @@ describe("tokenize path", () => {
   });
   test("bracketed name", () => {
     const path = "$['foo']['bar']";
-    const [lexer, tokens] = lex(path);
+    const [lexer, tokens] = lex(DEFAULT_ENVIRONMENT, path);
     lexer.run();
     expect(tokens).toStrictEqual([
       new Token(TokenKind.ROOT, "$", 0, path),
@@ -30,7 +31,7 @@ describe("tokenize path", () => {
   });
   test("basic index", () => {
     const path = "$.foo[1]";
-    const [lexer, tokens] = lex(path);
+    const [lexer, tokens] = lex(DEFAULT_ENVIRONMENT, path);
     lexer.run();
     expect(tokens).toStrictEqual([
       new Token(TokenKind.ROOT, "$", 0, path),
@@ -43,7 +44,7 @@ describe("tokenize path", () => {
   });
   test("missing root selector", () => {
     const path = "foo.bar";
-    const [lexer, tokens] = lex(path);
+    const [lexer, tokens] = lex(DEFAULT_ENVIRONMENT, path);
     lexer.run();
     expect(tokens).toStrictEqual([
       new Token(TokenKind.ERROR, "expected '$', found 'f'", 0, path),
@@ -51,7 +52,7 @@ describe("tokenize path", () => {
   });
   test("root property selector without dot", () => {
     const path = "$foo";
-    const [lexer, tokens] = lex(path);
+    const [lexer, tokens] = lex(DEFAULT_ENVIRONMENT, path);
     lexer.run();
     expect(tokens).toStrictEqual([
       new Token(TokenKind.ROOT, "$", 0, path),
@@ -65,7 +66,7 @@ describe("tokenize path", () => {
   });
   test("whitespace after root", () => {
     const path = "$ .foo.bar";
-    const [lexer, tokens] = lex(path);
+    const [lexer, tokens] = lex(DEFAULT_ENVIRONMENT, path);
     lexer.run();
     expect(tokens).toStrictEqual([
       new Token(TokenKind.ROOT, "$", 0, path),
@@ -76,7 +77,7 @@ describe("tokenize path", () => {
   });
   test("whitespace before dot property", () => {
     const path = "$. foo.bar";
-    const [lexer, tokens] = lex(path);
+    const [lexer, tokens] = lex(DEFAULT_ENVIRONMENT, path);
     lexer.run();
     expect(tokens).toStrictEqual([
       new Token(TokenKind.ROOT, "$", 0, path),
@@ -85,7 +86,7 @@ describe("tokenize path", () => {
   });
   test("whitespace after dot property", () => {
     const path = "$.foo .bar";
-    const [lexer, tokens] = lex(path);
+    const [lexer, tokens] = lex(DEFAULT_ENVIRONMENT, path);
     lexer.run();
     expect(tokens).toStrictEqual([
       new Token(TokenKind.ROOT, "$", 0, path),
@@ -96,7 +97,7 @@ describe("tokenize path", () => {
   });
   test("basic dot wild", () => {
     const path = "$.foo.*";
-    const [lexer, tokens] = lex(path);
+    const [lexer, tokens] = lex(DEFAULT_ENVIRONMENT, path);
     lexer.run();
     expect(tokens).toStrictEqual([
       new Token(TokenKind.ROOT, "$", 0, path),
@@ -107,7 +108,7 @@ describe("tokenize path", () => {
   });
   test("basic recurse", () => {
     const path = "$..foo";
-    const [lexer, tokens] = lex(path);
+    const [lexer, tokens] = lex(DEFAULT_ENVIRONMENT, path);
     lexer.run();
     expect(tokens).toStrictEqual([
       new Token(TokenKind.ROOT, "$", 0, path),
@@ -118,7 +119,7 @@ describe("tokenize path", () => {
   });
   test("basic recurse with trailing dot", () => {
     const path = "$...foo";
-    const [lexer, tokens] = lex(path);
+    const [lexer, tokens] = lex(DEFAULT_ENVIRONMENT, path);
     lexer.run();
     expect(tokens).toStrictEqual([
       new Token(TokenKind.ROOT, "$", 0, path),
@@ -133,7 +134,7 @@ describe("tokenize path", () => {
   });
   test("erroneous double recurse", () => {
     const path = "$....foo";
-    const [lexer, tokens] = lex(path);
+    const [lexer, tokens] = lex(DEFAULT_ENVIRONMENT, path);
     lexer.run();
     expect(tokens).toStrictEqual([
       new Token(TokenKind.ROOT, "$", 0, path),
@@ -148,7 +149,7 @@ describe("tokenize path", () => {
   });
   test("bracketed name selector, double quotes", () => {
     const path = '$.foo["bar"]';
-    const [lexer, tokens] = lex(path);
+    const [lexer, tokens] = lex(DEFAULT_ENVIRONMENT, path);
     lexer.run();
     expect(tokens).toStrictEqual([
       new Token(TokenKind.ROOT, "$", 0, path),
@@ -161,7 +162,7 @@ describe("tokenize path", () => {
   });
   test("bracketed name selector, single quotes", () => {
     const path = "$.foo['bar']";
-    const [lexer, tokens] = lex(path);
+    const [lexer, tokens] = lex(DEFAULT_ENVIRONMENT, path);
     lexer.run();
     expect(tokens).toStrictEqual([
       new Token(TokenKind.ROOT, "$", 0, path),
@@ -174,7 +175,7 @@ describe("tokenize path", () => {
   });
   test("multiple selectors", () => {
     const path = "$.foo['bar', 123, *]";
-    const [lexer, tokens] = lex(path);
+    const [lexer, tokens] = lex(DEFAULT_ENVIRONMENT, path);
     lexer.run();
     expect(tokens).toStrictEqual([
       new Token(TokenKind.ROOT, "$", 0, path),
@@ -191,7 +192,7 @@ describe("tokenize path", () => {
   });
   test("slice", () => {
     const path = "$.foo[1:3]";
-    const [lexer, tokens] = lex(path);
+    const [lexer, tokens] = lex(DEFAULT_ENVIRONMENT, path);
     lexer.run();
     expect(tokens).toStrictEqual([
       new Token(TokenKind.ROOT, "$", 0, path),
@@ -206,7 +207,7 @@ describe("tokenize path", () => {
   });
   test("filter", () => {
     const path = "$.foo[?@.bar]";
-    const [lexer, tokens] = lex(path);
+    const [lexer, tokens] = lex(DEFAULT_ENVIRONMENT, path);
     lexer.run();
     expect(tokens).toStrictEqual([
       new Token(TokenKind.ROOT, "$", 0, path),
@@ -221,7 +222,7 @@ describe("tokenize path", () => {
   });
   test("filter, parenthesized expression", () => {
     const path = "$.foo[?(@.bar)]";
-    const [lexer, tokens] = lex(path);
+    const [lexer, tokens] = lex(DEFAULT_ENVIRONMENT, path);
     lexer.run();
     expect(tokens).toStrictEqual([
       new Token(TokenKind.ROOT, "$", 0, path),
@@ -238,7 +239,7 @@ describe("tokenize path", () => {
   });
   test("two filters", () => {
     const path = "$.foo[?@.bar, ?@.baz]";
-    const [lexer, tokens] = lex(path);
+    const [lexer, tokens] = lex(DEFAULT_ENVIRONMENT, path);
     lexer.run();
     expect(tokens).toStrictEqual([
       new Token(TokenKind.ROOT, "$", 0, path),
@@ -257,7 +258,7 @@ describe("tokenize path", () => {
   });
   test("filter, function", () => {
     const path = "$[?count(@.foo)>2]";
-    const [lexer, tokens] = lex(path);
+    const [lexer, tokens] = lex(DEFAULT_ENVIRONMENT, path);
     lexer.run();
     expect(tokens).toStrictEqual([
       new Token(TokenKind.ROOT, "$", 0, path),
@@ -275,7 +276,7 @@ describe("tokenize path", () => {
   });
   test("filter, function with two args", () => {
     const path = "$[?count(@.foo, 1)>2]";
-    const [lexer, tokens] = lex(path);
+    const [lexer, tokens] = lex(DEFAULT_ENVIRONMENT, path);
     lexer.run();
     expect(tokens).toStrictEqual([
       new Token(TokenKind.ROOT, "$", 0, path),
@@ -295,7 +296,7 @@ describe("tokenize path", () => {
   });
   test("filter, parenthesized function", () => {
     const path = "$[?(count(@.foo)>2)]";
-    const [lexer, tokens] = lex(path);
+    const [lexer, tokens] = lex(DEFAULT_ENVIRONMENT, path);
     lexer.run();
     expect(tokens).toStrictEqual([
       new Token(TokenKind.ROOT, "$", 0, path),
@@ -315,7 +316,7 @@ describe("tokenize path", () => {
   });
   test("filter, parenthesized function argument", () => {
     const path = "$[?(count((@.foo),1)>2)]";
-    const [lexer, tokens] = lex(path);
+    const [lexer, tokens] = lex(DEFAULT_ENVIRONMENT, path);
     lexer.run();
     expect(tokens).toStrictEqual([
       new Token(TokenKind.ROOT, "$", 0, path),
@@ -339,7 +340,7 @@ describe("tokenize path", () => {
   });
   test("filter, nested", () => {
     const path = "$[?@[?@>1]]";
-    const [lexer, tokens] = lex(path);
+    const [lexer, tokens] = lex(DEFAULT_ENVIRONMENT, path);
     lexer.run();
     expect(tokens).toStrictEqual([
       new Token(TokenKind.ROOT, "$", 0, path),
@@ -358,7 +359,7 @@ describe("tokenize path", () => {
   });
   test("filter, nested brackets", () => {
     const path = "$[?@[?@[1]>1]]";
-    const [lexer, tokens] = lex(path);
+    const [lexer, tokens] = lex(DEFAULT_ENVIRONMENT, path);
     lexer.run();
     expect(tokens).toStrictEqual([
       new Token(TokenKind.ROOT, "$", 0, path),
@@ -380,7 +381,7 @@ describe("tokenize path", () => {
   });
   test("function", () => {
     const path = "$[?foo()]";
-    const [lexer, tokens] = lex(path);
+    const [lexer, tokens] = lex(DEFAULT_ENVIRONMENT, path);
     lexer.run();
     expect(tokens).toStrictEqual([
       new Token(TokenKind.ROOT, "$", 0, path),
@@ -394,7 +395,7 @@ describe("tokenize path", () => {
   });
   test("function", () => {
     const path = "$[?foo()]";
-    const [lexer, tokens] = lex(path);
+    const [lexer, tokens] = lex(DEFAULT_ENVIRONMENT, path);
     lexer.run();
     expect(tokens).toStrictEqual([
       new Token(TokenKind.ROOT, "$", 0, path),
@@ -408,7 +409,7 @@ describe("tokenize path", () => {
   });
   test("function, int literal", () => {
     const path = "$[?foo(42)]";
-    const [lexer, tokens] = lex(path);
+    const [lexer, tokens] = lex(DEFAULT_ENVIRONMENT, path);
     lexer.run();
     expect(tokens).toStrictEqual([
       new Token(TokenKind.ROOT, "$", 0, path),
@@ -423,7 +424,7 @@ describe("tokenize path", () => {
   });
   test("function, two int args", () => {
     const path = "$[?foo(42, -7)]";
-    const [lexer, tokens] = lex(path);
+    const [lexer, tokens] = lex(DEFAULT_ENVIRONMENT, path);
     lexer.run();
     expect(tokens).toStrictEqual([
       new Token(TokenKind.ROOT, "$", 0, path),
@@ -440,7 +441,7 @@ describe("tokenize path", () => {
   });
   test("boolean literals", () => {
     const path = "$[?true==false]";
-    const [lexer, tokens] = lex(path);
+    const [lexer, tokens] = lex(DEFAULT_ENVIRONMENT, path);
     lexer.run();
     expect(tokens).toStrictEqual([
       new Token(TokenKind.ROOT, "$", 0, path),
@@ -455,7 +456,7 @@ describe("tokenize path", () => {
   });
   test("logical and", () => {
     const path = "$[?true && false]";
-    const [lexer, tokens] = lex(path);
+    const [lexer, tokens] = lex(DEFAULT_ENVIRONMENT, path);
     lexer.run();
     expect(tokens).toStrictEqual([
       new Token(TokenKind.ROOT, "$", 0, path),
@@ -470,7 +471,7 @@ describe("tokenize path", () => {
   });
   test("float", () => {
     const path = "$[?@.foo > 42.7]";
-    const [lexer, tokens] = lex(path);
+    const [lexer, tokens] = lex(DEFAULT_ENVIRONMENT, path);
     lexer.run();
     expect(tokens).toStrictEqual([
       new Token(TokenKind.ROOT, "$", 0, path),

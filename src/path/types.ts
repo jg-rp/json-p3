@@ -16,6 +16,7 @@ export type FilterContext = {
   currentValue: JSONValue;
   rootValue: JSONValue;
   lazy?: boolean;
+  currentKey?: string | number;
 };
 
 /**

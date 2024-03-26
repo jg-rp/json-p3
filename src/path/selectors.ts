@@ -530,6 +530,7 @@ export class FilterSelector extends JSONPathSelector {
             environment: this.environment,
             currentValue: value,
             rootValue: node.root,
+            currentKey: i,
           };
           if (this.expression.evaluate(filterContext)) {
             rv.push(
@@ -543,6 +544,7 @@ export class FilterSelector extends JSONPathSelector {
             environment: this.environment,
             currentValue: value,
             rootValue: node.root,
+            currentKey: key,
           };
           if (this.expression.evaluate(filterContext)) {
             rv.push(
@@ -567,6 +569,7 @@ export class FilterSelector extends JSONPathSelector {
             currentValue: value,
             rootValue: node.root,
             lazy: true,
+            currentKey: i,
           };
           if (this.expression.evaluate(filterContext)) {
             yield new JSONPathNode(value, node.location.concat(i), node.root);
@@ -579,6 +582,7 @@ export class FilterSelector extends JSONPathSelector {
             currentValue: value,
             rootValue: node.root,
             lazy: true,
+            currentKey: key,
           };
           if (this.expression.evaluate(filterContext)) {
             yield new JSONPathNode(value, node.location.concat(key), node.root);

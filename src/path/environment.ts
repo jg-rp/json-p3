@@ -18,6 +18,7 @@ import { Parser } from "./parse";
 import { JSONPath } from "./path";
 import { Token, TokenStream } from "./token";
 import { JSONValue } from "../types";
+import { CurrentKey } from "./extra/expression";
 
 /**
  * JSONPath environment options. The defaults are in compliance with JSONPath
@@ -26,11 +27,13 @@ import { JSONValue } from "../types";
 export type JSONPathEnvironmentOptions = {
   /**
    * Indicates if the environment should to be strict about its compliance with
-   * JSONPath standards.
+   * RFC 9535.
    *
-   * Defaults to `true`. Setting `strict` to `false` currently has no effect.
-   * If/when we add non-standard features, the environment's strictness will
-   * control their availability.
+   * Defaults to `true`. Setting `strict` to `false` enables non-standard
+   * features. Non-standard features are subject to change if conflicting
+   * features are included in a future JSONPath standard or draft standard, or
+   * an overwhelming consensus amongst the JSONPath community emerges that
+   * differs from this implementation.
    */
   strict?: boolean;
 
@@ -54,8 +57,17 @@ export type JSONPathEnvironmentOptions = {
 
   /**
    * If `true`, enable nondeterministic ordering when iterating JSON object data.
+   *
+   * This is mainly useful for validating the JSONPath Compliance Test Suite.
    */
   nondeterministic?: boolean;
+
+  /**
+   * The pattern to use for the non-standard _keys selector_.
+   *
+   * The lexer expects the sticky bit to be set. Defaults to `/~/y`.
+   */
+  keysPattern?: RegExp;
 };
 
 /**
@@ -99,6 +111,11 @@ export class JSONPathEnvironment {
   readonly nondeterministic: boolean;
 
   /**
+   * The pattern to use for the non-standard _keys selector_.
+   */
+  readonly keysPattern: RegExp;
+
+  /**
    * A map of function names to objects implementing the {@link FilterFunction}
    * interface. You are free to set or delete custom filter functions directly.
    */
@@ -115,6 +132,8 @@ export class JSONPathEnvironment {
     this.minIntIndex = options.maxIntIndex ?? -Math.pow(2, 53) - 1;
     this.maxRecursionDepth = options.maxRecursionDepth ?? 50;
     this.nondeterministic = options.nondeterministic ?? false;
+    this.keysPattern = options.keysPattern ?? /~/y;
+
     this.parser = new Parser(this);
     this.setupFilterFunctions();
   }
@@ -126,7 +145,7 @@ export class JSONPathEnvironment {
   public compile(path: string): JSONPath {
     return new JSONPath(
       this,
-      this.parser.parse(new TokenStream(tokenize(path))),
+      this.parser.parse(new TokenStream(tokenize(this, path))),
     );
   }
 
@@ -232,6 +251,7 @@ export class JSONPathEnvironment {
           if (
             !(
               arg instanceof FilterExpressionLiteral ||
+              arg instanceof CurrentKey ||
               (arg instanceof JSONPathQuery && arg.path.singularQuery()) ||
               (arg instanceof FunctionExtension &&
                 this.functionRegister.get(arg.name)?.returnType ===

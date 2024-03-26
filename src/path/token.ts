@@ -20,6 +20,8 @@ export enum TokenKind {
   GE = "TOKEN_GE",
   GT = "TOKEN_GT",
   INDEX = "TOKEN_INDEX",
+  KEY = "TOKEN_KEY", // non-standard
+  KEYS = "TOKEN_KEYS", // non-standard
   LBRACKET = "TOKEN_LBRACKET",
   LE = "TOKEN_LE",
   LG = "TOKEN_LG",

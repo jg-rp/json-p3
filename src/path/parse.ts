@@ -27,6 +27,8 @@ import {
   WildcardSelector,
 } from "./selectors";
 import { Token, TokenKind, TokenStream } from "./token";
+import { CurrentKey } from "./extra/expression";
+import { KeysSelector } from "./extra/selectors";
 
 const PRECEDENCE_LOWEST = 1;
 const PRECEDENCE_LOGICAL_OR = 4;
@@ -79,6 +81,8 @@ export class Parser {
       [TokenKind.DOUBLE_QUOTE_STRING, this.parseString],
       [TokenKind.TRUE, this.parseBoolean],
       [TokenKind.FUNCTION, this.parseFunction],
+      [TokenKind.KEY, this.parseCurrentKey],
+      [TokenKind.KEY, this.parseCurrentKey],
     ]);
   }
 
@@ -125,6 +129,8 @@ export class Parser {
         );
       case TokenKind.WILD:
         return new WildcardSelector(this.environment, stream.current, true);
+      case TokenKind.KEYS:
+        return new KeysSelector(this.environment, stream.current, true);
       case TokenKind.DDOT: {
         const segmentToken = stream.current;
         stream.next();
@@ -255,6 +261,9 @@ export class Parser {
         case TokenKind.WILD:
           items.push(new WildcardSelector(this.environment, stream.current));
           break;
+        case TokenKind.KEYS:
+          items.push(new KeysSelector(this.environment, stream.current));
+          break;
         case TokenKind.EOF:
           throw new JSONPathSyntaxError(
             "unexpected end of query",
@@ -379,6 +388,10 @@ export class Parser {
       tok,
       new JSONPath(this.environment, this.parsePath(stream, true)),
     );
+  }
+
+  protected parseCurrentKey(stream: TokenStream): CurrentKey {
+    return new CurrentKey(stream.current);
   }
 
   protected parseFunction(stream: TokenStream): FunctionExtension {

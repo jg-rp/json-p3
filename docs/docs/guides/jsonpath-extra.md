@@ -15,7 +15,7 @@ values = env.query("$.some.path", data).values();
 Non-standard features are subject to change if:
 
 - conflicting syntax is included in a future JSONPath standard or draft standard.
-- an overwhelming consensus from the JSONPath community emerges that differs from our choices.
+- an overwhelming consensus emerges from the JSONPath community that differs from our choices.
   :::
 
 ## Keys selector
@@ -26,13 +26,13 @@ Non-standard features are subject to change if:
 $.users[?@.score == 86].~
 ```
 
-Output using example data from the [previous page](./jsonpath-syntax.md):
+Using example data from the [previous page](./jsonpath-syntax.md) we get the following results.
 
 ```json
 ["name", "score", "admin"]
 ```
 
-When applied to an array or primitive value, the keys selector select nothing.
+When applied to an array or primitive value, the keys selector selects nothing.
 
 :::warning
 Creating a [JSON Pointer](./json-pointer.md) from a [`JSONPathNode`](../api/classes/jsonpath.JSONPathNode.md#topointer) built using the keys selector will result in an unresolvable pointer. JSON Pointer does not support pointing to property names.

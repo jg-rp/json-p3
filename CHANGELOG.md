@@ -1,5 +1,11 @@
 # JSON P3 Change Log
 
+## Version 1.2.1 (unreleased)
+
+**Fixes**
+
+- Fixed JSONPath name selectors that operator on array values. Previously, if a name selector were a quoted digit, we would treat that digit as an array index. The name selector now selects nothing if the target value is an array.
+
 ## Version 1.2.0
 
 **Fixes**

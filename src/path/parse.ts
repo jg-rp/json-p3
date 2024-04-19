@@ -359,7 +359,12 @@ export class Parser {
   }
 
   protected parseGroupedExpression(stream: TokenStream): FilterExpression {
-    stream.next();
+    if (stream.peek.kind == TokenKind.RPAREN) {
+      throw new JSONPathSyntaxError(`empty paren expression`, stream.current);
+    }
+
+    stream.next(); // eat open paren
+
     let expr = this.parseFilterExpression(stream);
     stream.next();
 
@@ -367,6 +372,14 @@ export class Parser {
       if (stream.current.kind === TokenKind.EOF) {
         throw new JSONPathSyntaxError("unbalanced parentheses", stream.current);
       }
+
+      if (!BINARY_OPERATORS.has(stream.current.kind)) {
+        throw new JSONPathSyntaxError(
+          `expected an expression, found '${stream.current.value}'`,
+          stream.current,
+        );
+      }
+
       expr = this.parseInfixExpression(stream, expr);
     }
 
@@ -450,7 +463,7 @@ export class Parser {
           msg = "end of expression";
           break;
         default:
-          msg = `'${stream.current.value}`;
+          msg = `'${stream.current.value}'`;
       }
       throw new JSONPathSyntaxError(`unexpected ${msg}`, stream.current);
     }

@@ -38,6 +38,20 @@ describe("syntax error", () => {
       "empty bracketed segment ('$.foo[]':5)",
     );
   });
+  test("empty paren expression", () => {
+    const query = "$[?()]";
+    expect(() => env.query(query, {})).toThrow(JSONPathSyntaxError);
+    expect(() => env.query(query, {})).toThrow(
+      "empty paren expression ('$[?()]':3)",
+    );
+  });
+  test("unbalanced parens", () => {
+    const query = "$[?((@.foo)]";
+    expect(() => env.query(query, {})).toThrow(JSONPathSyntaxError);
+    expect(() => env.query(query, {})).toThrow(
+      "expected an expression, found ']' ('((@.foo)]':11)",
+    );
+  });
 });
 
 describe("type error", () => {

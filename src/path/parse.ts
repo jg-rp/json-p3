@@ -359,7 +359,7 @@ export class Parser {
   }
 
   protected parseGroupedExpression(stream: TokenStream): FilterExpression {
-    if (stream.peek.kind == TokenKind.RPAREN) {
+    if (stream.peek.kind === TokenKind.RPAREN) {
       throw new JSONPathSyntaxError(`empty paren expression`, stream.current);
     }
 

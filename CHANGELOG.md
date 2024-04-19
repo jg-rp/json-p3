@@ -5,10 +5,7 @@
 **Fixes**
 
 - Fixed JSONPath name selectors that operator on array values. Previously, if a name selector were a quoted digit, we would treat that digit as an array index. The name selector now selects nothing if the target value is an array.
-
-**Features**
-
-- Improved handling of JSONPath syntax errors resulting from unbalanced parentheses or empty paren expressions.
+- Fixed JSONPath syntax error messages resulting from unbalanced parentheses or empty paren expressions.
 
 ## Version 1.2.0
 

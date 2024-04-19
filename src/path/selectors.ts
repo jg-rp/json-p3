@@ -52,7 +52,7 @@ export class NameSelector extends JSONPathSelector {
   public resolve(nodes: JSONPathNode[]): JSONPathNode[] {
     const rv: JSONPathNode[] = [];
     for (const node of nodes) {
-      if (hasStringKey(node.value, this.name)) {
+      if (!isArray(node.value) && hasStringKey(node.value, this.name)) {
         rv.push(
           new JSONPathNode(
             node.value[this.name],
@@ -67,7 +67,7 @@ export class NameSelector extends JSONPathSelector {
 
   public *lazyResolve(nodes: Iterable<JSONPathNode>): Generator<JSONPathNode> {
     for (const node of nodes) {
-      if (hasStringKey(node.value, this.name)) {
+      if (!isArray(node.value) && hasStringKey(node.value, this.name)) {
         yield new JSONPathNode(
           node.value[this.name],
           node.location.concat(this.name),

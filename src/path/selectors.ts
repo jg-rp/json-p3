@@ -178,7 +178,7 @@ export class SliceSelector extends JSONPathSelector {
     for (const node of nodes) {
       if (!isArray(node.value)) continue;
 
-      for (const [i, value] of this.slice(
+      for (const [i, value] of this.lazySlice(
         node.value,
         this.start,
         this.stop,
@@ -255,6 +255,50 @@ export class SliceSelector extends JSONPathSelector {
     }
 
     return slicedArray;
+  }
+
+  // eslint-disable-next-line sonarjs/cognitive-complexity
+  private *lazySlice(
+    arr: JSONValue[],
+    start?: number,
+    stop?: number,
+    step?: number,
+  ): Generator<[number, JSONValue]> {
+    if (!arr.length) return;
+
+    // Handle negative and undefined start values
+    if (start === undefined || start === null) {
+      start = step && step < 0 ? arr.length - 1 : 0;
+    } else if (start < 0) {
+      start = Math.max(arr.length + start, 0);
+    } else {
+      start = Math.min(start, arr.length - 1);
+    }
+
+    // Handle negative and undefined stop values
+    if (stop === undefined || stop === null) {
+      stop = step && step < 0 ? -1 : arr.length;
+    } else if (stop < 0) {
+      stop = Math.max(arr.length + stop, -1);
+    } else {
+      stop = Math.min(stop, arr.length);
+    }
+
+    // Perform the slice
+    if (step === undefined) {
+      // Default to a step of 1
+      for (let i = start; i < stop; i += 1) {
+        yield [i, arr[i]];
+      }
+    } else if (step > 0) {
+      for (let i = start; i < stop; i += step) {
+        yield [i, arr[i]];
+      }
+    } else if (step < 0) {
+      for (let i = start; i > stop; i += step) {
+        yield [i, arr[i]];
+      }
+    }
   }
 }
 
@@ -339,7 +383,6 @@ export class RecursiveDescentSegment extends JSONPathSelector {
       }
     }
 
-    // console.log(JSON.stringify(rv.map((n: any) => n.value)));
     return this.selector.resolve(rv);
   }
 

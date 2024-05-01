@@ -562,7 +562,6 @@ function makeLexString(
   state: StateFn,
   token_kind: TokenKind,
 ): StateFn {
-  // eslint-disable-next-line sonarjs/cognitive-complexity
   function _lexString(l: Lexer): StateFn | null {
     l.ignore();
 

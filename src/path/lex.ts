@@ -9,6 +9,7 @@ const exponentPattern = /e[+-]?\d+/y;
 const functionNamePattern = /[a-z][a-z_0-9]*/y;
 const indexPattern = /-?\d+/y;
 const intPattern = /-?[0-9]+/y;
+const nameFirstPattern = /[\u0080-\uFFFFa-zA-Z_]/y;
 const namePattern = /[\u0080-\uFFFFa-zA-Z_][\u0080-\uFFFFa-zA-Z0-9_-]*/y;
 const whitespace = new Set([" ", "\n", "\t", "\r"]);
 
@@ -101,6 +102,12 @@ class Lexer {
     const ch = this.next();
     if (ch) this.backup();
     return ch;
+  }
+
+  public peekMatch(pattern: RegExp): boolean {
+    const ch = this.next();
+    if (ch) this.backup();
+    return pattern.test(ch);
   }
 
   public accept(valid: Set<string>): boolean {
@@ -260,9 +267,17 @@ function lexDescendantSelection(l: Lexer): StateFn | null {
   }
 
   if (!l.environment.strict && l.acceptMatchRun(l.environment.keysPattern)) {
-    // Non-standard keys selector
-    l.emit(TokenKind.KEYS);
-    return lexSegment;
+    if (l.peekMatch(nameFirstPattern)) {
+      // Non-standard key selector
+      l.ignore(); // ignore ~
+      l.acceptMatchRun(namePattern);
+      l.emit(TokenKind.KEY);
+      return lexSegment;
+    } else {
+      // Non-standard keys selector
+      l.emit(TokenKind.KEYS);
+      return lexSegment;
+    }
   }
 
   const ch = l.next();
@@ -292,8 +307,17 @@ function lexDotSelector(l: Lexer): StateFn | null {
   }
 
   if (!l.environment.strict && l.acceptMatchRun(l.environment.keysPattern)) {
-    l.emit(TokenKind.KEYS);
-    return lexSegment;
+    if (l.peekMatch(nameFirstPattern)) {
+      // Non-standard key selector
+      l.ignore(); // ignore ~
+      l.acceptMatchRun(namePattern);
+      l.emit(TokenKind.KEY);
+      return lexSegment;
+    } else {
+      // Non-standard keys selector
+      l.emit(TokenKind.KEYS);
+      return lexSegment;
+    }
   }
 
   if (l.acceptMatchRun(namePattern)) {
@@ -322,8 +346,25 @@ function lexInsideBracketedSelection(l: Lexer): StateFn | null {
     }
 
     if (!l.environment.strict && l.acceptMatchRun(l.environment.keysPattern)) {
-      l.emit(TokenKind.KEYS);
-      continue;
+      switch (l.peek()) {
+        case "'":
+          l.ignore(); // ~
+          l.next();
+          return lexSingleQuoteKeyString(l);
+        case '"':
+          l.ignore(); // ~
+          l.next();
+          return lexDoubleQuoteKeyString(l);
+        case "?":
+          l.ignore(); // ~
+          l.next();
+          l.emit(TokenKind.KEYS_FILTER);
+          l.filterLevel += 1;
+          return lexInsideFilter;
+        default:
+          l.emit(TokenKind.KEYS);
+          continue;
+      }
     }
 
     const ch = l.next();
@@ -411,7 +452,7 @@ function lexInsideFilter(l: Lexer): StateFn | null {
         l.emit(TokenKind.CURRENT);
         return lexSegment;
       case "#":
-        l.emit(TokenKind.KEY);
+        l.emit(TokenKind.CURRENT_KEY);
         return lexSegment;
       case ".":
         l.backup();
@@ -516,7 +557,11 @@ function lexInsideFilter(l: Lexer): StateFn | null {
  * @param state - The state function to return control to.
  * @returns String tokenizing state function.
  */
-function makeLexString(quote: string, state: StateFn): StateFn {
+function makeLexString(
+  quote: string,
+  state: StateFn,
+  token_kind: TokenKind,
+): StateFn {
   // eslint-disable-next-line sonarjs/cognitive-complexity
   function _lexString(l: Lexer): StateFn | null {
     l.ignore();
@@ -551,11 +596,7 @@ function makeLexString(quote: string, state: StateFn): StateFn {
 
       if (ch === quote) {
         l.backup();
-        l.emit(
-          quote === "'"
-            ? TokenKind.SINGLE_QUOTE_STRING
-            : TokenKind.DOUBLE_QUOTE_STRING,
-        );
+        l.emit(token_kind);
         l.next();
         l.ignore();
         return state;
@@ -568,19 +609,35 @@ function makeLexString(quote: string, state: StateFn): StateFn {
 const lexSingleQuoteStringInsideBracketSelection = makeLexString(
   "'",
   lexInsideBracketedSelection,
+  TokenKind.SINGLE_QUOTE_STRING,
 );
 
 const lexDoubleQuoteStringInsideBracketSelection = makeLexString(
   '"',
   lexInsideBracketedSelection,
+  TokenKind.DOUBLE_QUOTE_STRING,
 );
 
 const lexSingleQuoteStringInsideFilterExpression = makeLexString(
   "'",
   lexInsideFilter,
+  TokenKind.SINGLE_QUOTE_STRING,
 );
 
 const lexDoubleQuoteStringInsideFilterExpression = makeLexString(
   '"',
   lexInsideFilter,
+  TokenKind.DOUBLE_QUOTE_STRING,
+);
+
+const lexSingleQuoteKeyString = makeLexString(
+  "'",
+  lexInsideBracketedSelection,
+  TokenKind.KEY_SINGLE_QUOTE_STRING,
+);
+
+const lexDoubleQuoteKeyString = makeLexString(
+  '"',
+  lexInsideBracketedSelection,
+  TokenKind.KEY_DOUBLE_QUOTE_STRING,
 );

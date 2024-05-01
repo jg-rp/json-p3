@@ -1,6 +1,8 @@
 import { JSONPointer } from "../pointer";
 import { JSONValue, isString } from "../types";
 
+const KEY_MARKER = "\x02";
+
 /**
  * The pair of a JSON value and its location found in the target JSON value.
  */
@@ -20,7 +22,9 @@ export class JSONPathNode {
     return (
       // eslint-disable-next-line prefer-template
       "$" +
-      this.location.map((s) => (isString(s) ? `['${s}']` : `[${s}]`)).join("")
+      this.location
+        .map((s) => (isString(s) ? this.decode_name_location(s) : `[${s}]`))
+        .join("")
     );
   }
 
@@ -32,6 +36,12 @@ export class JSONPathNode {
       return new JSONPointer("");
     }
     return new JSONPointer(JSONPointer.encode(this.location.map(String)));
+  }
+
+  private decode_name_location(name: string): string {
+    return name.startsWith(KEY_MARKER)
+      ? `[~'${name.slice(1).replaceAll("'", "\\'")}']`
+      : `['${name.replaceAll("'", "\\'")}']`;
   }
 }
 

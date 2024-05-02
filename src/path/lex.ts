@@ -267,16 +267,25 @@ function lexDescendantSelection(l: Lexer): StateFn | null {
     return lexSegment;
   }
 
-  if (!l.environment.strict && l.acceptMatchRun(l.environment.keysPattern)) {
-    // XXX: this is not going to work if keysPattern is not the default
-    if (l.peekMatch(nameFirstPattern)) {
-      // Non-standard key selector
-      l.ignore(); // ignore ~
-      l.acceptMatchRun(namePattern);
-      l.emit(TokenKind.KEY);
-      return lexSegment;
-    } else {
-      // Non-standard keys selector
+  if (!l.environment.strict) {
+    // We're effectively disabling the _key selector_ and _keys filter selector_ if a
+    // custom _keys selector_ is set.
+    if (l.environment.keysPattern.source === "~" && l.peek() === "~") {
+      l.next();
+      if (l.peekMatch(nameFirstPattern)) {
+        // Non-standard key selector
+        l.ignore(); // ignore ~
+        l.acceptMatchRun(namePattern);
+        l.emit(TokenKind.KEY);
+        return lexSegment;
+      } else {
+        // Non-standard keys selector
+        l.emit(TokenKind.KEYS);
+        return lexSegment;
+      }
+    } else if (l.acceptMatchRun(l.environment.keysPattern)) {
+      // NOTE: A custom keys pattern does not play well with other non-standard key selectors.
+      // We leave this here for backwards compatibility.
       l.emit(TokenKind.KEYS);
       return lexSegment;
     }
@@ -308,15 +317,25 @@ function lexDotSelector(l: Lexer): StateFn | null {
     return null;
   }
 
-  if (!l.environment.strict && l.acceptMatchRun(l.environment.keysPattern)) {
-    if (l.peekMatch(nameFirstPattern)) {
-      // Non-standard key selector
-      l.ignore(); // ignore ~
-      l.acceptMatchRun(namePattern);
-      l.emit(TokenKind.KEY);
-      return lexSegment;
-    } else {
-      // Non-standard keys selector
+  if (!l.environment.strict) {
+    // We're effectively disabling the _key selector_ and _keys filter selector_ if a
+    // custom _keys selector_ is set.
+    if (l.environment.keysPattern.source === "~" && l.peek() === "~") {
+      l.next();
+      if (l.peekMatch(nameFirstPattern)) {
+        // Non-standard key selector
+        l.ignore(); // ignore ~
+        l.acceptMatchRun(namePattern);
+        l.emit(TokenKind.KEY);
+        return lexSegment;
+      } else {
+        // Non-standard keys selector
+        l.emit(TokenKind.KEYS);
+        return lexSegment;
+      }
+    } else if (l.acceptMatchRun(l.environment.keysPattern)) {
+      // NOTE: A custom keys pattern does not play well with other non-standard key selectors.
+      // We leave this here for backwards compatibility.
       l.emit(TokenKind.KEYS);
       return lexSegment;
     }

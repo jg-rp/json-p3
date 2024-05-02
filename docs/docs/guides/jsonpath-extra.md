@@ -18,17 +18,95 @@ Non-standard features are subject to change if:
 - an overwhelming consensus emerges from the JSONPath community that differs from our choices.
   :::
 
+## Key selector
+
+The key selector `~'<name>'` selects at most one object member name. It is syntactically similar to the standard [name selector](https://datatracker.ietf.org/doc/html/rfc9535#name-name-selector), with the addition of a tilde (`~`) prefix.
+
+When applied to a JSON object, the key selector selects the _name_ from a name/value member, if such a member exists, or nothing if it does not exist. This complements the standard name selector, which select the _value_ from a name/value pair.
+
+When applied to an array or primitive value, the key selector selects nothing.
+
+Key selector strings must follow the same processing semantics as name selector strings, as described in [section 2.3.2.1](https://datatracker.ietf.org/doc/html/rfc9535#section-2.3.1.2) of RFC 9535.
+
+:::info
+The key selector is included as a way to generate valid normalized paths for nodes produced by the keys (plural) selector and the keys filter selector. I don't expect it will be of much use elsewhere.
+:::
+
+### Example
+
+```json title="Example JSON document"
+{
+  "users": [
+    { "name": "Sue", "score": 100 },
+    { "name": "John", "score": 86, "admin": true },
+    { "name": "Sally", "score": 84, "admin": false },
+    { "name": "Jane", "score": 55 }
+  ],
+  "moderator": "John"
+}
+```
+
+```text title="Query"
+$.users[0].~score
+```
+
+```json title="Result"
+"score"
+```
+
+```text title="Path"
+$['users'][0][~'score']
+```
+
+### Syntax
+
+```
+selector             = name-selector /
+                       wildcard-selector /
+                       slice-selector /
+                       index-selector /
+                       filter-selector /
+                       key-selector /
+                       keys-selector /
+                       keys-filter-selector
+
+key-selector         = "~" name-selector
+
+child-segment        = bracketed-selection /
+                       ("."
+                        (wildcard-selector /
+                         member-name-shorthand /
+                         member-key-shorthand))
+
+descendant-segment   = ".." (bracketed-selection /
+                             wildcard-selector /
+                             member-name-shorthand /
+                             member-key-shorthand)
+
+member-key-shorthand = "~" name-first *name-char
+```
+
 ## Keys selector
 
-`~` is the _keys_ selector, selecting property names from objects. The keys selector can be used in a bracketed selection (`[~]`) or in its shorthand form (`.~`).
+`~` is the _keys_ selector, selecting property names from object's name/value pairs. The keys selector can be used in a bracketed selection (`[~]`) or in its shorthand form (`.~`).
 
-```text
+```text title="Query"
 $.users[?@.score == 86].~
 ```
 
-Using example data from the [previous page](./jsonpath-syntax.md) we get the following results.
+```json title="Example JSON document"
+{
+  "users": [
+    { "name": "Sue", "score": 100 },
+    { "name": "John", "score": 86, "admin": true },
+    { "name": "Sally", "score": 84, "admin": false },
+    { "name": "Jane", "score": 55 }
+  ],
+  "moderator": "John"
+}
+```
 
-```json
+```json title="Output"
 ["name", "score", "admin"]
 ```
 

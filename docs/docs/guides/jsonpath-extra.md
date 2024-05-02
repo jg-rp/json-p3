@@ -32,32 +32,6 @@ Key selector strings must follow the same processing semantics as name selector 
 The key selector is included as a way to generate valid normalized paths for nodes produced by the keys (plural) selector and the keys filter selector. I don't expect it will be of much use elsewhere.
 :::
 
-### Example
-
-```json title="Example JSON document"
-{
-  "users": [
-    { "name": "Sue", "score": 100 },
-    { "name": "John", "score": 86, "admin": true },
-    { "name": "Sally", "score": 84, "admin": false },
-    { "name": "Jane", "score": 55 }
-  ],
-  "moderator": "John"
-}
-```
-
-```text title="Query"
-$.users[0].~score
-```
-
-```json title="Result"
-"score"
-```
-
-```text title="Path"
-$['users'][0][~'score']
-```
-
 ### Syntax
 
 ```
@@ -86,45 +60,55 @@ descendant-segment   = ".." (bracketed-selection /
 member-key-shorthand = "~" name-first *name-char
 ```
 
-## Keys selector
-
-`~` is the _keys_ selector, selecting property names from object's name/value pairs. The keys selector can be used in a bracketed selection (`[~]`) or in its shorthand form (`.~`).
-
-```text title="Query"
-$.users[?@.score == 86].~
-```
+### Examples
 
 ```json title="Example JSON document"
 {
-  "users": [
-    { "name": "Sue", "score": 100 },
-    { "name": "John", "score": 86, "admin": true },
-    { "name": "Sally", "score": 84, "admin": false },
-    { "name": "Jane", "score": 55 }
-  ],
-  "moderator": "John"
+  "a": [{ "b": "x", "c": "z" }, { "b": "y" }]
 }
 ```
 
-```json title="Output"
-["name", "score", "admin"]
-```
+| Query       | Result            | Result Path                               | Comment                       |
+| ----------- | ----------------- | ----------------------------------------- | ----------------------------- |
+| `$.a[0].~c` | `"c"`             | `$['a'][0][~'c']`                         | Key of nested object          |
+| `$.a[1].~c` |                   |                                           | Key does not exist            |
+| `$..[~'b']` | `"b"` <br/> `"b"` | `$['a'][0][~'b']` <br/> `$['a'][1][~'b']` | Descendant, single quoted key |
+| `$..[~"b"]` | `"b"` <br/> `"b"` | `$['a'][0][~'b']` <br/> `$['a'][1][~'b']` | Descendant, double quoted key |
+
+## Keys selector
+
+The keys selector `~` selects all names from an object’s name/value members. This complements the standard [wildcard selector](https://datatracker.ietf.org/doc/html/rfc9535#name-wildcard-selector), which selects all values from an object’s name/value pairs.
+
+As with the wildcard selector, the order of nodes resulting from a keys selector is not stipulated.
 
 When applied to an array or primitive value, the keys selector selects nothing.
 
-:::warning
-Creating a [JSON Pointer](./json-pointer.md) from a [`JSONPathNode`](../api/classes/jsonpath.JSONPathNode.md#topointer) built using the keys selector will result in an unresolvable pointer. JSON Pointer does not support pointing to property names.
-:::
+The normalized path of a node selected using the keys selector uses [key selector](#key-selector) syntax.
 
-### Custom keys token
+### Syntax
 
-The token representing the keys selector can be customized by setting the `keysPattern` option on a `JSONPathEnvironment` to a regular expression with the sticky flag set. For example, to change the keys selector to be `*~` instead of `~`:
-
-```javascript
-import { JSONPathEnvironment } from "json-p3";
-
-const env = new JSONPathEnvironment({ strict: false, keysPattern: /\*~/y });
 ```
+keys-selector  = "~"
+```
+
+### Examples
+
+```json title="Example JSON document"
+{
+  "a": [{ "b": "x", "c": "z" }, { "b": "y" }]
+}
+```
+
+| Query          | Result                                    | Result Path                                                                               | Comment                    |
+| -------------- | ----------------------------------------- | ----------------------------------------------------------------------------------------- | -------------------------- |
+| `$.a[0].~`     | `"b"` <br/> `"c"`                         | `['a'][0][~'b']` <br/> `$['a'][0][~'c']`                                                  | Object keys                |
+| `$.a.~`        |                                           |                                                                                           | Array keys                 |
+| `$.a[0][~, ~]` | `"b"` <br/> `"c"` <br/> `"c"` <br/> `"b"` | `$['a'][0][~'b']` <br/> `$['a'][0][~'c']` <br/> `$['a'][0][~'c']` <br/> `$['a'][0][~'b']` | Non-deterministic ordering |
+| `$..[~]`       | `"a"` <br/> `"b"` <br/> `"c"` <br/> `"b"` | `$[~'a']` <br/> `$['a'][0][~'b']` <br/> `$['a'][0][~'c']` <br/> `$['a'][1][~'b']`         | Descendant keys            |
+
+## Keys filter selector
+
+TODO:
 
 ## Current key identifier
 

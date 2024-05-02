@@ -1,11 +1,17 @@
 import React, { useEffect, useRef, useState } from "react";
+import { Link } from "react-router-dom";
 import { useColorMode } from "@docusaurus/theme-common";
 import Editor from "@monaco-editor/react";
 import { Allotment } from "allotment";
 import "allotment/dist/style.css";
 import clsx from "clsx";
 
-import { jsonpath, version as p3version } from "@site/../dist/json-p3.esm";
+import {
+  JSONPathEnvironment,
+  version as p3version,
+} from "@site/../dist/json-p3.esm";
+
+const ENV = new JSONPathEnvironment({ strict: false });
 
 const commonEditorOptions = {
   codeLens: false,
@@ -102,7 +108,7 @@ export default function Playground() {
   function _onQueryChange(value) {
     try {
       setQuery(value.trim());
-      const rv = jsonpath.query(value.trim(), data);
+      const rv = ENV.query(value.trim(), data);
       setResult(JSON.stringify(rv.values(), undefined, "  "));
       setResultPaths(JSON.stringify(rv.paths(), undefined, "  "));
     } catch (error) {
@@ -120,7 +126,7 @@ export default function Playground() {
     try {
       const _data = JSON.parse(value);
       setData(_data);
-      const rv = jsonpath.query(query, _data);
+      const rv = ENV.query(query, _data);
       setResult(JSON.stringify(rv.values(), undefined, "  "));
       setResultPaths(JSON.stringify(rv.paths(), undefined, "  "));
     } catch (error) {
@@ -282,6 +288,11 @@ export default function Playground() {
             JSON data is on the left and results are on the right.
             <br />
             Results are updated automatically after one second of inactivity.
+            <br />
+            <Link to="/json-p3/guides/jsonpath-extra">
+              Non-standard syntax
+            </Link>{" "}
+            is enabled.
             <br />
             <span className="font-bold">JSON P3 Version {p3version}</span>
           </p>

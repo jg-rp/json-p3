@@ -97,6 +97,54 @@ const TEST_CASES: TestCase[] = [
     data: { some: ["other", "thing", "foo", "bar"] },
     want: ["foo", "bar"],
   },
+  {
+    description: "filter keys from an object",
+    path: "$.some[~?match(@, '^b.*')]",
+    data: { some: { other: "foo", thing: "bar" } },
+    want: ["thing"],
+  },
+  {
+    description: "singular key from an object",
+    path: "$.some[~'other']",
+    data: { some: { other: "foo", thing: "bar" } },
+    want: ["other"],
+  },
+  {
+    description: "singular key from an object, does not exist",
+    path: "$.some[~'else']",
+    data: { some: { other: "foo", thing: "bar" } },
+    want: [],
+  },
+  {
+    description: "singular key from an array",
+    path: "$.some[~'1']",
+    data: { some: ["foo", "bar"] },
+    want: [],
+  },
+  {
+    description: "singular key from an object, shorthand",
+    path: "$.some.~other",
+    data: { some: { other: "foo", thing: "bar" } },
+    want: ["other"],
+  },
+  {
+    description: "recursive key from an object",
+    path: "$.some..[~'other']",
+    data: { some: { other: "foo", thing: "bar", else: { other: "baz" } } },
+    want: ["other", "other"],
+  },
+  {
+    description: "recursive key from an object, shorthand",
+    path: "$.some..~other",
+    data: { some: { other: "foo", thing: "bar", else: { other: "baz" } } },
+    want: ["other", "other"],
+  },
+  {
+    description: "recursive key from an object, does not exist",
+    path: "$.some..[~'nosuchthing']",
+    data: { some: { other: "foo", thing: "bar", else: { other: "baz" } } },
+    want: [],
+  },
 ];
 
 describe("extra features", () => {
@@ -110,26 +158,14 @@ describe("extra features", () => {
     },
   );
 
-  test("keys from an array, location is valid", () => {
-    const path = "$.some[?# > 1]";
-    const data = { some: ["other", "thing", "foo", "bar"] };
-    const nodes = env.query(path, data);
-    expect(nodes.values()).toStrictEqual(["foo", "bar"]);
-    expect(env.query(nodes.nodes[0].path, data).values()).toStrictEqual([
-      "foo",
-    ]);
-    expect(env.query(nodes.nodes[1].path, data).values()).toStrictEqual([
-      "bar",
-    ]);
-  });
-
   test("keys from an object, location is valid", () => {
-    const path = "$.some[?match(#, '^b.*')]";
-    const data = { some: { foo: "a", bar: "b", baz: "c", qux: "d" } };
+    const path = "$.some.~";
+    const data = { some: { a: 1, b: 2, c: 3 } };
     const nodes = env.query(path, data);
-    expect(nodes.values()).toStrictEqual(["b", "c"]);
-    expect(env.query(nodes.nodes[0].path, data).values()).toStrictEqual(["b"]);
-    expect(env.query(nodes.nodes[1].path, data).values()).toStrictEqual(["c"]);
+    expect(nodes.values()).toStrictEqual(["a", "b", "c"]);
+    expect(env.query(nodes.nodes[0].path, data).values()).toStrictEqual(["a"]);
+    expect(env.query(nodes.nodes[1].path, data).values()).toStrictEqual(["b"]);
+    expect(env.query(nodes.nodes[2].path, data).values()).toStrictEqual(["c"]);
   });
 
   test("custom keys pattern", () => {

@@ -9,9 +9,10 @@ const exponentPattern = /e[+-]?\d+/y;
 const functionNamePattern = /[a-z][a-z_0-9]*/y;
 const indexPattern = /-?\d+/y;
 const intPattern = /-?[0-9]+/y;
-const nameFirstPattern = /[\u0080-\uFFFFa-zA-Z_]/y;
 const namePattern = /[\u0080-\uFFFFa-zA-Z_][\u0080-\uFFFFa-zA-Z0-9_-]*/y;
+
 const whitespace = new Set([" ", "\n", "\t", "\r"]);
+const nameFirstPattern = /[\u0080-\uFFFFa-zA-Z_]/; // don't set sticky bit
 
 /**
  * JSONPath lexical scanner.
@@ -267,6 +268,7 @@ function lexDescendantSelection(l: Lexer): StateFn | null {
   }
 
   if (!l.environment.strict && l.acceptMatchRun(l.environment.keysPattern)) {
+    // XXX: this is not going to work if keysPattern is not the default
     if (l.peekMatch(nameFirstPattern)) {
       // Non-standard key selector
       l.ignore(); // ignore ~

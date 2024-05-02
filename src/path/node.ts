@@ -1,7 +1,6 @@
 import { JSONPointer } from "../pointer";
 import { JSONValue, isString } from "../types";
-
-const KEY_MARKER = "\x02";
+import { KEY_MARK } from "./extra/selectors";
 
 /**
  * The pair of a JSON value and its location found in the target JSON value.
@@ -39,7 +38,7 @@ export class JSONPathNode {
   }
 
   private decode_name_location(name: string): string {
-    return name.startsWith(KEY_MARKER)
+    return name.startsWith(KEY_MARK)
       ? `[~'${name.slice(1).replaceAll("'", "\\'")}']`
       : `['${name.replaceAll("'", "\\'")}']`;
   }

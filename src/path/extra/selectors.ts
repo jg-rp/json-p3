@@ -6,7 +6,7 @@ import { JSONPathSelector } from "../selectors";
 import { Token } from "../token";
 import { FilterContext, hasStringKey } from "../types";
 
-const KEY_MARKER = "\x02";
+export const KEY_MARK = "\x02";
 
 export class KeySelector extends JSONPathSelector {
   constructor(
@@ -26,7 +26,7 @@ export class KeySelector extends JSONPathSelector {
         rv.push(
           new JSONPathNode(
             this.key,
-            node.location.concat(`${KEY_MARKER}${this.key}`),
+            node.location.concat(`${KEY_MARK}${this.key}`),
             node.root,
           ),
         );
@@ -41,7 +41,7 @@ export class KeySelector extends JSONPathSelector {
       if (isObject(node.value) && hasStringKey(node.value, this.key)) {
         yield new JSONPathNode(
           this.key,
-          node.location.concat(`${KEY_MARKER}${this.key}`),
+          node.location.concat(`${KEY_MARK}${this.key}`),
           node.root,
         );
       }
@@ -76,7 +76,7 @@ export class KeysSelector extends JSONPathSelector {
           rv.push(
             new JSONPathNode(
               key,
-              node.location.concat(`${KEY_MARKER}${key}`),
+              node.location.concat(`${KEY_MARK}${key}`),
               node.root,
             ),
           );
@@ -93,7 +93,7 @@ export class KeysSelector extends JSONPathSelector {
         for (const [key, _] of this.environment.entries(node.value)) {
           yield new JSONPathNode(
             key,
-            node.location.concat(`${KEY_MARKER}${key}`),
+            node.location.concat(`${KEY_MARK}${key}`),
             node.root,
           );
         }
@@ -131,7 +131,7 @@ export class KeysFilterSelector extends JSONPathSelector {
             rv.push(
               new JSONPathNode(
                 key,
-                node.location.concat(`${KEY_MARKER}${key}`),
+                node.location.concat(`${KEY_MARK}${key}`),
                 node.root,
               ),
             );
@@ -157,7 +157,7 @@ export class KeysFilterSelector extends JSONPathSelector {
           if (this.expression.evaluate(filterContext)) {
             yield new JSONPathNode(
               key,
-              node.location.concat(`${KEY_MARKER}${key}`),
+              node.location.concat(`${KEY_MARK}${key}`),
               node.root,
             );
           }

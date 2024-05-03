@@ -1,6 +1,6 @@
 # Extra JSONPath Syntax
 
-**_New in version 1.2.2_**
+**_New in version 1.3.0_**
 
 JSON P3 includes some extra, non-standard JSONPath syntax that is disabled by default. Setting the [`strict`](../api/namespaces/jsonpath.md#jsonpathenvironmentoptions) option to `false` when instantiating a [`JSONPathEnvironment`](../api/classes/jsonpath.JSONPathEnvironment.md) will enable all non-standard syntax.
 
@@ -18,7 +18,7 @@ Non-standard features are subject to change if:
 - an overwhelming consensus emerges from the JSONPath community that differs from our choices.
   :::
 
-The following definitions build on [RFC 9535](https://datatracker.ietf.org/doc/html/rfc9535) ([license info](https://trustee.ietf.org/license-info)), while trying to stay true to its JSONPath model. These non-standard selectors are known to break the definitions of _location_ and _children_ defined in RFC 9535.
+The following definitions build on [RFC 9535](https://datatracker.ietf.org/doc/html/rfc9535) ([license info](https://trustee.ietf.org/license-info)), while trying to stay true to its JSONPath model. These non-standard selectors are known to break the definition of _location_ and _children_ from in RFC 9535.
 
 ## Key selector
 

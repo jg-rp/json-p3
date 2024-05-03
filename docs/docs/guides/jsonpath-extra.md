@@ -18,9 +18,11 @@ Non-standard features are subject to change if:
 - an overwhelming consensus emerges from the JSONPath community that differs from our choices.
   :::
 
+The following definitions build on [RFC 9535](https://datatracker.ietf.org/doc/html/rfc9535) ([license info](https://trustee.ietf.org/license-info)), while trying to stay true to its JSONPath model. These non-standard selectors are known to break the definitions of _location_ and _children_ defined in RFC 9535.
+
 ## Key selector
 
-The key selector `~'<name>'` selects at most one object member name. It is syntactically similar to the standard [name selector](https://datatracker.ietf.org/doc/html/rfc9535#name-name-selector), with the addition of a tilde (`~`) prefix.
+The key selector `~'<name>'` selects at most one name from an object member. It is syntactically similar to the standard [name selector](https://datatracker.ietf.org/doc/html/rfc9535#name-name-selector), with the addition of a tilde (`~`) prefix.
 
 When applied to a JSON object, the key selector selects the _name_ from a name/value member, if such a member exists, or nothing if it does not exist. This complements the standard name selector, which select the _value_ from a name/value pair.
 
@@ -29,7 +31,7 @@ When applied to an array or primitive value, the key selector selects nothing.
 Key selector strings must follow the same processing semantics as name selector strings, as described in [section 2.3.2.1](https://datatracker.ietf.org/doc/html/rfc9535#section-2.3.1.2) of RFC 9535.
 
 :::info
-The key selector is included as a way to generate valid normalized paths for nodes produced by the keys (plural) selector and the keys filter selector. I don't expect it will be of much use elsewhere.
+The key selector is introduced to facilitate valid normalized paths for nodes produced by the [keys selector](#keys-selector) and the [keys filter selector](#keys-filter-selector). I don't expect it will be of much use elsewhere.
 :::
 
 ### Syntax
@@ -77,7 +79,7 @@ member-key-shorthand = "~" name-first *name-char
 
 ## Keys selector
 
-The keys selector `~` selects all names from an object’s name/value members. This complements the standard [wildcard selector](https://datatracker.ietf.org/doc/html/rfc9535#name-wildcard-selector), which selects all values from an object’s name/value pairs.
+The keys selector (`~`) selects all names from an object’s name/value members. This complements the standard [wildcard selector](https://datatracker.ietf.org/doc/html/rfc9535#name-wildcard-selector), which selects all values from an object’s name/value pairs.
 
 As with the wildcard selector, the order of nodes resulting from a keys selector is not stipulated.
 
@@ -88,7 +90,7 @@ The normalized path of a node selected using the keys selector uses [key selecto
 ### Syntax
 
 ```
-keys-selector  = "~"
+keys-selector       = "~"
 ```
 
 ### Examples
@@ -108,28 +110,73 @@ keys-selector  = "~"
 
 ## Keys filter selector
 
-TODO:
+The keys filter selector selects names from an object’s name/value members. It is syntactically similar to the standard [filter selector](https://datatracker.ietf.org/doc/html/rfc9535#name-filter-selector), with the addition of a tilde (`~`) prefix.
+
+```
+~?<logical-expr>
+```
+
+Whereas the standard filter selector will produce a node for each _value_ from an object’s name/value members - when its expression evaluates to logical `true` - the keys filter selector produces a node for each _name_ in an object’s name/value members.
+
+Logical expression syntax and semantics otherwise match that of the standard filter selector. `@` still refers to the current member value. See also the [current key identifier](#current-key-identifier).
+
+When applied to an array or primitive value, the keys filter selector selects nothing.
+
+The normalized path of a node selected using the keys filter selector uses [key selector](#key-selector) syntax.
+
+### Syntax
+
+```
+filter-selector     = "~?" S logical-expr
+```
+
+### Examples
+
+```json title="Example JSON document"
+[{ "a": [1, 2, 3], "b": [4, 5] }, { "c": { "x": [1, 2] } }, { "d": [1, 2, 3] }]
+```
+
+| Query                  | Result            | Result Path                     | Comment                          |
+| ---------------------- | ----------------- | ------------------------------- | -------------------------------- |
+| `$.*[~?length(@) > 2]` | `"a"` <br/> `"d"` | `$[0][~'a']` <br/> `$[2][~'d']` | Conditionally select object keys |
+| `$.*[~?@.x]`           | `"c"`             | `$[1][~'c']`                    | Existence test                   |
+| `$[~?(true == true)]`  |                   |                                 | Keys from an array               |
 
 ## Current key identifier
 
-`#` is the _current key_ identifier. `#` will be the property name of an object or index of an array corresponding to `@` in a filter expression.
+`#` is the _current key_ identifier. `#` will be the name of the current object member, or index of the current array element. This complements the current node identifier (`@`), which refers to a member value or array element, respectively.
 
-```text
-$.users[?# > 1]
+It is a syntax error to follow the current key identifier with segments, as if it were a filter query.
+
+When used as an argument to a function, the current key is of `ValueType`, and outside a function call it must be compared.
+
+When applied to a primitive value, the keys filter selector selects nothing.
+
+### Syntax
+
+```
+comparable             = literal /
+                         singular-query / ; singular query value
+                         function-expr  / ; ValueType
+                         current-key-identifier
+
+
+function-argument      = literal /
+                         filter-query / ; (includes singular-query)
+                         logical-expr /
+                         function-expr /
+                         current-key-identifier
+
+current-key-identifier = "#"
 ```
 
-Again, using example data from the [previous page](./jsonpath-syntax.md):
+### Examples
 
-```json
-[
-  {
-    "name": "Sally",
-    "score": 84,
-    "admin": false
-  },
-  {
-    "name": "Jane",
-    "score": 55
-  }
-]
+```json title="Example JSON document"
+{ "abc": [1, 2, 3], "def": [4, 5], "abx": [6], "aby": [] }
 ```
+
+| Query                                     | Result                | Result Path                       | Comment                     |
+| ----------------------------------------- | --------------------- | --------------------------------- | --------------------------- |
+| `$[?match(#, '^ab.*') && length(@) > 0 ]` | `[1,2,3]` <br/> `[6]` | `$['abc']` <br/> `$['abx']`       | Match on object names       |
+| `$.abc[?(# >= 1)]`                        | `2` <br/> `3`         | `$['abc'][1]` <br/> `$['abc'][2]` | Compare current array index |

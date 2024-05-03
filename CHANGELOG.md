@@ -1,5 +1,16 @@
 # JSON P3 Change Log
 
+## Version 1.3.0
+
+**Fixes**
+
+- Fixed the normalized path representation of the non-standard keys selector. Previously the normalized path of a node produced from a keys selector would always select nothing. Note that this fix only applies when the default key token (`~`) is used. Custom key tokens are problematic when it comes to other, co-operating key selectors. If you're only interested in a _values_ from a node list, this wont affect you.
+
+**Features**
+
+- Added the non-standard _key_ selector.
+- Added the non-standard _keys filter_ selector.
+
 ## Version 1.2.1
 
 **Fixes**

@@ -1,6 +1,6 @@
 # Extra JSONPath Syntax
 
-**_New in version 1.2.0_**
+**_New in version 1.2.2_**
 
 JSON P3 includes some extra, non-standard JSONPath syntax that is disabled by default. Setting the [`strict`](../api/namespaces/jsonpath.md#jsonpathenvironmentoptions) option to `false` when instantiating a [`JSONPathEnvironment`](../api/classes/jsonpath.JSONPathEnvironment.md) will enable all non-standard syntax.
 

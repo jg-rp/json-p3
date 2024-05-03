@@ -7,7 +7,8 @@ export enum TokenKind {
   AND = "TOKEN_AND",
   COLON = "TOKEN_COLON",
   COMMA = "TOKEN_COMMA",
-  CURRENT = "TOKEN_CURRENT_NODE",
+  CURRENT = "TOKEN_CURRENT_VALUE",
+  CURRENT_KEY = "TOKEN_CURRENT_KEY", // non-standard, default `#`
   DDOT = "TOKEN_DDOT",
   DOT = "TOKEN_DOT",
   DOUBLE_QUOTE_STRING = "TOKEN_DOUBLE_QUOTE_STRING",
@@ -20,8 +21,11 @@ export enum TokenKind {
   GE = "TOKEN_GE",
   GT = "TOKEN_GT",
   INDEX = "TOKEN_INDEX",
-  KEY = "TOKEN_KEY", // non-standard
-  KEYS = "TOKEN_KEYS", // non-standard
+  KEY = "TOKEN_KEY", // non-standard, default `~<name>`
+  KEY_DOUBLE_QUOTE_STRING = "TOKEN_KEY_DOUBLE_QUOTE_STRING", // non-standard, `~"<name>"`
+  KEY_SINGLE_QUOTE_STRING = "TOKEN_KEY_SINGLE_QUOTE_STRING", // non-standard, `~'<name>'`
+  KEYS = "TOKEN_KEYS", // non-standard, default `~`
+  KEYS_FILTER = "TOKEN_KEYS_FILTER", // non-standard, `~?<expression>`
   LBRACKET = "TOKEN_LBRACKET",
   LE = "TOKEN_LE",
   LG = "TOKEN_LG",

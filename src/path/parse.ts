@@ -28,7 +28,11 @@ import {
 } from "./selectors";
 import { Token, TokenKind, TokenStream } from "./token";
 import { CurrentKey } from "./extra/expression";
-import { KeysSelector } from "./extra/selectors";
+import {
+  KeySelector,
+  KeysSelector,
+  KeysFilterSelector,
+} from "./extra/selectors";
 
 const PRECEDENCE_LOWEST = 1;
 const PRECEDENCE_LOGICAL_OR = 4;
@@ -81,8 +85,7 @@ export class Parser {
       [TokenKind.DOUBLE_QUOTE_STRING, this.parseString],
       [TokenKind.TRUE, this.parseBoolean],
       [TokenKind.FUNCTION, this.parseFunction],
-      [TokenKind.KEY, this.parseCurrentKey],
-      [TokenKind.KEY, this.parseCurrentKey],
+      [TokenKind.CURRENT_KEY, this.parseCurrentKey],
     ]);
   }
 
@@ -129,6 +132,13 @@ export class Parser {
         );
       case TokenKind.WILD:
         return new WildcardSelector(this.environment, stream.current, true);
+      case TokenKind.KEY:
+        return new KeySelector(
+          this.environment,
+          stream.current,
+          stream.current.value,
+          true,
+        );
       case TokenKind.KEYS:
         return new KeysSelector(this.environment, stream.current, true);
       case TokenKind.DDOT: {
@@ -261,6 +271,20 @@ export class Parser {
         case TokenKind.WILD:
           items.push(new WildcardSelector(this.environment, stream.current));
           break;
+        case TokenKind.KEY_SINGLE_QUOTE_STRING:
+        case TokenKind.KEY_DOUBLE_QUOTE_STRING:
+          items.push(
+            new KeySelector(
+              this.environment,
+              stream.current,
+              this.decodeString(stream.current, true),
+              false,
+            ),
+          );
+          break;
+        case TokenKind.KEYS_FILTER:
+          items.push(this.parseFilter(stream, true));
+          break;
         case TokenKind.KEYS:
           items.push(new KeysSelector(this.environment, stream.current));
           break;
@@ -291,7 +315,10 @@ export class Parser {
     return new BracketedSelection(this.environment, token, items);
   }
 
-  protected parseFilter(stream: TokenStream): FilterSelector {
+  protected parseFilter(
+    stream: TokenStream,
+    keys: boolean = false,
+  ): FilterSelector {
     const tok = stream.next();
     const expr = this.parseFilterExpression(stream);
     if (expr instanceof FunctionExtension) {
@@ -303,11 +330,17 @@ export class Parser {
         );
       }
     }
-    return new FilterSelector(
-      this.environment,
-      tok,
-      new LogicalExpression(tok, expr),
-    );
+    return keys
+      ? new KeysFilterSelector(
+          this.environment,
+          tok,
+          new LogicalExpression(tok, expr),
+        )
+      : new FilterSelector(
+          this.environment,
+          tok,
+          new LogicalExpression(tok, expr),
+        );
   }
 
   protected parseBoolean(stream: TokenStream): BooleanLiteral {

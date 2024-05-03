@@ -70,7 +70,7 @@ member-key-shorthand = "~" name-first *name-char
 }
 ```
 
-| Query       | Result            | Result Path                               | Comment                       |
+| Query       | Result            | Result Paths                              | Comment                       |
 | ----------- | ----------------- | ----------------------------------------- | ----------------------------- |
 | `$.a[0].~c` | `"c"`             | `$['a'][0][~'c']`                         | Key of nested object          |
 | `$.a[1].~c` |                   |                                           | Key does not exist            |
@@ -101,9 +101,9 @@ keys-selector       = "~"
 }
 ```
 
-| Query          | Result                                    | Result Path                                                                               | Comment                    |
+| Query          | Result                                    | Result Paths                                                                              | Comment                    |
 | -------------- | ----------------------------------------- | ----------------------------------------------------------------------------------------- | -------------------------- |
-| `$.a[0].~`     | `"b"` <br/> `"c"`                         | `['a'][0][~'b']` <br/> `$['a'][0][~'c']`                                                  | Object keys                |
+| `$.a[0].~`     | `"b"` <br/> `"c"`                         | `$['a'][0][~'b']` <br/> `$['a'][0][~'c']`                                                 | Object keys                |
 | `$.a.~`        |                                           |                                                                                           | Array keys                 |
 | `$.a[0][~, ~]` | `"b"` <br/> `"c"` <br/> `"c"` <br/> `"b"` | `$['a'][0][~'b']` <br/> `$['a'][0][~'c']` <br/> `$['a'][0][~'c']` <br/> `$['a'][0][~'b']` | Non-deterministic ordering |
 | `$..[~]`       | `"a"` <br/> `"b"` <br/> `"c"` <br/> `"b"` | `$[~'a']` <br/> `$['a'][0][~'b']` <br/> `$['a'][0][~'c']` <br/> `$['a'][1][~'b']`         | Descendant keys            |
@@ -116,7 +116,7 @@ The keys filter selector selects names from an object’s name/value members. It
 ~?<logical-expr>
 ```
 
-Whereas the standard filter selector will produce a node for each _value_ from an object’s name/value members - when its expression evaluates to logical `true` - the keys filter selector produces a node for each _name_ in an object’s name/value members.
+Whereas the standard filter selector will produce a node for each _value_ from an object’s name/value members - when its expression evaluates to logical true - the keys filter selector produces a node for each _name_ in an object’s name/value members.
 
 Logical expression syntax and semantics otherwise match that of the standard filter selector. `@` still refers to the current member value. See also the [current key identifier](#current-key-identifier).
 
@@ -136,7 +136,7 @@ filter-selector     = "~?" S logical-expr
 [{ "a": [1, 2, 3], "b": [4, 5] }, { "c": { "x": [1, 2] } }, { "d": [1, 2, 3] }]
 ```
 
-| Query                  | Result            | Result Path                     | Comment                          |
+| Query                  | Result            | Result Paths                    | Comment                          |
 | ---------------------- | ----------------- | ------------------------------- | -------------------------------- |
 | `$.*[~?length(@) > 2]` | `"a"` <br/> `"d"` | `$[0][~'a']` <br/> `$[2][~'d']` | Conditionally select object keys |
 | `$.*[~?@.x]`           | `"c"`             | `$[1][~'c']`                    | Existence test                   |

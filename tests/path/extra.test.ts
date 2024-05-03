@@ -200,3 +200,144 @@ describe("extra errors", () => {
     );
   });
 });
+
+type DocsTestCase = {
+  description: string;
+  path: string;
+  data: JSONValue;
+  want: JSONValue;
+  want_paths: string[];
+};
+
+const DOCS_EXAMPLE_TEST_CASES: DocsTestCase[] = [
+  {
+    description: "key selector, key of nested object",
+    path: "$.a[0].~c",
+    data: {
+      a: [{ b: "x", c: "z" }, { b: "y" }],
+    },
+    want: ["c"],
+    want_paths: ["$['a'][0][~'c']"],
+  },
+  {
+    description: "key selector, key does not exist",
+    path: "$.a[1].~c",
+    data: {
+      a: [{ b: "x", c: "z" }, { b: "y" }],
+    },
+    want: [],
+    want_paths: [],
+  },
+  {
+    description: "key selector, descendant, single quoted key",
+    path: "$..[~'b']",
+    data: {
+      a: [{ b: "x", c: "z" }, { b: "y" }],
+    },
+    want: ["b", "b"],
+    want_paths: ["$['a'][0][~'b']", "$['a'][1][~'b']"],
+  },
+  {
+    description: "key selector, , descendant, double quoted key",
+    path: '$..[~"b"]',
+    data: {
+      a: [{ b: "x", c: "z" }, { b: "y" }],
+    },
+    want: ["b", "b"],
+    want_paths: ["$['a'][0][~'b']", "$['a'][1][~'b']"],
+  },
+  {
+    description: "keys selector, object key",
+    path: "$.a[0].~",
+    data: {
+      a: [{ b: "x", c: "z" }, { b: "y" }],
+    },
+    want: ["b", "c"],
+    want_paths: ["$['a'][0][~'b']", "$['a'][0][~'c']"],
+  },
+  {
+    description: "keys selector, array key",
+    path: "$.a.~",
+    data: {
+      a: [{ b: "x", c: "z" }, { b: "y" }],
+    },
+    want: [],
+    want_paths: [],
+  },
+  // {
+  //   description: "keys selector, non-deterministic ordering",
+  //   path: "$.a[0][~, ~]",
+  //   data: {
+  //     a: [{ b: "x", c: "z" }, { b: "y" }],
+  //   },
+  //   want: ["b", "c", "b", "c"], // non-deterministic
+  //   want_paths: [
+  //     "$['a'][0][~'b']",
+  //     "$['a'][0][~'c']",
+  //     "$['a'][0][~'b']",
+  //     "$['a'][0][~'c']",
+  //   ],
+  // },
+  {
+    description: "keys selector, descendant keys",
+    path: "$..[~]",
+    data: {
+      a: [{ b: "x", c: "z" }, { b: "y" }],
+    },
+    want: ["a", "b", "c", "b"],
+    want_paths: [
+      "$[~'a']",
+      "$['a'][0][~'b']",
+      "$['a'][0][~'c']",
+      "$['a'][1][~'b']",
+    ],
+  },
+  {
+    description: "keys filter selector, conditionally select object keys",
+    path: "$.*[~?length(@) > 2]",
+    data: [{ a: [1, 2, 3], b: [4, 5] }, { c: { x: [1, 2] } }, { d: [1, 2, 3] }],
+    want: ["a", "d"],
+    want_paths: ["$[0][~'a']", "$[2][~'d']"],
+  },
+  {
+    description: "keys filter selector, existence test",
+    path: "$.*[~?@.x]",
+    data: [{ a: [1, 2, 3], b: [4, 5] }, { c: { x: [1, 2] } }, { d: [1, 2, 3] }],
+    want: ["c"],
+    want_paths: ["$[1][~'c']"],
+  },
+  {
+    description: "keys filter selector, keys from an array",
+    path: "$[~?(true == true)]",
+    data: [{ a: [1, 2, 3], b: [4, 5] }, { c: { x: [1, 2] } }, { d: [1, 2, 3] }],
+    want: [],
+    want_paths: [],
+  },
+  {
+    description: "current key identifier, match on object names",
+    path: "$[?match(#, '^ab.*') && length(@) > 0 ]",
+    data: { abc: [1, 2, 3], def: [4, 5], abx: [6], aby: [] },
+    want: [[1, 2, 3], [6]],
+    want_paths: ["$['abc']", "$['abx']"],
+  },
+  {
+    description: "current key identifier, compare current array index",
+    path: "$.abc[?(# >= 1)]",
+    data: { abc: [1, 2, 3], def: [4, 5], abx: [6], aby: [] },
+    want: [2, 3],
+    want_paths: ["$['abc'][1]", "$['abc'][2]"],
+  },
+];
+
+describe("extra docs examples", () => {
+  test.each<DocsTestCase>(DOCS_EXAMPLE_TEST_CASES)(
+    "$description",
+    ({ path, data, want, want_paths }: DocsTestCase) => {
+      expect(env.query(path, data).values()).toStrictEqual(want);
+      expect(env.query(path, data).paths()).toStrictEqual(want_paths);
+      expect(
+        Array.from(env.lazyQuery(path, data)).map((n) => n.value),
+      ).toStrictEqual(want);
+    },
+  );
+});

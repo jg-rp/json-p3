@@ -30,7 +30,7 @@ function ResultTab({ fileName, file, setFileName }) {
         "flex cursor-pointer items-center border-none px-4 py-1 text-sm font-medium",
         fileName === file.name
           ? "bg-[#F8F8FF] text-slate-700 dark:bg-[#1E1E1E] dark:text-neutral-300"
-          : "bg-slate-200 text-slate-500 hover:bg-[#F8F8FF] hover:text-slate-700 dark:bg-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-600",
+          : "bg-slate-200 text-slate-500 hover:bg-[#F8F8FF] hover:text-slate-700 dark:bg-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-600 dark:hover:text-neutral-300",
       )}
       onClick={() => setFileName(fileName)}
     >

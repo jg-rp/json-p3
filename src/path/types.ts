@@ -28,3 +28,5 @@ export function hasStringKey(
 ): value is { [key: string]: unknown } {
   return isObject(value) && Object.hasOwn(value, key);
 }
+
+export const KEY_MARK = "\x02";

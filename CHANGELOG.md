@@ -8,8 +8,8 @@
 
 **Features**
 
-- Added the non-standard _key_ selector.
-- Added the non-standard _keys filter_ selector.
+- Added the non-standard _key_ selector ([docs](https://jg-rp.github.io/json-p3/guides/jsonpath-extra#key-selector)).
+- Added the non-standard _keys filter_ selector ([docs](https://jg-rp.github.io/json-p3/guides/jsonpath-extra#keys-filter-selector)).
 
 ## Version 1.2.1
 

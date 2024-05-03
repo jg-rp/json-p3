@@ -26,7 +26,7 @@ export {
   JSONPathRecursionLimitError,
 } from "./errors";
 
-export { Nothing } from "./types";
+export { Nothing, KEY_MARK } from "./types";
 export type { JSONPathValue, FilterContext } from "./types";
 
 export const DEFAULT_ENVIRONMENT = new JSONPathEnvironment();

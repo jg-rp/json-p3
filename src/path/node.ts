@@ -1,6 +1,6 @@
 import { JSONPointer } from "../pointer";
 import { JSONValue, isString } from "../types";
-import { KEY_MARK } from "./extra/selectors";
+import { KEY_MARK } from "./types";
 
 /**
  * The pair of a JSON value and its location found in the target JSON value.

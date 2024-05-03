@@ -4,9 +4,7 @@ import { LogicalExpression } from "../expression";
 import { JSONPathNode } from "../node";
 import { JSONPathSelector } from "../selectors";
 import { Token } from "../token";
-import { FilterContext, hasStringKey } from "../types";
-
-export const KEY_MARK = "\x02";
+import { FilterContext, KEY_MARK, hasStringKey } from "../types";
 
 export class KeySelector extends JSONPathSelector {
   constructor(

@@ -150,8 +150,6 @@ It is a syntax error to follow the current key identifier with segments, as if i
 
 When used as an argument to a function, the current key is of `ValueType`, and outside a function call it must be compared.
 
-When applied to a primitive value, the keys filter selector selects nothing.
-
 ### Syntax
 
 ```

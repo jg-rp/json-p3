@@ -58,9 +58,56 @@ export class Match implements FilterFunction {
 
   protected fullMatch(pattern: string): string {
     const parts: string[] = [];
-    if (!pattern.startsWith("^")) parts.push("^");
-    parts.push(pattern);
-    if (!pattern.endsWith("$")) parts.push("$");
+    let nonCaptureGroup = false;
+
+    if (!pattern.startsWith("^") && !pattern.startsWith("^(")) {
+      nonCaptureGroup = true;
+      parts.push("^(?:");
+    }
+    parts.push(this.mapRegexp(pattern));
+
+    if (nonCaptureGroup && !pattern.endsWith("$") && !pattern.endsWith(")$")) {
+      parts.push(")$");
+    }
+
+    return parts.join("");
+  }
+
+  // See https://datatracker.ietf.org/doc/html/rfc9485#name-ecmascript-regexps
+  protected mapRegexp(pattern: string): string {
+    let escaped = false;
+    let charClass = false;
+    const parts: string[] = [];
+    for (const ch of pattern) {
+      switch (ch) {
+        case ".":
+          if (!escaped && !charClass) {
+            parts.push("(?:(?![\r\n])\\P{Cs}|\\p{Cs}\\p{Cs})");
+          } else {
+            parts.push(ch);
+            escaped = false;
+          }
+          break;
+        case "\\":
+          escaped = true;
+          parts.push(ch);
+          break;
+        case "[":
+          charClass = true;
+          escaped = false;
+          parts.push(ch);
+          break;
+        case "]":
+          charClass = false;
+          escaped = false;
+          parts.push(ch);
+          break;
+        default:
+          escaped = false;
+          parts.push(ch);
+          break;
+      }
+    }
     return parts.join("");
   }
 }

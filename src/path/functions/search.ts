@@ -48,12 +48,50 @@ export class Search implements FilterFunction {
     }
 
     try {
-      const re = new RegExp(pattern, "u");
+      const re = new RegExp(this.mapRegexp(pattern), "u");
       if (this.cacheSize > 0) this.#cache.set(pattern, re);
       return !!s.match(re);
     } catch (error) {
       if (this.throwErrors) throw error;
       return false;
     }
+  }
+
+  // See https://datatracker.ietf.org/doc/html/rfc9485#name-ecmascript-regexps
+  protected mapRegexp(pattern: string): string {
+    let escaped = false;
+    let charClass = false;
+    const parts: string[] = [];
+    for (const ch of pattern) {
+      switch (ch) {
+        case ".":
+          if (!escaped && !charClass) {
+            parts.push("(?:(?![\r\n])\\P{Cs}|\\p{Cs}\\p{Cs})");
+          } else {
+            parts.push(ch);
+            escaped = false;
+          }
+          break;
+        case "\\":
+          escaped = true;
+          parts.push(ch);
+          break;
+        case "[":
+          charClass = true;
+          escaped = false;
+          parts.push(ch);
+          break;
+        case "]":
+          charClass = false;
+          escaped = false;
+          parts.push(ch);
+          break;
+        default:
+          escaped = false;
+          parts.push(ch);
+          break;
+      }
+    }
+    return parts.join("");
   }
 }

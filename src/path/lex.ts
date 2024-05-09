@@ -367,6 +367,7 @@ function lexInsideBracketedSelection(l: Lexer): StateFn | null {
     }
 
     if (!l.environment.strict && l.acceptMatchRun(l.environment.keysPattern)) {
+      // FIXME: fall back to legacy behavior if keysPattern is not the default
       switch (l.peek()) {
         case "'":
           l.ignore(); // ~
@@ -377,7 +378,6 @@ function lexInsideBracketedSelection(l: Lexer): StateFn | null {
           l.next();
           return lexDoubleQuoteKeyString(l);
         case "?":
-          l.ignore(); // ~
           l.next();
           l.emit(TokenKind.KEYS_FILTER);
           l.filterLevel += 1;

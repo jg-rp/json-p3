@@ -1,5 +1,11 @@
 # JSON P3 Change Log
 
+## Version 1.3.1 (unreleased)
+
+**Fixes**
+
+- Fixed RegExp to I-Regex pattern mapping with the `match` and `search` filter functions. We now correctly match the special `.` character to everything other than `\r` and `\n`.
+
 ## Version 1.3.0
 
 **Fixes**

@@ -1,5 +1,6 @@
 import { LRUCache } from "../lru_cache";
 import { FilterFunction, FunctionExpressionType } from "./function";
+import { mapRegexp } from "./pattern";
 
 export type MatchFilterFunctionOptions = {
   /**
@@ -58,56 +59,11 @@ export class Match implements FilterFunction {
 
   protected fullMatch(pattern: string): string {
     const parts: string[] = [];
-    let nonCaptureGroup = false;
-
-    if (!pattern.startsWith("^") && !pattern.startsWith("^(")) {
-      nonCaptureGroup = true;
-      parts.push("^(?:");
-    }
-    parts.push(this.mapRegexp(pattern));
-
-    if (nonCaptureGroup && !pattern.endsWith("$") && !pattern.endsWith(")$")) {
-      parts.push(")$");
-    }
-
-    return parts.join("");
-  }
-
-  // See https://datatracker.ietf.org/doc/html/rfc9485#name-ecmascript-regexps
-  protected mapRegexp(pattern: string): string {
-    let escaped = false;
-    let charClass = false;
-    const parts: string[] = [];
-    for (const ch of pattern) {
-      switch (ch) {
-        case ".":
-          if (!escaped && !charClass) {
-            parts.push("(?:(?![\r\n])\\P{Cs}|\\p{Cs}\\p{Cs})");
-          } else {
-            parts.push(ch);
-            escaped = false;
-          }
-          break;
-        case "\\":
-          escaped = true;
-          parts.push(ch);
-          break;
-        case "[":
-          charClass = true;
-          escaped = false;
-          parts.push(ch);
-          break;
-        case "]":
-          charClass = false;
-          escaped = false;
-          parts.push(ch);
-          break;
-        default:
-          escaped = false;
-          parts.push(ch);
-          break;
-      }
-    }
+    const explicitCaret = pattern.startsWith("^");
+    const explicitDollar = pattern.endsWith("$");
+    if (!explicitCaret && !explicitDollar) parts.push("^(?:");
+    parts.push(mapRegexp(pattern));
+    if (!explicitCaret && !explicitDollar) parts.push(")$");
     return parts.join("");
   }
 }

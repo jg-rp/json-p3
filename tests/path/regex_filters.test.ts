@@ -56,11 +56,26 @@ describe("match filter", () => {
   });
   test("explicit end dollar", () => {
     const env = new JSONPathEnvironment();
-    const query = "$[?match(@, '.*?bc$')]";
+    const query = "$[?match(@, '.bc$')]";
     const data = ["abcd", "abc", "axc"];
     const rv = env.query(query, data);
     expect(rv.values()).toStrictEqual(["abc"]);
   });
+  // test("handle escaped left square bracket", () => {
+  //   const env = new JSONPathEnvironment();
+  //   const query = "$[?match(@, 'ab\\\\[.d')]";
+  //   const data = ["abcd", "ab.d", "ab[d"];
+  //   const rv = env.query(query, data);
+  //   expect(rv.values()).toStrictEqual(["ab[d"]);
+  // });
+
+  // test("handle escaped backslash before dot", () => {
+  //   const env = new JSONPathEnvironment();
+  //   const query = "$[?match(@, 'ab\\\\\\\\.d')]";
+  //   const data = ["abcd", "ab.d", "ab\\d"];
+  //   const rv = env.query(query, data);
+  //   expect(rv.values()).toStrictEqual(["ab\\d"]);
+  // });
 });
 
 describe("search filter", () => {

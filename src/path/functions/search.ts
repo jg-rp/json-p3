@@ -1,6 +1,9 @@
+import { check } from "iregexp-check";
 import { LRUCache } from "../lru_cache";
 import { FilterFunction, FunctionExpressionType } from "./function";
 import { mapRegexp } from "./pattern";
+import { IRegexpError } from "../errors";
+import { isString } from "../../types";
 
 export type SearchFilterFunctionOptions = {
   /**
@@ -15,6 +18,16 @@ export type SearchFilterFunctionOptions = {
    * and return _false_.
    */
   throwErrors?: boolean;
+
+  /**
+   * If _true_, check that regexp patterns are valid according to I-Regexp.
+   * The standard and default behavior is to silently return _false_ if a
+   * pattern is invalid.
+   *
+   * If `iRegexpCheck` is _true_ and `throwErrors` is _true_, a `IRegexpError`
+   * will be thrown.
+   */
+  iRegexpCheck?: boolean;
 };
 
 export class Search implements FilterFunction {
@@ -27,11 +40,13 @@ export class Search implements FilterFunction {
 
   readonly cacheSize: number;
   readonly throwErrors: boolean;
+  readonly iRegexpCheck: boolean;
   #cache: LRUCache<string, RegExp>;
 
   constructor(readonly options: SearchFilterFunctionOptions = {}) {
     this.cacheSize = options.cacheSize ?? 10;
     this.throwErrors = options.throwErrors ?? false;
+    this.iRegexpCheck = options.iRegexpCheck ?? true;
     this.#cache = new LRUCache(this.cacheSize);
   }
 
@@ -46,6 +61,24 @@ export class Search implements FilterFunction {
           return false;
         }
       }
+    }
+
+    if (!isString(pattern)) {
+      if (this.throwErrors) {
+        throw new IRegexpError(
+          `match() expected a string pattern, found ${pattern}`,
+        );
+      }
+      return false;
+    }
+
+    if (this.iRegexpCheck && !check(pattern)) {
+      if (this.throwErrors) {
+        throw new IRegexpError(
+          `pattern ${pattern} is not a valid I-Regexp pattern`,
+        );
+      }
+      return false;
     }
 
     try {

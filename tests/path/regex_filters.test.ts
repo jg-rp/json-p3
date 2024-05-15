@@ -1,4 +1,5 @@
 import { JSONPathEnvironment } from "../../src/path";
+import { IRegexpError } from "../../src/path/errors";
 import { Match, Search } from "../../src/path/functions";
 
 describe("match filter", () => {
@@ -23,7 +24,7 @@ describe("match filter", () => {
       new Match({ cacheSize: 0, throwErrors: true }),
     );
     expect(() => env.query("$[?match(@.a, 'a.*(')]", [{ a: "ab" }])).toThrow(
-      SyntaxError,
+      IRegexpError,
     );
   });
   test("don't replace dot in character group", () => {
@@ -101,6 +102,6 @@ describe("search filter", () => {
     );
     expect(() =>
       env.query("$[?search(@.a, 'a.*(')]", [{ a: "the end is ab" }]),
-    ).toThrow(SyntaxError);
+    ).toThrow(IRegexpError);
   });
 });

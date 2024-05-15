@@ -126,3 +126,14 @@ export class JSONPathRecursionLimitError extends JSONPathError {
     this.message = withErrorContext(message, token);
   }
 }
+
+/**
+ * Error thrown due to invalid I-Regexp syntax.
+ */
+export class IRegexpError extends Error {
+  constructor(readonly message: string) {
+    super(message);
+    Object.setPrototypeOf(this, new.target.prototype);
+    this.name = "IRegexpError";
+  }
+}

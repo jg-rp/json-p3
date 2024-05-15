@@ -49,6 +49,7 @@ export class Match implements FilterFunction {
     this.#cache = new LRUCache(this.cacheSize);
   }
 
+  // eslint-disable-next-line sonarjs/cognitive-complexity
   public call(s: string, pattern: string): boolean {
     if (this.cacheSize > 0) {
       const re = this.#cache.get(pattern);

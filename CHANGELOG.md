@@ -4,7 +4,7 @@
 
 **Fixes**
 
-- Fixed more I-Regex to RegExp pattern mapping. See [jsonpath-compliance-test-suite#77](https://github.com/jsonpath-standard/jsonpath-compliance-test-suite/pull/77).
+- Fixed more I-Regexp to RegExp pattern mapping. See [jsonpath-compliance-test-suite#77](https://github.com/jsonpath-standard/jsonpath-compliance-test-suite/pull/77).
 
 **Compliance**
 
@@ -14,7 +14,7 @@
 
 **Fixes**
 
-- Fixed I-Regex to RegExp pattern mapping with the `match` and `search` filter functions. We now correctly match the special `.` character to everything other than `\r` and `\n`.
+- Fixed I-Regexp to RegExp pattern mapping with the `match` and `search` filter functions. We now correctly match the special `.` character to everything other than `\r` and `\n`.
 
 ## Version 1.3.0
 

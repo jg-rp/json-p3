@@ -23,7 +23,7 @@ export type MatchFilterFunctionOptions = {
    * The standard and default behavior is to silently return _false_ if a
    * pattern is invalid.
    *
-   * If `iRegexpCheck` is _true_ and `throwErrors` is _true_, a `IRegexpError`
+   * If `iRegexpCheck` is _true_ and `throwErrors` is _true_, an `IRegexpError`
    * will be thrown.
    */
   iRegexpCheck?: boolean;

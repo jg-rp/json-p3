@@ -5,9 +5,6 @@
 **Fixes**
 
 - Fixed more I-Regexp to RegExp pattern mapping. See [jsonpath-compliance-test-suite#77](https://github.com/jsonpath-standard/jsonpath-compliance-test-suite/pull/77).
-
-**Compliance**
-
 - We now check that regular expression patterns passed to `match` and `search` are valid according to RFC 9485. The standard behavior is to silently return `false` from these filter function if the pattern is invalid. The `throwErrors` option can be passed to `Match` and/or `Search` to throw an error instead, and the `iRegexpCheck` option can be set to `false` to disable I-Regexp checks.
 
 ## Version 1.3.1

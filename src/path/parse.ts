@@ -332,12 +332,7 @@ export class Parser {
       }
     }
 
-    if (expr instanceof FilterExpressionLiteral) {
-      throw new JSONPathSyntaxError(
-        "filter expression literals must be compared",
-        expr.token,
-      );
-    }
+    this.throwForLiteral(expr);
 
     return keys
       ? new KeysFilterSelector(
@@ -397,18 +392,8 @@ export class Parser {
       this.throwForNonComparable(left);
       this.throwForNonComparable(right);
     } else {
-      if (left instanceof FilterExpressionLiteral) {
-        throw new JSONPathSyntaxError(
-          "filter expression literals must be compared",
-          left.token,
-        );
-      }
-      if (right instanceof FilterExpressionLiteral) {
-        throw new JSONPathSyntaxError(
-          "filter expression literals must be compared",
-          right.token,
-        );
-      }
+      this.throwForLiteral(left);
+      this.throwForLiteral(right);
     }
 
     return new InfixExpression(tok, left, operator, right);
@@ -580,6 +565,15 @@ export class Parser {
           expr.token,
         );
       }
+    }
+  }
+
+  protected throwForLiteral(expr: FilterExpression): void {
+    if (expr instanceof FilterExpressionLiteral) {
+      throw new JSONPathSyntaxError(
+        `filter expression literals (${expr.toString()}) must be compared`,
+        expr.token,
+      );
     }
   }
 }

@@ -3,6 +3,7 @@ import { JSONPathSyntaxError, JSONPathTypeError } from "./errors";
 import {
   BooleanLiteral,
   FilterExpression,
+  FilterExpressionLiteral,
   FunctionExtension,
   InfixExpression,
   LogicalExpression,
@@ -330,6 +331,9 @@ export class Parser {
         );
       }
     }
+
+    this.throwForLiteral(expr);
+
     return keys
       ? new KeysFilterSelector(
           this.environment,
@@ -387,7 +391,11 @@ export class Parser {
     if (COMPARISON_OPERATORS.has(operator)) {
       this.throwForNonComparable(left);
       this.throwForNonComparable(right);
+    } else {
+      this.throwForLiteral(left);
+      this.throwForLiteral(right);
     }
+
     return new InfixExpression(tok, left, operator, right);
   }
 
@@ -557,6 +565,15 @@ export class Parser {
           expr.token,
         );
       }
+    }
+  }
+
+  protected throwForLiteral(expr: FilterExpression): void {
+    if (expr instanceof FilterExpressionLiteral) {
+      throw new JSONPathSyntaxError(
+        `filter expression literals (${expr.toString()}) must be compared`,
+        expr.token,
+      );
     }
   }
 }

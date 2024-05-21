@@ -1,10 +1,10 @@
 # JSON P3 Change Log
 
-## Version 1.3.3 (unreleased)
+## Version 1.3.3
 
 **Fixes**
 
-- Fixed handling of JSONPath filter expression literals. We now throw a `JSONPathSyntaxError` if a filter expression contains a literal (string, int, float, null) that is not part of a comparison or function expression. See [jsonpath-compliance-test-suite #81](https://github.com/jsonpath-standard/jsonpath-compliance-test-suite/pull/81).
+- Fixed handling of JSONPath filter expression literals. We now throw a `JSONPathSyntaxError` if a filter expression contains a literal (string, int, float, boolean, null) that is not part of a comparison or function expression. See [jsonpath-compliance-test-suite #81](https://github.com/jsonpath-standard/jsonpath-compliance-test-suite/pull/81).
 
 ## Version 1.3.2
 

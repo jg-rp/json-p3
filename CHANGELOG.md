@@ -1,5 +1,11 @@
 # JSON P3 Change Log
 
+## Version 1.3.4
+
+**Fixes**
+
+- Fixed decoding of JSONPath escape sequences (those found in name selectors and string literals). Previously we were relying on `JSON.parse()` to unescape strings containing escape sequences, now we have our own `unescapeString()` function that rejects invalid surrogate pairs. See [jsonpath-compliance-test-suite #87](https://github.com/jsonpath-standard/jsonpath-compliance-test-suite/pull/87).
+
 ## Version 1.3.3
 
 **Fixes**

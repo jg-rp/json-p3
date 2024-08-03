@@ -548,7 +548,7 @@ export class Parser {
       const ch = value[index];
       if (ch === "\\") {
         // Handle escape sequences
-        index += 1; // Move past '/'
+        index += 1; // Move past '\'
 
         switch (value[index]) {
           case '"':

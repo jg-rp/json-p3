@@ -538,16 +538,11 @@ export class Parser {
     );
   }
 
-  // eslint-disable-next-line sonarjs/cognitive-complexity
   protected unescapeString(value: string, token: Token): string {
     const rv: string[] = [];
     const length = value.length;
     let index = 0;
-    let digits: string;
     let codepoint: number;
-    let lowSurrogate: number;
-    let unescaped: string;
-    let codepointAt: number | undefined;
 
     while (index < length) {
       const ch = value[index];
@@ -581,98 +576,14 @@ export class Parser {
             rv.push("\t");
             break;
           case "u":
-            if (index + 4 >= length) {
-              throw new JSONPathSyntaxError(
-                `invalid escape sequence at offset ${index}`,
-                token,
-              );
-            }
-
-            index += 1;
-
-            digits = value.slice(index, index + 4);
-            codepoint = this.parseInt16(digits, token);
-
-            if (isNaN(codepoint)) {
-              throw new JSONPathSyntaxError(
-                `invalid escape sequence at offset ${index}`,
-                token,
-              );
-            }
-
-            if (
-              index + 5 < length &&
-              value[index + 4] === "\\" &&
-              value[index + 5] === "u"
-            ) {
-              // expect a surrogate pair
-              if (index + 9 >= length || !isHighSurrogate(codepoint)) {
-                throw new JSONPathSyntaxError(
-                  `invalid escape sequence at offset ${index}`,
-                  token,
-                );
-              }
-
-              digits = value.slice(index + 6, index + 10);
-              lowSurrogate = this.parseInt16(digits, token);
-
-              if (isNaN(lowSurrogate) || !isLowSurrogate(lowSurrogate)) {
-                throw new JSONPathSyntaxError(
-                  `invalid escape sequence at offset ${index + 4}`,
-                  token,
-                );
-              }
-
-              codepoint =
-                0x10000 +
-                (((codepoint & 0x03ff) << 10) | (lowSurrogate & 0x03ff));
-
-              index += 6;
-            } else if (
-              isHighSurrogate(codepoint) ||
-              isLowSurrogate(codepoint)
-            ) {
-              throw new JSONPathSyntaxError(
-                `invalid escape sequence at offset ${index}`,
-                token,
-              );
-            }
-
-            try {
-              unescaped = String.fromCodePoint(codepoint);
-            } catch {
-              // TODO: offset is wrong
-              throw new JSONPathSyntaxError(
-                `invalid escape sequence at offset ${index}`,
-                token,
-              );
-            }
-
-            codepointAt = unescaped.codePointAt(0);
-            if (codepointAt !== undefined && codepointAt <= 0x1f) {
-              throw new JSONPathSyntaxError(
-                `invalid character at offset ${index}`,
-                token,
-              );
-            }
-
-            rv.push(unescaped);
-            index += 3;
+            [codepoint, index] = this.decodeEscapeSequence(value, index, token);
+            rv.push(this.stringFromCodePoint(codepoint, token));
             break;
           default:
-            throw new JSONPathSyntaxError(
-              `invalid escape sequence at offset ${index}`,
-              token,
-            );
+            throw new JSONPathSyntaxError("invalid escape sequence", token);
         }
       } else {
-        codepointAt = ch.codePointAt(0);
-        if (codepointAt !== undefined && codepointAt <= 0x1f) {
-          throw new JSONPathSyntaxError(
-            `invalid character at offset ${index}`,
-            token,
-          );
-        }
+        this.stringFromCodePoint(ch.codePointAt(0), token);
         rv.push(ch);
       }
 
@@ -682,6 +593,72 @@ export class Parser {
     return rv.join("");
   }
 
+  /**
+   * Decode a `\uXXXX` or `\uXXXX\uXXXX` escape sequence from _value_ at _index_.
+   *
+   * @param value - A string value containing the sequence to decode.
+   * @param index - The start index of an escape sequence in _value_.
+   * @param token - The token for the string value.
+   * @returns - A codepoint, new index tuple.
+   */
+  protected decodeEscapeSequence(
+    value: string,
+    index: number,
+    token: Token,
+  ): [number, number] {
+    const length = value.length;
+
+    if (index + 4 >= length) {
+      throw new JSONPathSyntaxError("invalid escape sequence", token);
+    }
+
+    index += 1; // Move past 'u'
+    let codepoint = this.parseInt16(value.slice(index, index + 4), token);
+
+    if (isLowSurrogate(codepoint)) {
+      throw new JSONPathSyntaxError("invalid escape sequence", token);
+    }
+
+    if (isHighSurrogate(codepoint)) {
+      // Expect a surrogate pair.
+      if (
+        !(
+          index + 9 < length &&
+          value[index + 4] === "\\" &&
+          value[index + 5] === "u"
+        )
+      ) {
+        throw new JSONPathSyntaxError("invalid escape sequence", token);
+      }
+
+      const lowSurrogate = this.parseInt16(
+        value.slice(index + 6, index + 10),
+        token,
+      );
+
+      if (!isLowSurrogate(lowSurrogate)) {
+        throw new JSONPathSyntaxError("invalid escape sequence", token);
+      }
+
+      codepoint =
+        0x10000 + (((codepoint & 0x03ff) << 10) | (lowSurrogate & 0x03ff));
+
+      return [codepoint, index + 9];
+    }
+
+    return [codepoint, index + 3];
+  }
+
+  /**
+   * Parse a hexadecimal string as an integer.
+   *
+   * @param digits - Hexadecimal digit string.
+   * @param token - The token for the string value.
+   * @returns - The number representation of _digits_.
+   *
+   * Note that we're not using `parseInt(digits, 16)` because it accepts `+`
+   * and `-` and things we don't allow.
+   */
   protected parseInt16(digits: string, token: Token): number {
     const encoder = new TextEncoder();
     let codepoint = 0;
@@ -726,6 +703,22 @@ export class Parser {
     return codepoint;
   }
 
+  /** Check the codepoint is valid and return its string representation. */
+  protected stringFromCodePoint(
+    codepoint: number | undefined,
+    token: Token,
+  ): string {
+    if (codepoint === undefined || codepoint <= 0x1f) {
+      throw new JSONPathSyntaxError(`invalid character`, token);
+    }
+
+    try {
+      return String.fromCodePoint(codepoint);
+    } catch {
+      throw new JSONPathSyntaxError("invalid escape sequence", token);
+    }
+  }
+
   protected throwForNonComparable(expr: FilterExpression): void {
     if (
       (expr instanceof RootQuery || expr instanceof RelativeQuery) &&
@@ -758,10 +751,10 @@ export class Parser {
   }
 }
 
-function isHighSurrogate(codepoint: number): boolean {
+export function isHighSurrogate(codepoint: number): boolean {
   return codepoint >= 0xd800 && codepoint <= 0xdbff;
 }
 
-function isLowSurrogate(codepoint: number): boolean {
+export function isLowSurrogate(codepoint: number): boolean {
   return codepoint >= 0xdc00 && codepoint <= 0xdfff;
 }

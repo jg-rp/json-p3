@@ -576,7 +576,7 @@ export class Parser {
             rv.push("\t");
             break;
           case "u":
-            [codepoint, index] = this.decodeEscapeSequence(value, index, token);
+            [codepoint, index] = this.decodeHexChar(value, index, token);
             rv.push(this.stringFromCodePoint(codepoint, token));
             break;
           default:
@@ -605,7 +605,7 @@ export class Parser {
    * @param token - The token for the string value.
    * @returns - A codepoint, new index tuple.
    */
-  protected decodeEscapeSequence(
+  protected decodeHexChar(
     value: string,
     index: number,
     token: Token,
@@ -620,7 +620,7 @@ export class Parser {
     }
 
     index += 1; // Move past 'u'
-    let codepoint = this.parseInt16(value.slice(index, index + 4), token);
+    let codepoint = this.parseHexDigits(value.slice(index, index + 4), token);
 
     if (isLowSurrogate(codepoint)) {
       throw new JSONPathSyntaxError(
@@ -644,7 +644,7 @@ export class Parser {
         );
       }
 
-      const lowSurrogate = this.parseInt16(
+      const lowSurrogate = this.parseHexDigits(
         value.slice(index + 6, index + 10),
         token,
       );
@@ -675,7 +675,7 @@ export class Parser {
    * Note that we're not using `parseInt(digits, 16)` because it accepts `+`
    * and `-` and things we don't allow.
    */
-  protected parseInt16(digits: string, token: Token): number {
+  protected parseHexDigits(digits: string, token: Token): number {
     const encoder = new TextEncoder();
     let codepoint = 0;
     for (const digit of encoder.encode(digits)) {

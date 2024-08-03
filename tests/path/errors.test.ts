@@ -123,3 +123,64 @@ describe("filter expression EOF", () => {
     );
   });
 });
+
+describe("escape sequence decode errors", () => {
+  const env = new JSONPathEnvironment();
+
+  test("unknown escape sequence", () => {
+    const query = String.raw`$['ab\xc']`;
+    // From the lexer
+    expect(() => env.query(query, {})).toThrow(JSONPathSyntaxError);
+    expect(() => env.query(query, {})).toThrow(
+      "invalid escape ('['ab\\xc']':6)",
+    );
+  });
+
+  test("incomplete \\u escape sequence at end of string", () => {
+    const query = String.raw`$['abc\u263']`;
+    expect(() => env.query(query, {})).toThrow(JSONPathSyntaxError);
+    expect(() => env.query(query, {})).toThrow(
+      "incomplete escape sequence at index 6 ('$['abc\\u2':3)",
+    );
+  });
+
+  test("incomplete surrogate pair at end of string", () => {
+    const query = String.raw`$['abc\uD83D\uDE0']`;
+    expect(() => env.query(query, {})).toThrow(JSONPathSyntaxError);
+    expect(() => env.query(query, {})).toThrow(
+      "incomplete escape sequence at index 6 ('$['abc\\uD':3)",
+    );
+  });
+
+  test("high high surrogate pair", () => {
+    const query = String.raw`$['ab\uD800\uD800c']`;
+    expect(() => env.query(query, {})).toThrow(JSONPathSyntaxError);
+    expect(() => env.query(query, {})).toThrow(
+      "unexpected codepoint at index 11 ('$['ab\\uD8':3)",
+    );
+  });
+
+  test("high surrogate followed by non-surrogate", () => {
+    const query = String.raw`$['ab\uD800\u263Ac']`;
+    expect(() => env.query(query, {})).toThrow(JSONPathSyntaxError);
+    expect(() => env.query(query, {})).toThrow(
+      "unexpected codepoint at index 11 ('$['ab\\uD8':3)",
+    );
+  });
+
+  test("just a low surrogate", () => {
+    const query = String.raw`$['ab\uDC00c']`;
+    expect(() => env.query(query, {})).toThrow(JSONPathSyntaxError);
+    expect(() => env.query(query, {})).toThrow(
+      "unexpected low surrogate codepoint at index 5 ('$['ab\\uDC':3)",
+    );
+  });
+
+  test("non-hex digits", () => {
+    const query = String.raw`$['ab\u263Xc']`;
+    expect(() => env.query(query, {})).toThrow(JSONPathSyntaxError);
+    expect(() => env.query(query, {})).toThrow(
+      "invalid \\uXXXX escape sequence ('$['ab\\u26':3)",
+    );
+  });
+});

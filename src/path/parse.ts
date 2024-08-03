@@ -548,7 +548,7 @@ export class Parser {
       const ch = value[index];
       if (ch === "\\") {
         // Handle escape sequences
-        index += 1;
+        index += 1; // Move past '/'
 
         switch (value[index]) {
           case '"':
@@ -580,7 +580,11 @@ export class Parser {
             rv.push(this.stringFromCodePoint(codepoint, token));
             break;
           default:
-            throw new JSONPathSyntaxError("invalid escape sequence", token);
+            // TODO: This is unreachable. The lexer will catch unknown escape sequences.
+            throw new JSONPathSyntaxError(
+              `unknown escape sequence at index ${token.index + index - 1}`,
+              token,
+            );
         }
       } else {
         this.stringFromCodePoint(ch.codePointAt(0), token);
@@ -609,14 +613,20 @@ export class Parser {
     const length = value.length;
 
     if (index + 4 >= length) {
-      throw new JSONPathSyntaxError("invalid escape sequence", token);
+      throw new JSONPathSyntaxError(
+        `incomplete escape sequence at index ${token.index + index - 1}`,
+        token,
+      );
     }
 
     index += 1; // Move past 'u'
     let codepoint = this.parseInt16(value.slice(index, index + 4), token);
 
     if (isLowSurrogate(codepoint)) {
-      throw new JSONPathSyntaxError("invalid escape sequence", token);
+      throw new JSONPathSyntaxError(
+        `unexpected low surrogate codepoint at index ${token.index + index - 2}`,
+        token,
+      );
     }
 
     if (isHighSurrogate(codepoint)) {
@@ -628,7 +638,10 @@ export class Parser {
           value[index + 5] === "u"
         )
       ) {
-        throw new JSONPathSyntaxError("invalid escape sequence", token);
+        throw new JSONPathSyntaxError(
+          `incomplete escape sequence at index ${token.index + index - 2}`,
+          token,
+        );
       }
 
       const lowSurrogate = this.parseInt16(
@@ -637,7 +650,10 @@ export class Parser {
       );
 
       if (!isLowSurrogate(lowSurrogate)) {
-        throw new JSONPathSyntaxError("invalid escape sequence", token);
+        throw new JSONPathSyntaxError(
+          `unexpected codepoint at index ${token.index + index + 4}`,
+          token,
+        );
       }
 
       codepoint =
@@ -695,7 +711,7 @@ export class Parser {
           break;
         default:
           throw new JSONPathSyntaxError(
-            `invalid \\uXXXX escape sequence (${digit})`,
+            "invalid \\uXXXX escape sequence",
             token,
           );
       }
@@ -715,6 +731,7 @@ export class Parser {
     try {
       return String.fromCodePoint(codepoint);
     } catch {
+      // This should not be reachable.
       throw new JSONPathSyntaxError("invalid escape sequence", token);
     }
   }

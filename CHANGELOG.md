@@ -1,10 +1,14 @@
 # JSON P3 Change Log
 
-## Version 1.3.4
+## Version 1.3.4 (unreleased)
 
 **Fixes**
 
 - Fixed decoding of JSONPath escape sequences (those found in name selectors and string literals). Previously we were relying on `JSON.parse()` to unescape strings, now we have our own `unescapeString()` function that rejects invalid codepoints and surrogate pairs. See [jsonpath-compliance-test-suite #87](https://github.com/jsonpath-standard/jsonpath-compliance-test-suite/pull/87).
+- Fixed default minimum integer boundary for JSONPath indexes and slice steps. We were off by one.
+- Fixed parsing of JSONPath integer literals with an exponent and an upper case 'e'. We now allow 'e' to be upper case.
+- Fixed handling of trailing commas in JSONPath bracketed segments. We now raise a syntax error.
+- Fixed handling of invalid JSONPath integer and float literals with extra minus signs, leading zeros or too many zeros. We now raise a syntax error in such cases.
 
 ## Version 1.3.3
 

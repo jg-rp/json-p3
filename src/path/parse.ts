@@ -304,6 +304,7 @@ export class Parser {
       if (stream.peek.kind !== TokenKind.RBRACKET) {
         stream.expectPeek(TokenKind.COMMA);
         stream.next();
+        stream.expectPeekNot(TokenKind.RBRACKET, "unexpected trailing comma");
       }
 
       stream.next();
@@ -362,7 +363,23 @@ export class Parser {
   }
 
   protected parseNumber(stream: TokenStream): NumberLiteral {
-    return new NumberLiteral(stream.current, Number(stream.current.value));
+    const value = stream.current.value;
+    if (value.startsWith("0") && value.length > 1) {
+      throw new JSONPathSyntaxError(
+        `invalid number literal '${value}'`,
+        stream.current,
+      );
+    }
+
+    const num = Number(stream.current.value);
+
+    if (isNaN(num)) {
+      throw new JSONPathSyntaxError(
+        `invalid number literal '${value}'`,
+        stream.current,
+      );
+    }
+    return new NumberLiteral(stream.current, num);
   }
 
   protected parsePrefixExpression(stream: TokenStream): PrefixExpression {

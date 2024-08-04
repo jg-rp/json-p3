@@ -129,7 +129,7 @@ export class JSONPathEnvironment {
   constructor(options: JSONPathEnvironmentOptions = {}) {
     this.strict = options.strict ?? true;
     this.maxIntIndex = options.maxIntIndex ?? Math.pow(2, 53) - 1;
-    this.minIntIndex = options.maxIntIndex ?? -Math.pow(2, 53) - 1;
+    this.minIntIndex = options.maxIntIndex ?? -Math.pow(2, 53) + 1;
     this.maxRecursionDepth = options.maxRecursionDepth ?? 50;
     this.nondeterministic = options.nondeterministic ?? false;
     this.keysPattern = options.keysPattern ?? /~/y;

@@ -5,7 +5,7 @@ import { Token, TokenKind } from "./token";
 
 // These regular expressions are to be used with Lexer.acceptMatchRun(),
 // which expects the sticky flag to be set.
-const exponentPattern = /e[+-]?\d+/y;
+const exponentPattern = /[eE][+-]?\d+/y;
 const functionNamePattern = /[a-z][a-z_0-9]*/y;
 const indexPattern = /-?\d+/y;
 const intPattern = /-?[0-9]+/y;

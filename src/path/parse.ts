@@ -251,7 +251,7 @@ export class Parser {
             new NameSelector(
               this.environment,
               stream.current,
-              this.decodeString(stream.current, true),
+              this.decodeString(stream.current),
               false,
             ),
           );
@@ -278,7 +278,7 @@ export class Parser {
             new KeySelector(
               this.environment,
               stream.current,
-              this.decodeString(stream.current, true),
+              this.decodeString(stream.current),
               false,
             ),
           );
@@ -529,20 +529,210 @@ export class Parser {
     return left;
   }
 
-  protected decodeString(token: Token, isName: boolean = false): string {
-    try {
-      return JSON.parse(
-        token.kind === TokenKind.SINGLE_QUOTE_STRING
-          ? `"${token.value.replaceAll('"', '\\"').replaceAll("\\'", "'")}"`
-          : `"${token.value}"`,
-      );
-    } catch {
+  protected decodeString(token: Token): string {
+    return this.unescapeString(
+      token.kind === TokenKind.SINGLE_QUOTE_STRING
+        ? token.value.replaceAll('"', '\\"').replaceAll("\\'", "'")
+        : token.value,
+      token,
+    );
+  }
+
+  protected unescapeString(value: string, token: Token): string {
+    const rv: string[] = [];
+    const length = value.length;
+    let index = 0;
+    let codepoint: number;
+
+    while (index < length) {
+      const ch = value[index];
+      if (ch === "\\") {
+        // Handle escape sequences
+        index += 1; // Move past '\'
+
+        switch (value[index]) {
+          case '"':
+            rv.push('"');
+            break;
+          case "\\":
+            rv.push("\\");
+            break;
+          case "/":
+            rv.push("/");
+            break;
+          case "b":
+            rv.push("\x08");
+            break;
+          case "f":
+            rv.push("\x0C");
+            break;
+          case "n":
+            rv.push("\n");
+            break;
+          case "r":
+            rv.push("\r");
+            break;
+          case "t":
+            rv.push("\t");
+            break;
+          case "u":
+            [codepoint, index] = this.decodeHexChar(value, index, token);
+            rv.push(this.stringFromCodePoint(codepoint, token));
+            break;
+          default:
+            // TODO: This is unreachable. The lexer will catch unknown escape sequences.
+            throw new JSONPathSyntaxError(
+              `unknown escape sequence at index ${token.index + index - 1}`,
+              token,
+            );
+        }
+      } else {
+        this.stringFromCodePoint(ch.codePointAt(0), token);
+        rv.push(ch);
+      }
+
+      index += 1;
+    }
+
+    return rv.join("");
+  }
+
+  /**
+   * Decode a `\uXXXX` or `\uXXXX\uXXXX` escape sequence from _value_ at _index_.
+   *
+   * @param value - A string value containing the sequence to decode.
+   * @param index - The start index of an escape sequence in _value_.
+   * @param token - The token for the string value.
+   * @returns - A codepoint, new index tuple.
+   */
+  protected decodeHexChar(
+    value: string,
+    index: number,
+    token: Token,
+  ): [number, number] {
+    const length = value.length;
+
+    if (index + 4 >= length) {
       throw new JSONPathSyntaxError(
-        `invalid ${isName ? "name selector" : "string literal"} '${
-          token.value
-        }'`,
+        `incomplete escape sequence at index ${token.index + index - 1}`,
         token,
       );
+    }
+
+    index += 1; // Move past 'u'
+    let codepoint = this.parseHexDigits(value.slice(index, index + 4), token);
+
+    if (isLowSurrogate(codepoint)) {
+      throw new JSONPathSyntaxError(
+        `unexpected low surrogate codepoint at index ${token.index + index - 2}`,
+        token,
+      );
+    }
+
+    if (isHighSurrogate(codepoint)) {
+      // Expect a surrogate pair.
+      if (
+        !(
+          index + 9 < length &&
+          value[index + 4] === "\\" &&
+          value[index + 5] === "u"
+        )
+      ) {
+        throw new JSONPathSyntaxError(
+          `incomplete escape sequence at index ${token.index + index - 2}`,
+          token,
+        );
+      }
+
+      const lowSurrogate = this.parseHexDigits(
+        value.slice(index + 6, index + 10),
+        token,
+      );
+
+      if (!isLowSurrogate(lowSurrogate)) {
+        throw new JSONPathSyntaxError(
+          `unexpected codepoint at index ${token.index + index + 4}`,
+          token,
+        );
+      }
+
+      codepoint =
+        0x10000 + (((codepoint & 0x03ff) << 10) | (lowSurrogate & 0x03ff));
+
+      return [codepoint, index + 9];
+    }
+
+    return [codepoint, index + 3];
+  }
+
+  /**
+   * Parse a hexadecimal string as an integer.
+   *
+   * @param digits - Hexadecimal digit string.
+   * @param token - The token for the string value.
+   * @returns - The number representation of _digits_.
+   *
+   * Note that we're not using `parseInt(digits, 16)` because it accepts `+`
+   * and `-` and things we don't allow.
+   */
+  protected parseHexDigits(digits: string, token: Token): number {
+    const encoder = new TextEncoder();
+    let codepoint = 0;
+    for (const digit of encoder.encode(digits)) {
+      codepoint <<= 4;
+      switch (digit) {
+        case 48:
+        case 49:
+        case 50:
+        case 51:
+        case 52:
+        case 53:
+        case 54:
+        case 55:
+        case 56:
+        case 57:
+          codepoint |= digit - 48; // '0'
+          break;
+        case 97:
+        case 98:
+        case 99:
+        case 100:
+        case 101:
+        case 102:
+          codepoint |= digit - 97 + 10; // 'a'
+          break;
+        case 65:
+        case 66:
+        case 67:
+        case 68:
+        case 69:
+        case 70:
+          codepoint |= digit - 65 + 10; // 'A'
+          break;
+        default:
+          throw new JSONPathSyntaxError(
+            "invalid \\uXXXX escape sequence",
+            token,
+          );
+      }
+    }
+    return codepoint;
+  }
+
+  /** Check the codepoint is valid and return its string representation. */
+  protected stringFromCodePoint(
+    codepoint: number | undefined,
+    token: Token,
+  ): string {
+    if (codepoint === undefined || codepoint <= 0x1f) {
+      throw new JSONPathSyntaxError(`invalid character`, token);
+    }
+
+    try {
+      return String.fromCodePoint(codepoint);
+    } catch {
+      // This should not be reachable.
+      throw new JSONPathSyntaxError("invalid escape sequence", token);
     }
   }
 
@@ -576,4 +766,12 @@ export class Parser {
       );
     }
   }
+}
+
+export function isHighSurrogate(codepoint: number): boolean {
+  return codepoint >= 0xd800 && codepoint <= 0xdbff;
+}
+
+export function isLowSurrogate(codepoint: number): boolean {
+  return codepoint >= 0xdc00 && codepoint <= 0xdfff;
 }

@@ -105,4 +105,11 @@ export class TokenStream {
       );
     }
   }
+
+  public expectPeekNot(kind: TokenKind, message: string): void {
+    const peeked = this.peek;
+    if (peeked.kind === kind) {
+      throw new JSONPathSyntaxError(message, peeked);
+    }
+  }
 }

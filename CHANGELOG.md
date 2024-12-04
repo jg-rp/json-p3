@@ -1,5 +1,11 @@
 # JSON P3 Change Log
 
+## Version 1.3.5 (unreleased)
+
+**Fixes**
+
+- Fixed a JSON Patch bug where we would not allow moving or copying to the end of an array using the special JSON Pointer token `-`.
+
 ## Version 1.3.4
 
 **Fixes**

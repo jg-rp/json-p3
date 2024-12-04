@@ -26,7 +26,10 @@ export class LRUCache<K, V> extends Map<K, V> {
     if (this.has(key)) {
       this.delete(key);
     } else if (this.size >= this.maxSize) {
-      this.delete(this.first());
+      const first = this.first();
+      if (first !== undefined) {
+        this.delete(first);
+      }
     }
     return super.set(key, value);
   }

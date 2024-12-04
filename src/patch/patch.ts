@@ -243,7 +243,11 @@ export class OpMove implements Op {
     }
 
     if (isArray(destParent)) {
-      destParent.splice(Number(destTarget), 0, sourceObj);
+      if (destTarget === "-") {
+        destParent.push(sourceObj);
+      } else {
+        destParent.splice(Number(destTarget), 0, sourceObj);
+      }
     } else if (isObject(destParent)) {
       destParent[destTarget] = sourceObj;
     } else {
@@ -298,12 +302,16 @@ export class OpCopy implements Op {
     }
 
     if (isArray(destParent)) {
-      destParent.splice(Number(destTarget), 0, this.deepCopy(sourceObj));
+      if (destTarget === "-") {
+        destParent.push(this.deepCopy(sourceObj));
+      } else {
+        destParent.splice(Number(destTarget), 0, this.deepCopy(sourceObj));
+      }
     } else if (isObject(destParent)) {
       destParent[destTarget] = this.deepCopy(sourceObj);
     } else {
       throw new JSONPatchError(
-        `unexpected operation on '${typeof parent}' (${this.name}:${index})`,
+        `unexpected operation on '${typeof destParent}' (${this.name}:${index})`,
       );
     }
 

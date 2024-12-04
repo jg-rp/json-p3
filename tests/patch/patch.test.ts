@@ -142,4 +142,19 @@ describe("JSON Patch", () => {
       '"bar/" pointers must start with a slash or be the empty string (add:0)',
     );
   });
+  test("move, end of array", () => {
+    const data = { foo: { bar: [1, 2, 3] }, a: "b" };
+    const patch = new JSONPatch().move("/a", "/foo/bar/-");
+    expect(patch.apply(data)).toStrictEqual({
+      foo: { bar: [1, 2, 3, "b"] },
+    });
+  });
+  test("copy, end of array", () => {
+    const data = { foo: { bar: [1, 2, 3] }, a: "b" };
+    const patch = new JSONPatch().copy("/a", "/foo/bar/-");
+    expect(patch.apply(data)).toStrictEqual({
+      foo: { bar: [1, 2, 3, "b"] },
+      a: "b",
+    });
+  });
 });

@@ -1,6 +1,6 @@
 # JSON P3 Change Log
 
-## Version 1.3.5 (unreleased)
+## Version 1.3.5
 
 **Fixes**
 

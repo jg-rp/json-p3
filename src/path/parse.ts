@@ -17,16 +17,18 @@ import {
 import { FunctionExpressionType } from "./functions/function";
 import { JSONPath } from "./path";
 import {
-  BracketedSelection,
-  BracketedSegment,
   FilterSelector,
   IndexSelector,
   JSONPathSelector,
   NameSelector,
-  RecursiveDescentSegment,
   SliceSelector,
   WildcardSelector,
 } from "./selectors";
+import {
+  RecursiveDescentSegment,
+  ChildSegment,
+  JSONPathSegment,
+} from "./segments";
 import { Token, TokenKind, TokenStream } from "./token";
 import { CurrentKey } from "./extra/expression";
 import {
@@ -90,78 +92,80 @@ export class Parser {
     ]);
   }
 
-  public parse(stream: TokenStream): JSONPathSelector[] {
+  public parse(stream: TokenStream): JSONPathSegment[] {
     if (stream.current.kind === TokenKind.ROOT) stream.next();
-    const selectors = this.parsePath(stream);
+    const segments = this.parseQuery(stream);
     if (stream.current.kind !== TokenKind.EOF) {
       throw new JSONPathSyntaxError(
         `unexpected token '${stream.current.kind}'`,
         stream.current,
       );
     }
-    return selectors;
+    return segments;
   }
 
-  protected parsePath(
+  protected parseQuery(
     stream: TokenStream,
     inFilter: boolean = false,
-  ): JSONPathSelector[] {
-    const selectors: JSONPathSelector[] = [];
-    for (;;) {
-      const selector = this.parseSegment(stream);
-      if (!selector) {
-        if (inFilter) {
-          stream.backup();
+  ): JSONPathSegment[] {
+    const segments: JSONPathSegment[] = [];
+    loop: for (;;) {
+      switch (stream.current.kind) {
+        case TokenKind.DDOT: {
+          const token = stream.next();
+          const selectors = this.parseSelectors(stream);
+          segments.push(
+            new RecursiveDescentSegment(this.environment, token, selectors),
+          );
+          break;
         }
-        break;
+        case TokenKind.LBRACKET:
+        case TokenKind.KEY:
+        case TokenKind.KEYS:
+        case TokenKind.NAME:
+        case TokenKind.WILD: {
+          const token = stream.current;
+          const selectors = this.parseSelectors(stream);
+          segments.push(new ChildSegment(this.environment, token, selectors));
+          break;
+        }
+        default: {
+          if (inFilter) stream.backup();
+          break loop;
+        }
       }
 
-      selectors.push(selector);
       stream.next();
     }
-    return selectors;
+    return segments;
   }
 
-  protected parseSegment(stream: TokenStream): JSONPathSelector | null {
+  protected parseSelectors(stream: TokenStream): JSONPathSelector[] {
     switch (stream.current.kind) {
       case TokenKind.NAME:
-        return new NameSelector(
-          this.environment,
-          stream.current,
-          stream.current.value,
-          true,
-        );
-      case TokenKind.WILD:
-        return new WildcardSelector(this.environment, stream.current, true);
-      case TokenKind.KEY:
-        return new KeySelector(
-          this.environment,
-          stream.current,
-          stream.current.value,
-          true,
-        );
-      case TokenKind.KEYS:
-        return new KeysSelector(this.environment, stream.current, true);
-      case TokenKind.DDOT: {
-        const segmentToken = stream.current;
-        stream.next();
-        const selector = this.parseSegment(stream);
-        if (!selector) {
-          throw new JSONPathSyntaxError(
-            "bald descendant segment",
+        return [
+          new NameSelector(
+            this.environment,
             stream.current,
-          );
-        }
-        return new RecursiveDescentSegment(
-          this.environment,
-          segmentToken,
-          selector,
-        );
-      }
+            stream.current.value,
+          ),
+        ];
+      case TokenKind.WILD:
+        return [new WildcardSelector(this.environment, stream.current)];
+      case TokenKind.KEY:
+        return [
+          new KeySelector(
+            this.environment,
+            stream.current,
+            stream.current.value,
+          ),
+        ];
+      case TokenKind.KEYS:
+        return [new KeysSelector(this.environment, stream.current)];
       case TokenKind.LBRACKET:
         return this.parseBracketedSelection(stream);
       default:
-        return null;
+        return [];
     }
   }
 
@@ -239,55 +243,55 @@ export class Parser {
     return new SliceSelector(this.environment, tok, ...indices);
   }
 
-  protected parseBracketedSelection(stream: TokenStream): BracketedSelection {
+  protected parseBracketedSelection(stream: TokenStream): JSONPathSelector[] {
     const token = stream.next();
-    const items: BracketedSegment[] = [];
+    const selectors: JSONPathSelector[] = [];
 
     while (stream.current.kind !== TokenKind.RBRACKET) {
       switch (stream.current.kind) {
         case TokenKind.SINGLE_QUOTE_STRING:
         case TokenKind.DOUBLE_QUOTE_STRING:
-          items.push(
+          selectors.push(
             new NameSelector(
               this.environment,
               stream.current,
               this.decodeString(stream.current),
-              false,
             ),
           );
           break;
         case TokenKind.FILTER:
-          items.push(this.parseFilter(stream));
+          selectors.push(this.parseFilter(stream));
           break;
         case TokenKind.INDEX:
           if (stream.peek.kind === TokenKind.COLON) {
-            items.push(this.parseSlice(stream));
+            selectors.push(this.parseSlice(stream));
           } else {
-            items.push(this.parseIndex(stream));
+            selectors.push(this.parseIndex(stream));
           }
           break;
         case TokenKind.COLON:
-          items.push(this.parseSlice(stream));
+          selectors.push(this.parseSlice(stream));
           break;
         case TokenKind.WILD:
-          items.push(new WildcardSelector(this.environment, stream.current));
+          selectors.push(
+            new WildcardSelector(this.environment, stream.current),
+          );
           break;
         case TokenKind.KEY_SINGLE_QUOTE_STRING:
         case TokenKind.KEY_DOUBLE_QUOTE_STRING:
-          items.push(
+          selectors.push(
             new KeySelector(
               this.environment,
               stream.current,
               this.decodeString(stream.current),
-              false,
             ),
           );
           break;
         case TokenKind.KEYS_FILTER:
-          items.push(this.parseFilter(stream, true));
+          selectors.push(this.parseFilter(stream, true));
           break;
         case TokenKind.KEYS:
-          items.push(new KeysSelector(this.environment, stream.current));
+          selectors.push(new KeysSelector(this.environment, stream.current));
           break;
         case TokenKind.EOF:
           throw new JSONPathSyntaxError(
@@ -310,11 +314,11 @@ export class Parser {
       stream.next();
     }
 
-    if (!items.length) {
+    if (!selectors.length) {
       throw new JSONPathSyntaxError("empty bracketed segment", token);
     }
 
-    return new BracketedSelection(this.environment, token, items);
+    return selectors;
   }
 
   protected parseFilter(
@@ -449,7 +453,7 @@ export class Parser {
     const tok = stream.next();
     return new RootQuery(
       tok,
-      new JSONPath(this.environment, this.parsePath(stream, true)),
+      new JSONPath(this.environment, this.parseQuery(stream, true)),
     );
   }
 
@@ -457,7 +461,7 @@ export class Parser {
     const tok = stream.next();
     return new RelativeQuery(
       tok,
-      new JSONPath(this.environment, this.parsePath(stream, true)),
+      new JSONPath(this.environment, this.parseQuery(stream, true)),
     );
   }
 

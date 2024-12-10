@@ -1,12 +1,12 @@
 import { JSONValue } from "../types";
 import { JSONPathEnvironment } from "./environment";
 import { JSONPathNode, JSONPathNodeList } from "./node";
-import { JSONPath } from "./path";
+import { JSONPathQuery } from "./path";
 
 export { JSONPathEnvironment } from "./environment";
 export type { JSONPathEnvironmentOptions } from "./environment";
 
-export { JSONPath } from "./path";
+export { JSONPathQuery } from "./path";
 export { JSONPathNodeList, JSONPathNode } from "./node";
 export { Token, TokenKind } from "./token";
 
@@ -85,7 +85,7 @@ export function lazyQuery(
  * If filter function arguments are invalid, or filter expression are
  * used in an invalid way.
  */
-export function compile(path: string): JSONPath {
+export function compile(path: string): JSONPathQuery {
   return DEFAULT_ENVIRONMENT.compile(path);
 }
 

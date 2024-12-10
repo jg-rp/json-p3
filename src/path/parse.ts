@@ -15,7 +15,7 @@ import {
   StringLiteral,
 } from "./expression";
 import { FunctionExpressionType } from "./functions/function";
-import { JSONPath } from "./path";
+import { JSONPathQuery } from "./path";
 import {
   FilterSelector,
   IndexSelector,
@@ -24,11 +24,7 @@ import {
   SliceSelector,
   WildcardSelector,
 } from "./selectors";
-import {
-  RecursiveDescentSegment,
-  ChildSegment,
-  JSONPathSegment,
-} from "./segments";
+import { DescendantSegment, ChildSegment, JSONPathSegment } from "./segments";
 import { Token, TokenKind, TokenStream } from "./token";
 import { CurrentKey } from "./extra/expression";
 import {
@@ -115,7 +111,7 @@ export class Parser {
           const token = stream.next();
           const selectors = this.parseSelectors(stream);
           segments.push(
-            new RecursiveDescentSegment(this.environment, token, selectors),
+            new DescendantSegment(this.environment, token, selectors),
           );
           break;
         }
@@ -453,7 +449,7 @@ export class Parser {
     const tok = stream.next();
     return new RootQuery(
       tok,
-      new JSONPath(this.environment, this.parseQuery(stream, true)),
+      new JSONPathQuery(this.environment, this.parseQuery(stream, true)),
     );
   }
 
@@ -461,7 +457,7 @@ export class Parser {
     const tok = stream.next();
     return new RelativeQuery(
       tok,
-      new JSONPath(this.environment, this.parseQuery(stream, true)),
+      new JSONPathQuery(this.environment, this.parseQuery(stream, true)),
     );
   }
 

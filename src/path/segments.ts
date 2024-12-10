@@ -57,7 +57,7 @@ export class ChildSegment extends JSONPathSegment {
 }
 
 /** The recursive descent segment. */
-export class RecursiveDescentSegment extends JSONPathSegment {
+export class DescendantSegment extends JSONPathSegment {
   public resolve(nodes: JSONPathNode[]): JSONPathNode[] {
     const rv: JSONPathNode[] = [];
 

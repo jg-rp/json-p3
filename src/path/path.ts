@@ -2,12 +2,12 @@ import { JSONPathEnvironment } from "./environment";
 import { JSONPathNode, JSONPathNodeList } from "./node";
 import { IndexSelector, NameSelector } from "./selectors";
 import { JSONValue } from "../types";
-import { JSONPathSegment, RecursiveDescentSegment } from "./segments";
+import { JSONPathSegment, DescendantSegment } from "./segments";
 
 /**
  *
  */
-export class JSONPath {
+export class JSONPathQuery {
   /**
    *
    * @param environment -
@@ -70,7 +70,7 @@ export class JSONPath {
 
   public singularQuery(): boolean {
     for (const segment of this.segments) {
-      if (segment instanceof RecursiveDescentSegment) return false;
+      if (segment instanceof DescendantSegment) return false;
 
       if (
         segment.selectors.length === 1 &&

@@ -4,7 +4,7 @@ import {
   FilterExpressionLiteral,
   FunctionExtension,
   InfixExpression,
-  JSONPathQuery,
+  FilterQuery,
 } from "./expression";
 import { Count as CountFilterFunction } from "./functions/count";
 import { FilterFunction, FunctionExpressionType } from "./functions/function";
@@ -15,7 +15,7 @@ import { Value as ValueFilterFunction } from "./functions/value";
 import { tokenize } from "./lex";
 import { JSONPathNode, JSONPathNodeList } from "./node";
 import { Parser } from "./parse";
-import { JSONPath } from "./path";
+import { JSONPathQuery } from "./path";
 import { Token, TokenStream } from "./token";
 import { JSONValue } from "../types";
 import { CurrentKey } from "./extra/expression";
@@ -140,10 +140,10 @@ export class JSONPathEnvironment {
 
   /**
    * @param path - A JSONPath query to parse.
-   * @returns A new {@link JSONPath} object, bound to this environment.
+   * @returns A new {@link JSONPathQuery} object, bound to this environment.
    */
-  public compile(path: string): JSONPath {
-    return new JSONPath(
+  public compile(path: string): JSONPathQuery {
+    return new JSONPathQuery(
       this,
       this.parser.parse(new TokenStream(tokenize(this, path))),
     );
@@ -252,7 +252,7 @@ export class JSONPathEnvironment {
             !(
               arg instanceof FilterExpressionLiteral ||
               arg instanceof CurrentKey ||
-              (arg instanceof JSONPathQuery && arg.path.singularQuery()) ||
+              (arg instanceof FilterQuery && arg.path.singularQuery()) ||
               (arg instanceof FunctionExtension &&
                 this.functionRegister.get(arg.name)?.returnType ===
                   FunctionExpressionType.ValueType)
@@ -265,9 +265,7 @@ export class JSONPathEnvironment {
           }
           break;
         case FunctionExpressionType.LogicalType:
-          if (
-            !(arg instanceof JSONPathQuery || arg instanceof InfixExpression)
-          ) {
+          if (!(arg instanceof FilterQuery || arg instanceof InfixExpression)) {
             throw new JSONPathTypeError(
               `${token.value}() argument ${idx} must be of LogicalType`,
               arg.token,
@@ -277,7 +275,7 @@ export class JSONPathEnvironment {
         case FunctionExpressionType.NodesType:
           if (
             !(
-              arg instanceof JSONPathQuery ||
+              arg instanceof FilterQuery ||
               (arg instanceof FunctionExtension &&
                 this.functionRegister.get(arg.name)?.returnType ===
                   FunctionExpressionType.NodesType)

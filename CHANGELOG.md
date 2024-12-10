@@ -1,5 +1,15 @@
 # JSON P3 Change Log
 
+## Version 2.0.0 (unreleased)
+
+**Breaking changes**
+
+These changes should only affect you if you're customizing the JSONPath parser, defining custom JSONPath selectors or inspecting `JSONPath.selectors` (now `JSONPathQuery.segments`). Otherwise query parsing and evaluation remains unchanged. See [issue 11](https://github.com/jg-rp/json-p3/issues/11) for more information.
+
+- Renamed `JSONPath` to `JSONPathQuery` to match terminology from RFC 9535.
+- Refactored `JSONPathQuery` to be composed of `JSONPathSegment`s, each of which is composed of one or more instances of `JSONPathSelector`.
+- Changed abstract method `JSONPathSelector.resolve` and `JSONPathSelector.lazyResolve` to accept a single node argument instead of an array or iterator of nodes. Both still return zero or more nodes.
+
 ## Version 1.3.5
 
 **Fixes**

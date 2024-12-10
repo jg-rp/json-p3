@@ -2,7 +2,7 @@ import { deepEquals } from "../deep_equals";
 import { JSONPathTypeError, UndefinedFilterFunctionError } from "./errors";
 import { FunctionExpressionType } from "./functions/function";
 import { JSONPathNodeList } from "./node";
-import { JSONPath } from "./path";
+import { JSONPathQuery } from "./path";
 import { Token } from "./token";
 import { FilterContext, Nothing } from "./types";
 import { isNumber, isString } from "../types";
@@ -190,16 +190,16 @@ export class LogicalExpression extends FilterExpression {
 /**
  * Base class for relative and absolute JSONPath query expressions.
  */
-export abstract class JSONPathQuery extends FilterExpression {
+export abstract class FilterQuery extends FilterExpression {
   constructor(
     readonly token: Token,
-    readonly path: JSONPath,
+    readonly path: JSONPathQuery,
   ) {
     super(token);
   }
 }
 
-export class RelativeQuery extends JSONPathQuery {
+export class RelativeQuery extends FilterQuery {
   public evaluate(context: FilterContext): JSONPathNodeList {
     return context.lazy
       ? new JSONPathNodeList(
@@ -213,7 +213,7 @@ export class RelativeQuery extends JSONPathQuery {
   }
 }
 
-export class RootQuery extends JSONPathQuery {
+export class RootQuery extends FilterQuery {
   public evaluate(context: FilterContext): JSONPathNodeList {
     return context.lazy
       ? new JSONPathNodeList(Array.from(this.path.lazyQuery(context.rootValue)))

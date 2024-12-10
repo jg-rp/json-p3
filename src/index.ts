@@ -4,7 +4,7 @@ export * as jsonpath from "./path";
 export {
   DEFAULT_ENVIRONMENT,
   FunctionExpressionType,
-  JSONPath,
+  JSONPathQuery,
   JSONPathEnvironment,
   JSONPathError,
   JSONPathIndexError,

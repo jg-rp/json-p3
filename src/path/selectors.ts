@@ -19,14 +19,14 @@ export abstract class JSONPathSelector {
   ) {}
 
   /**
-   * @param nodes - Nodes matched by preceding selectors.
+   * @param node - Nodes matched by preceding selectors.
    */
   public abstract resolve(node: JSONPathNode): JSONPathNode[];
 
   /**
-   * @param nodes - Nodes matched by preceding selectors.
+   * @param node - Nodes matched by preceding selectors.
    */
-  public abstract lazyResolve(nodes: JSONPathNode): Generator<JSONPathNode>;
+  public abstract lazyResolve(node: JSONPathNode): Generator<JSONPathNode>;
 
   /**
    * Return a canonical string representation of this selector.

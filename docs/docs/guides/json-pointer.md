@@ -10,7 +10,7 @@ We have extended RFC 6901 to handle index/property pointers from [Relative JSON 
 
 ## Pointer resolution
 
-Resolve a JSON Pointer against some data using [`jsonpointer.resolve(pointer, data)`](../api/namespaces/jsonpointer.md#resolve).
+Resolve a JSON Pointer against some data using [`jsonpointer.resolve(pointer, data)`](../api/namespaces/jsonpointer/classes/JSONPointer#resolve).
 
 ```javascript
 import { jsonpointer } from "json-p3";
@@ -28,7 +28,7 @@ const rv = jsonpointer.resolve("/users/1", data);
 console.log(rv); // { name: 'John', score: 86 }
 ```
 
-`resolve()` is a convenience function equivalent to `new JSONPointer(pointer).resolve(data)`. Use the [`JSONPointer`](../api/classes/jsonpointer.JSONPointer.md) constructor when you need to resolve the same pointer repeatedly against different data.
+`resolve()` is a convenience function equivalent to `new JSONPointer(pointer).resolve(data)`. Use the [`JSONPointer`](../api/namespaces/jsonpointer/classes/JSONPointer.md) constructor when you need to resolve the same pointer repeatedly against different data.
 
 ```javascript
 import { JSONPointer } from "json-p3";
@@ -52,7 +52,7 @@ console.log(pointer.resolve(otherData)); // { name: 'Roy' }
 
 ### Errors and fallbacks
 
-If the pointer can't be resolved against the argument JSON value, one of [`JSONPointerIndexError`](../api/classes/jsonpointer.JSONPointerIndexError.md), [`JSONPointerKeyError`](../api/classes/jsonpointer.JSONPointerKeyError.md) or [`JSONPointerTypeError`](../api/classes/jsonpointer.JSONPointerTypeError.md) is thrown. All three exceptions inherit from [`JSONPointerResolutionError`](../api/classes/jsonpointer.JSONPointerResolutionError.md).
+If the pointer can't be resolved against the argument JSON value, one of [`JSONPointerIndexError`](../api/namespaces/jsonpointer/classes/JSONPointerIndexError.md), [`JSONPointerKeyError`](../api/namespaces/jsonpointer/classes/JSONPointerKeyError.md) or [`JSONPointerTypeError`](../api/namespaces/jsonpointer/classes/JSONPointerTypeError.md) is thrown. All three exceptions inherit from [`JSONPointerResolutionError`](../api/namespaces/jsonpointer/classes/JSONPointerResolutionError.md).
 
 ```javascript
 // .. continued from above
@@ -70,7 +70,7 @@ console.log(rv); // -1
 
 ### With parent
 
-[`resolveWithParent()`](../api/classes/jsonpointer.JSONPointer.md#resolvewithparent) is similar to `resolve()`, but returns the target's parent value and the target value as a two-element array.
+[`resolveWithParent()`](../api/namespaces/jsonpointer/classes/JSONPointer.md#resolvewithparent) is similar to `resolve()`, but returns the target's parent value and the target value as a two-element array.
 
 ```javascript
 import { JSONPointer } from "json-p3";
@@ -87,15 +87,15 @@ const pointer = new JSONPointer("/users/1");
 const [parent, target] = pointer.resolveWithParent(data);
 ```
 
-If the target value does not exist but the parent does, you'll get the parent object and the special [`UNDEFINED`](../api/namespaces/jsonpointer.md#undefined) symbol. Similarly, if the pointer is pointing to the JSON document root, you'll get `UNDEFINED` and the target document in its entirety.
+If the target value does not exist but the parent does, you'll get the parent object and the special [`UNDEFINED`](../api/namespaces/jsonpointer/variables/UNDEFINED.md) symbol. Similarly, if the pointer is pointing to the JSON document root, you'll get `UNDEFINED` and the target document in its entirety.
 
-Otherwise, if the pointer's parent does not exist, a [`JSONPointerResolutionError`](../api/classes/jsonpointer.JSONPointerResolutionError.md) is thrown.
+Otherwise, if the pointer's parent does not exist, a [`JSONPointerResolutionError`](../api/namespaces/jsonpointer/classes/JSONPointerResolutionError.md) is thrown.
 
 ## Utility methods
 
 ### `exists()`
 
-Test for existence with [`JSONPointer.exists(data)`](../api/classes/jsonpointer.JSONPointer.md#exists). It returns `true` if the target exists in _data_, even if the target is falsy, and `false` otherwise.
+Test for existence with [`JSONPointer.exists(data)`](../api/namespaces/jsonpointer/classes/JSONPointer.md#exists). It returns `true` if the target exists in _data_, even if the target is falsy, and `false` otherwise.
 
 ```javascript
 import { JSONPointer } from "json-p3";
@@ -114,7 +114,7 @@ console.log(pointer.exists(data)); // true
 
 ### `join()`
 
-Build child pointers using [`JSONPointer.join(...tokens)`](../api/classes/jsonpointer.JSONPointer.md#join). It takes any number of JSON Pointer tokens and returns a new `JSONPointer`. Similar to joining a file system path, if a token has a leading slash, the previous pointer is ignored and a new `JSONPointer` is created, before processing of remaining tokens continues.
+Build child pointers using [`JSONPointer.join(...tokens)`](../api/namespaces/jsonpointer/classes/JSONPointer.md#join). It takes any number of JSON Pointer tokens and returns a new `JSONPointer`. Similar to joining a file system path, if a token has a leading slash, the previous pointer is ignored and a new `JSONPointer` is created, before processing of remaining tokens continues.
 
 ```javascript
 import { JSONPointer } from "json-p3";
@@ -129,7 +129,7 @@ console.log(pointer.join("baz/qux", "0").toString()); // /foo/bar/baz/qux/0
 
 ### `parent()`
 
-Get a pointer to the parent of an existing JSON Pointer using [`JSONPointer.parent()`](../api/classes/jsonpointer.JSONPointer.md#parent). If the pointer is pointing to the document root, `this` is returned.
+Get a pointer to the parent of an existing JSON Pointer using [`JSONPointer.parent()`](../api/namespaces/jsonpointer/classes/JSONPointer.md#parent). If the pointer is pointing to the document root, `this` is returned.
 
 ```javascript
 import { JSONPointer } from "json-p3";
@@ -142,7 +142,7 @@ console.log(pointer.parent().toString()); // /foo
 
 ### `isRelativeTo()`
 
-Test if a pointer is a child of another using [`JSONPointer.isRelativeTo()`](../api/classes/jsonpointer.JSONPointer.md#isrelativeto).
+Test if a pointer is a child of another using [`JSONPointer.isRelativeTo()`](../api/namespaces/jsonpointer/classes/JSONPointer.md#isrelativeto).
 
 ```javascript
 import { JSONPointer } from "json-p3";
@@ -158,7 +158,7 @@ console.log(anotherPointer.isRelativeTo(pointer)); // false
 
 ## Relative JSON Pointer
 
-Use [Relative JSON Pointer](https://datatracker.ietf.org/doc/html/draft-hha-relative-json-pointer) syntax with [`JSONPointer.to(rel)`](../api/classes/jsonpointer.JSONPointer.md#to) to create a new pointer relative to an existing one.
+Use [Relative JSON Pointer](https://datatracker.ietf.org/doc/html/draft-hha-relative-json-pointer) syntax with [`JSONPointer.to(rel)`](../api/namespaces/jsonpointer/classes/JSONPointer.md#to) to create a new pointer relative to an existing one.
 
 ```javascript
 import { JSONPointer } from "json-p3";

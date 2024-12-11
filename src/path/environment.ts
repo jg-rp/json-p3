@@ -204,7 +204,7 @@ export class JSONPathEnvironment {
   /**
    * Check the well-typedness of a function's arguments at compile-time.
    *
-   * This method is called by the {@link Parser} when parsing function calls.
+   * This method is called by the parser when parsing function calls.
    * It is expected to throw a {@link JSONPathTypeError} if the function's
    * parameters are not well-typed.
    *

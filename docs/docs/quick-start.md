@@ -4,7 +4,7 @@ This page gets you started using JSONPath, JSON Pointer and JSON Patch with Java
 
 ## JSONPath
 
-Find all values matching a JSONPath query with [`jsonpath.query()`](./api/namespaces/jsonpath.md#query). It takes a string (the query) and some data to apply the query to. It always returns an instance of [`JSONPathNodeList`](./api/classes/jsonpath.JSONPathNodeList.md). Use [`JSONPathNodeList.values()`](./api/classes/jsonpath.JSONPathNodeList.md#values) to get an array of values matching the query.
+Find all values matching a JSONPath query with [`jsonpath.query()`](./api/globals.md#query). It takes a string (the query) and some data to apply the query to. It always returns an instance of [`JSONPathNodeList`](./api/namespaces/jsonpath/classes/JSONPathNodeList.md). Use [`JSONPathNodeList.values()`](./api/namespaces/jsonpath/classes/JSONPathNodeList.md#values) to get an array of values matching the query.
 
 ```javascript
 import { jsonpath } from "json-p3";
@@ -40,7 +40,7 @@ const nodes = query("$.users[?@.score < 100].name", data);
 console.log(nodes.values()); // [ 'John', 'Sally', 'Jane' ]
 ```
 
-A [`JSONPathNodeList`](./api/classes/jsonpath.JSONPathNodeList.md) is a list of [`JSONPathNode`](./api/classes/jsonpath.JSONPathNode.md) objects, one for each value in the target document matching the query. Each node has a:
+A [`JSONPathNodeList`](./api/namespaces/jsonpath/classes/JSONPathNodeList.md) is a list of [`JSONPathNode`](./api/namespaces/jsonpath/classes/JSONPathNode.md) objects, one for each value in the target document matching the query. Each node has a:
 
 - `value` - The value found in the target JSON document. This could be an array, object or primitive value.
 - `location` - An array of property names and array indices that were required to reach the node's value in the target JSON document.
@@ -99,9 +99,9 @@ Jane @ $['users'][3]['name']
 
 ### Lazy queries
 
-[`lazyQuery()`](./api/namespaces/jsonpath.md#lazyquery) is an alternative to `query()`. `lazyQuery()` can be faster and more memory efficient if querying large datasets, especially when using recursive descent selectors. Conversely, `query()` is usually the better choice when working with small datasets.
+[`lazyQuery()`](./api/globals.md#lazyquery) is an alternative to `query()`. `lazyQuery()` can be faster and more memory efficient if querying large datasets, especially when using recursive descent selectors. Conversely, `query()` is usually the better choice when working with small datasets.
 
-`lazyQuery()` returns an iterable sequence of [`JSONPathNode`](./api/classes/jsonpath.JSONPathNode.md) objects which is not a `JSONPathNodeList`.
+`lazyQuery()` returns an iterable sequence of [`JSONPathNode`](./api/namespaces/jsonpath/classes/JSONPathNode.md) objects which is not a `JSONPathNodeList`.
 
 ```javascript
 import { lazyQuery } from "json-p3";
@@ -126,7 +126,7 @@ for (const node of lazyQuery("$.users[?@.score < 100].name", data)) {
 
 ### Compilation
 
-`query()` is a convenience function equivalent to `new JSONPathEnvironment().compile(path).query(data)`. Use `jsonpath.compile()` to construct a [`JSONPath`](./api/classes/jsonpath.JSONPath.md) object that can be applied to different data repeatedly.
+`query()` is a convenience function equivalent to `new JSONPathEnvironment().compile(path).query(data)`. Use `jsonpath.compile()` to construct a [`JSONPathQuery`](./api/namespaces/jsonpath/classes/JSONPathQuery.md) object that can be applied to different data repeatedly.
 
 ```javascript
 import { jsonpath } from "json-p3";
@@ -167,7 +167,7 @@ const rv = jsonpointer.resolve("/users/1", data);
 console.log(rv); // { name: 'John', score: 86 }
 ```
 
-`resolve()` is a convenience function equivalent to `new JSONPointer(pointer).resolve(data)`. Use the [`JSONPointer`](./api/classes/jsonpointer.JSONPointer.md) constructor when you need to resolve the same pointer repeatedly against different data.
+`resolve()` is a convenience function equivalent to `new JSONPointer(pointer).resolve(data)`. Use the [`JSONPointer`](./api/namespaces/jsonpointer/classes/JSONPointer.md) constructor when you need to resolve the same pointer repeatedly against different data.
 
 ```javascript
 import { JSONPointer } from "json-p3";
@@ -191,7 +191,7 @@ console.log(pointer.resolve(otherData)); // { name: 'Roy' }
 
 ### Errors and fallbacks
 
-If the pointer can't be resolved against the argument JSON value, one of [`JSONPointerIndexError`](./api/classes/jsonpointer.JSONPointerIndexError.md), [`JSONPointerKeyError`](./api/classes/jsonpointer.JSONPointerKeyError.md) or [`JSONPointerTypeError`](./api/classes/jsonpointer.JSONPointerTypeError.md) is thrown. All three exceptions inherit from [`JSONPointerResolutionError`](./api/classes/jsonpointer.JSONPointerResolutionError.md).
+If the pointer can't be resolved against the argument JSON value, one of [`JSONPointerIndexError`](./api/namespaces/jsonpointer/classes/JSONPointerIndexError.md), [`JSONPointerKeyError`](./api/namespaces/jsonpointer/classes/JSONPointerKeyError.md) or [`JSONPointerTypeError`](./api/namespaces/jsonpointer/classes/JSONPointerTypeError.md) is thrown. All three exceptions inherit from [`JSONPointerResolutionError`](./api/namespaces/jsonpointer/classes/JSONPointerResolutionError.md).
 
 ```javascript
 // .. continued from above
@@ -209,7 +209,7 @@ console.log(rv); // -1
 
 ### Relative JSON Pointers
 
-We support [Relative JSON Pointers](https://datatracker.ietf.org/doc/html/draft-hha-relative-json-pointer) via the [`to(rel)`](./api/classes/jsonpointer.JSONPointer.md#to) method of `JSONPointer`, where `rel` is a relative JSON pointer string, and a new `JSONPointer` is returned.
+We support [Relative JSON Pointers](https://datatracker.ietf.org/doc/html/draft-hha-relative-json-pointer) via the [`to(rel)`](./api/namespaces/jsonpointer/classes/JSONPointer.md#to) method of `JSONPointer`, where `rel` is a relative JSON pointer string, and a new `JSONPointer` is returned.
 
 ```javascript
 import { JSONPointer } from "json-p3";
@@ -246,7 +246,7 @@ console.log(data);
 
 ### JSONPatch constructor
 
-`jsonpatch.apply()` is a convenience function equivalent to `new JSONPatch(ops).apply(data)`. Use the [`JSONPatch`](./api/classes/jsonpatch.JSONPatch.md) constructor when you need to apply the same patch to multiple different data structures.
+`jsonpatch.apply()` is a convenience function equivalent to `new JSONPatch(ops).apply(data)`. Use the [`JSONPatch`](./api/namespaces/jsonpatch/classes/JSONPatch.md) constructor when you need to apply the same patch to multiple different data structures.
 
 ```javascript
 import { JSONPatch } from "json-p3";

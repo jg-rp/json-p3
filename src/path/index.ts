@@ -6,6 +6,8 @@ import { JSONPathQuery } from "./path";
 export { JSONPathEnvironment } from "./environment";
 export type { JSONPathEnvironmentOptions } from "./environment";
 
+export { JSONPathSegment } from "./segments";
+export { JSONPathSelector } from "./selectors";
 export { JSONPathQuery } from "./path";
 export { JSONPathNodeList, JSONPathNode } from "./node";
 export { Token, TokenKind } from "./token";

@@ -4,7 +4,7 @@ Welcome to the API documentation for JSON P3. Also see the [quick start guide](/
 
 ## API Quick Links
 
-- [JSONPathEnvironment](/api/classes/jsonpath.JSONPathEnvironment)
-- [JSONPathEnvironment Options](/api/namespaces/jsonpath#jsonpathenvironmentoptions)
-- [JSONPathNodeList](/api/classes/jsonpath.JSONPathNodeList)
-- [JSONPathNode](/api/classes/jsonpath.JSONPathNode)
+- [JSONPathEnvironment](/api/namespaces/jsonpath/classes/JSONPathEnvironment)
+- [JSONPathEnvironment Options](/api/namespaces/jsonpath/type-aliases/JSONPathEnvironmentOptions)
+- [JSONPathNodeList](/api/namespaces/jsonpath/classes/JSONPathNodeList)
+- [JSONPathNode](/api/namespaces/jsonpath/classes/JSONPathNode)

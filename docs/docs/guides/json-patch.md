@@ -2,7 +2,7 @@
 
 JSON Patch ([RFC 6902](https://datatracker.ietf.org/doc/html/rfc6902)) is a standard for describing update operations to perform on JSON-like data. Each operation includes, at least, an `op` string and a `path`, which is a [JSON Pointer](./json-pointer.md).
 
-Use [`jsonpatch.apply(ops, data)`](../api/namespaces/jsonpatch.md#apply) to apply _ops_ to _data_, where _ops_ should be an array of [`OpObject`s](../api/namespaces/jsonpatch.md#opobject), as per RFC 6902. Patch operation are applied sequentially and, unless the target JSON document's root value is replaced, **data is modified in place**.
+Use [`jsonpatch.apply(ops, data)`](../api/namespaces/jsonpatch/functions/apply.md) to apply _ops_ to _data_, where _ops_ should be an array of [`OpObject`s](../api/namespaces/jsonpatch/type-aliases/OpObject.md), as per RFC 6902. Patch operation are applied sequentially and, unless the target JSON document's root value is replaced, **data is modified in place**.
 
 ```javascript
 import { jsonpatch } from "json-p3";
@@ -20,7 +20,7 @@ console.log(data);
 // { some: { other: 'thing', foo: { bar: [Array], else: 'thing' } } }
 ```
 
-Use the [`JSONPatch`](../api/classes/jsonpatch.JSONPatch.md) constructor to create a patch for repeated application.
+Use the [`JSONPatch`](../api/namespaces/jsonpatch/classes/JSONPatch.md) constructor to create a patch for repeated application.
 
 ```javascript
 import { JSONPatch } from "json-p3";
@@ -40,11 +40,11 @@ console.log(data);
 
 ## Builder API
 
-[`JSONPatch`](../api/classes/jsonpatch.JSONPatch.md) implements a builder interface for constructing JSON Patch documents. Each of the following methods appends an operation to the patch and returns the patch instance, so method calls can be chained.
+[`JSONPatch`](../api/namespaces/jsonpatch/classes/JSONPatch.md) implements a builder interface for constructing JSON Patch documents. Each of the following methods appends an operation to the patch and returns the patch instance, so method calls can be chained.
 
 ### `add()`
 
-[`JSONPatch.add(pointer, value)`](../api/classes/jsonpatch.JSONPatch.md#add) appends an [_add_](https://datatracker.ietf.org/doc/html/rfc6902#section-4.1) operation to the patch. _pointer_ can be a string following RFC 6901 or an instance of [`JSONPointer`](../api/classes/jsonpointer.JSONPointer.md).
+[`JSONPatch.add(pointer, value)`](../api/namespaces/jsonpatch/classes/JSONPatch.md#add) appends an [_add_](https://datatracker.ietf.org/doc/html/rfc6902#section-4.1) operation to the patch. _pointer_ can be a string following RFC 6901 or an instance of [`JSONPointer`](../api/namespaces/jsonpointer/classes/JSONPointer.md).
 
 ```javascript
 import { JSONPatch } from "json-p3";
@@ -67,7 +67,7 @@ console.log(JSON.stringify(patch.toArray(), undefined, "  "));
 
 ### `remove()`
 
-[`JSONPatch.remove(pointer)`](../api/classes/jsonpatch.JSONPatch.md#add) appends an [_remove_](https://datatracker.ietf.org/doc/html/rfc6902#section-4.2) operation to the patch. _pointer_ can be a string following RFC 6901 or an instance of [`JSONPointer`](../api/classes/jsonpointer.JSONPointer.md).
+[`JSONPatch.remove(pointer)`](../api/namespaces/jsonpatch/classes/JSONPatch.md#remove) appends a [_remove_](https://datatracker.ietf.org/doc/html/rfc6902#section-4.2) operation to the patch. _pointer_ can be a string following RFC 6901 or an instance of [`JSONPointer`](../api/namespaces/jsonpointer/classes/JSONPointer.md).
 
 ```javascript
 import { JSONPatch } from "json-p3";
@@ -87,7 +87,7 @@ console.log(JSON.stringify(patch.toArray(), undefined, "  "));
 
 ### `replace()`
 
-[`JSONPatch.replace(pointer, value)`](../api/classes/jsonpatch.JSONPatch.md#add) appends an [_replace_](https://datatracker.ietf.org/doc/html/rfc6902#section-4.3) operation to the patch. _pointer_ can be a string following RFC 6901 or an instance of [`JSONPointer`](../api/classes/jsonpointer.JSONPointer.md).
+[`JSONPatch.replace(pointer, value)`](../api/namespaces/jsonpatch/classes/JSONPatch.md#replace) appends a [_replace_](https://datatracker.ietf.org/doc/html/rfc6902#section-4.3) operation to the patch. _pointer_ can be a string following RFC 6901 or an instance of [`JSONPointer`](../api/namespaces/jsonpointer/classes/JSONPointer.md).
 
 ```javascript
 import { JSONPatch } from "json-p3";
@@ -108,7 +108,7 @@ console.log(JSON.stringify(patch.toArray(), undefined, "  "));
 
 ### `move()`
 
-[`JSONPatch.move(fromPointer, toPointer)`](../api/classes/jsonpatch.JSONPatch.md#add) appends an [_move_](https://datatracker.ietf.org/doc/html/rfc6902#section-4.4) operation to the patch. _fromPointer_ and _toPointer_ can be a string following RFC 6901 or an instance of [`JSONPointer`](../api/classes/jsonpointer.JSONPointer.md).
+[`JSONPatch.move(fromPointer, toPointer)`](../api/namespaces/jsonpatch/classes/JSONPatch.md#move) appends a [_move_](https://datatracker.ietf.org/doc/html/rfc6902#section-4.4) operation to the patch. _fromPointer_ and _toPointer_ can be a string following RFC 6901 or an instance of [`JSONPointer`](../api/namespaces/jsonpointer/classes/JSONPointer.md).
 
 ```javascript
 import { JSONPatch } from "json-p3";
@@ -129,7 +129,7 @@ console.log(JSON.stringify(patch.toArray(), undefined, "  "));
 
 ### `copy()`
 
-[`JSONPatch.copy(fromPointer, toPointer)`](../api/classes/jsonpatch.JSONPatch.md#add) appends an [_copy_](https://datatracker.ietf.org/doc/html/rfc6902#section-4.5) operation to the patch. _fromPointer_ and _toPointer_ can be a string following RFC 6901 or an instance of [`JSONPointer`](../api/classes/jsonpointer.JSONPointer.md).
+[`JSONPatch.copy(fromPointer, toPointer)`](../api/namespaces/jsonpatch/classes/JSONPatch.md#copy) appends a [_copy_](https://datatracker.ietf.org/doc/html/rfc6902#section-4.5) operation to the patch. _fromPointer_ and _toPointer_ can be a string following RFC 6901 or an instance of [`JSONPointer`](../api/namespaces/jsonpointer/classes/JSONPointer.md).
 
 ```javascript
 import { JSONPatch } from "json-p3";
@@ -150,7 +150,7 @@ console.log(JSON.stringify(patch.toArray(), undefined, "  "));
 
 ### `test()`
 
-[`JSONPatch.copy(pointer, value)`](../api/classes/jsonpatch.JSONPatch.md#add) appends an [_test_](https://datatracker.ietf.org/doc/html/rfc6902#section-4.6) operation to the patch. _pointer_ can be a string following RFC 6901 or an instance of [`JSONPointer`](../api/classes/jsonpointer.JSONPointer.md).
+[`JSONPatch.copy(pointer, value)`](../api/namespaces/jsonpatch/classes/JSONPatch.md#test) appends a [_test_](https://datatracker.ietf.org/doc/html/rfc6902#section-4.6) operation to the patch. _pointer_ can be a string following RFC 6901 or an instance of [`JSONPointer`](../api/namespaces/jsonpointer/classes/JSONPointer.md).
 
 ```javascript
 import { JSONPatch } from "json-p3";

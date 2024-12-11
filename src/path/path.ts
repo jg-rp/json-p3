@@ -1,25 +1,21 @@
 import { JSONPathEnvironment } from "./environment";
 import { JSONPathNode, JSONPathNodeList } from "./node";
-import {
-  BracketedSelection,
-  IndexSelector,
-  JSONPathSelector,
-  NameSelector,
-} from "./selectors";
+import { IndexSelector, NameSelector } from "./selectors";
 import { JSONValue } from "../types";
+import { JSONPathSegment, DescendantSegment } from "./segments";
 
 /**
  *
  */
-export class JSONPath {
+export class JSONPathQuery {
   /**
    *
    * @param environment -
-   * @param selectors -
+   * @param segments -
    */
   constructor(
     readonly environment: JSONPathEnvironment,
-    readonly selectors: JSONPathSelector[],
+    readonly segments: JSONPathSegment[],
   ) {}
 
   /**
@@ -29,8 +25,8 @@ export class JSONPath {
    */
   public query(value: JSONValue): JSONPathNodeList {
     let nodes = [new JSONPathNode(value, [], value)];
-    for (const selector of this.selectors) {
-      nodes = selector.resolve(nodes);
+    for (const segment of this.segments) {
+      nodes = segment.resolve(nodes);
     }
     return new JSONPathNodeList(nodes);
   }
@@ -44,8 +40,8 @@ export class JSONPath {
     let nodes: IterableIterator<JSONPathNode> = [
       new JSONPathNode(value, [], value),
     ][Symbol.iterator]();
-    for (const selector of this.selectors) {
-      nodes = selector.lazyResolve(nodes);
+    for (const segment of this.segments) {
+      nodes = segment.lazyResolve(nodes);
     }
     return nodes;
   }
@@ -69,19 +65,20 @@ export class JSONPath {
    *
    */
   public toString(): string {
-    return `$${this.selectors.map((s) => s.toString()).join("")}`;
+    return `$${this.segments.map((s) => s.toString()).join("")}`;
   }
 
   public singularQuery(): boolean {
-    for (const selector of this.selectors) {
-      if (selector instanceof NameSelector) continue;
+    for (const segment of this.segments) {
+      if (segment instanceof DescendantSegment) return false;
+
       if (
-        selector instanceof BracketedSelection &&
-        selector.items.length === 1 &&
-        (selector.items[0] instanceof NameSelector ||
-          selector.items[0] instanceof IndexSelector)
-      )
+        segment.selectors.length === 1 &&
+        (segment.selectors[0] instanceof NameSelector ||
+          segment.selectors[0] instanceof IndexSelector)
+      ) {
         continue;
+      }
       return false;
     }
     return true;

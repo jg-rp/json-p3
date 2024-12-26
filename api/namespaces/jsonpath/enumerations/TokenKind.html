@@ -1,0 +1,286 @@
+<!doctype html>
+<html lang="en" dir="ltr" class="docs-wrapper plugin-docs plugin-id-default docs-version-current docs-doc-page docs-doc-id-api/namespaces/jsonpath/enumerations/TokenKind" data-has-hydrated="false">
+<head>
+<meta charset="UTF-8">
+<meta name="generator" content="Docusaurus v3.6.3">
+<title data-rh="true">Enumeration: TokenKind | JSON P3</title><meta data-rh="true" name="viewport" content="width=device-width,initial-scale=1"><meta data-rh="true" name="twitter:card" content="summary_large_image"><meta data-rh="true" property="og:url" content="https://jg-rp.github.io/json-p3/api/namespaces/jsonpath/enumerations/TokenKind"><meta data-rh="true" property="og:locale" content="en"><meta data-rh="true" name="docusaurus_locale" content="en"><meta data-rh="true" name="docsearch:language" content="en"><meta data-rh="true" name="docusaurus_version" content="current"><meta data-rh="true" name="docusaurus_tag" content="docs-default-current"><meta data-rh="true" name="docsearch:version" content="current"><meta data-rh="true" name="docsearch:docusaurus_tag" content="docs-default-current"><meta data-rh="true" property="og:title" content="Enumeration: TokenKind | JSON P3"><meta data-rh="true" name="description" content="Enumeration Members"><meta data-rh="true" property="og:description" content="Enumeration Members"><link data-rh="true" rel="icon" href="/json-p3/img/favicon.ico"><link data-rh="true" rel="canonical" href="https://jg-rp.github.io/json-p3/api/namespaces/jsonpath/enumerations/TokenKind"><link data-rh="true" rel="alternate" href="https://jg-rp.github.io/json-p3/api/namespaces/jsonpath/enumerations/TokenKind" hreflang="en"><link data-rh="true" rel="alternate" href="https://jg-rp.github.io/json-p3/api/namespaces/jsonpath/enumerations/TokenKind" hreflang="x-default"><link rel="stylesheet" href="/json-p3/assets/css/styles.2ff850f1.css">
+<script src="/json-p3/assets/js/runtime~main.c29bc65d.js" defer="defer"></script>
+<script src="/json-p3/assets/js/main.383e8e93.js" defer="defer"></script>
+</head>
+<body class="navigation-with-keyboard">
+<script>!function(){function t(t){document.documentElement.setAttribute("data-theme",t)}var e=function(){try{return new URLSearchParams(window.location.search).get("docusaurus-theme")}catch(t){}}()||function(){try{return window.localStorage.getItem("theme")}catch(t){}}();t(null!==e?e:"light")}(),function(){try{const n=new URLSearchParams(window.location.search).entries();for(var[t,e]of n)if(t.startsWith("docusaurus-data-")){var a=t.replace("docusaurus-data-","data-");document.documentElement.setAttribute(a,e)}}catch(t){}}()</script><div id="__docusaurus"><div role="region" aria-label="Skip to main content"><a class="skipToContent_fXgn" href="#__docusaurus_skipToContent_fallback">Skip to main content</a></div><nav aria-label="Main" class="navbar navbar--fixed-top"><div class="navbar__inner"><div class="navbar__items"><button aria-label="Toggle navigation bar" aria-expanded="false" class="navbar__toggle clean-btn" type="button"><svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><path stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2" d="M4 7h22M4 15h22M4 23h22"></path></svg></button><a class="navbar__brand" href="/json-p3/"><div class="navbar__logo"><img src="/json-p3/img/p3_v2_dark_path.svg" alt="JSON P3" class="themedComponent_mlkZ themedComponent--light_NVdE"><img src="/json-p3/img/p3_v2_light_path.svg" alt="JSON P3" class="themedComponent_mlkZ themedComponent--dark_xIcU"></div><b class="navbar__title text--truncate">JSON P3</b></a><a class="navbar__item navbar__link" href="/json-p3/">Docs</a><a aria-current="page" class="navbar__item navbar__link navbar__link--active" href="/json-p3/api">API</a><a class="navbar__item navbar__link" href="/json-p3/playground">Try It</a></div><div class="navbar__items navbar__items--right"><a href="https://github.com/jg-rp/json-p3" target="_blank" rel="noopener noreferrer" class="navbar__item navbar__link">GitHub<svg width="13.5" height="13.5" aria-hidden="true" viewBox="0 0 24 24" class="iconExternalLink_nPIU"><path fill="currentColor" d="M21 13v10h-21v-19h12v2h-10v15h17v-8h2zm3-12h-10.988l4.035 4-6.977 7.07 2.828 2.828 6.977-7.07 4.125 4.172v-11z"></path></svg></a><div class="toggle_vylO colorModeToggle_DEke"><button class="clean-btn toggleButton_gllP toggleButtonDisabled_aARS" type="button" disabled="" title="Switch between dark and light mode (currently light mode)" aria-label="Switch between dark and light mode (currently light mode)" aria-live="polite" aria-pressed="false"><svg viewBox="0 0 24 24" width="24" height="24" class="lightToggleIcon_pyhR"><path fill="currentColor" d="M12,9c1.65,0,3,1.35,3,3s-1.35,3-3,3s-3-1.35-3-3S10.35,9,12,9 M12,7c-2.76,0-5,2.24-5,5s2.24,5,5,5s5-2.24,5-5 S14.76,7,12,7L12,7z M2,13l2,0c0.55,0,1-0.45,1-1s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S1.45,13,2,13z M20,13l2,0c0.55,0,1-0.45,1-1 s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S19.45,13,20,13z M11,2v2c0,0.55,0.45,1,1,1s1-0.45,1-1V2c0-0.55-0.45-1-1-1S11,1.45,11,2z M11,20v2c0,0.55,0.45,1,1,1s1-0.45,1-1v-2c0-0.55-0.45-1-1-1C11.45,19,11,19.45,11,20z M5.99,4.58c-0.39-0.39-1.03-0.39-1.41,0 c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0s0.39-1.03,0-1.41L5.99,4.58z M18.36,16.95 c-0.39-0.39-1.03-0.39-1.41,0c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0c0.39-0.39,0.39-1.03,0-1.41 L18.36,16.95z M19.42,5.99c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06c-0.39,0.39-0.39,1.03,0,1.41 s1.03,0.39,1.41,0L19.42,5.99z M7.05,18.36c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06 c-0.39,0.39-0.39,1.03,0,1.41s1.03,0.39,1.41,0L7.05,18.36z"></path></svg><svg viewBox="0 0 24 24" width="24" height="24" class="darkToggleIcon_wfgR"><path fill="currentColor" d="M9.37,5.51C9.19,6.15,9.1,6.82,9.1,7.5c0,4.08,3.32,7.4,7.4,7.4c0.68,0,1.35-0.09,1.99-0.27C17.45,17.19,14.93,19,12,19 c-3.86,0-7-3.14-7-7C5,9.07,6.81,6.55,9.37,5.51z M12,3c-4.97,0-9,4.03-9,9s4.03,9,9,9s9-4.03,9-9c0-0.46-0.04-0.92-0.1-1.36 c-0.98,1.37-2.58,2.26-4.4,2.26c-2.98,0-5.4-2.42-5.4-5.4c0-1.81,0.89-3.42,2.26-4.4C12.92,3.04,12.46,3,12,3L12,3z"></path></svg></button></div><div class="navbarSearchContainer_Bca1"></div></div></div><div role="presentation" class="navbar-sidebar__backdrop"></div></nav><div id="__docusaurus_skipToContent_fallback" class="main-wrapper mainWrapper_z2l0"><div class="docsWrapper_hBAB"><button aria-label="Scroll back to top" class="clean-btn theme-back-to-top-button backToTopButton_sjWU" type="button"></button><div class="docRoot_UBD9"><aside class="theme-doc-sidebar-container docSidebarContainer_YfHR"><div class="sidebarViewport_aRkj"><div class="sidebar_njMd"><nav aria-label="Docs sidebar" class="menu thin-scrollbar menu_SIkG"><ul class="theme-doc-sidebar-menu menu__list"><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/json-p3/api/globals">json-p3</a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/json-p3/api">JSON P3 API Documentation</a></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist menu__link--sublist-caret menu__link--active" role="button" aria-expanded="true" href="/json-p3/api/namespaces/jsonpatch">namespaces</a></div><ul style="display:block;overflow:visible;height:auto" class="menu__list"><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-2 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist" tabindex="0" href="/json-p3/api/namespaces/jsonpatch">jsonpatch</a><button aria-label="Expand sidebar category &#x27;jsonpatch&#x27;" aria-expanded="false" type="button" class="clean-btn menu__caret"></button></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-2 menu__list-item"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist menu__link--active" tabindex="0" href="/json-p3/api/namespaces/jsonpath">jsonpath</a><button aria-label="Collapse sidebar category &#x27;jsonpath&#x27;" aria-expanded="true" type="button" class="clean-btn menu__caret"></button></div><ul style="display:block;overflow:visible;height:auto" class="menu__list"><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-3 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist menu__link--sublist-caret" role="button" aria-expanded="false" tabindex="0" href="/json-p3/api/namespaces/jsonpath/classes/JSONPathEnvironment">classes</a></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-3 menu__list-item"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist menu__link--sublist-caret menu__link--active" role="button" aria-expanded="true" tabindex="0" href="/json-p3/api/namespaces/jsonpath/enumerations/TokenKind">enumerations</a></div><ul style="display:block;overflow:visible;height:auto" class="menu__list"><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-4 menu__list-item"><a class="menu__link menu__link--active" aria-current="page" tabindex="0" href="/json-p3/api/namespaces/jsonpath/enumerations/TokenKind">Enumeration: TokenKind</a></li></ul></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-3 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist menu__link--sublist-caret" role="button" aria-expanded="false" tabindex="0" href="/json-p3/api/namespaces/jsonpath/functions/compile">functions</a></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-3 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist menu__link--sublist-caret" role="button" aria-expanded="false" tabindex="0" href="/json-p3/api/namespaces/jsonpath/namespaces/expressions">namespaces</a></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-3 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist menu__link--sublist-caret" role="button" aria-expanded="false" tabindex="0" href="/json-p3/api/namespaces/jsonpath/type-aliases/FilterContext">type-aliases</a></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-3 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist menu__link--sublist-caret" role="button" aria-expanded="false" tabindex="0" href="/json-p3/api/namespaces/jsonpath/variables/DEFAULT_ENVIRONMENT">variables</a></div></li></ul></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-2 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist" tabindex="0" href="/json-p3/api/namespaces/jsonpointer">jsonpointer</a><button aria-label="Expand sidebar category &#x27;jsonpointer&#x27;" aria-expanded="false" type="button" class="clean-btn menu__caret"></button></div></li></ul></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist menu__link--sublist-caret" role="button" aria-expanded="false" href="/json-p3/api/type-aliases/JSONValue">type-aliases</a></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist menu__link--sublist-caret" role="button" aria-expanded="false" href="/json-p3/api/variables/version">variables</a></div></li></ul></nav></div></div></aside><main class="docMainContainer_TBSr"><div class="container padding-top--md padding-bottom--lg"><div class="row"><div class="col docItemCol_VOVn"><div class="docItemContainer_Djhp"><article><nav class="theme-doc-breadcrumbs breadcrumbsContainer_Z_bl" aria-label="Breadcrumbs"><ul class="breadcrumbs" itemscope="" itemtype="https://schema.org/BreadcrumbList"><li class="breadcrumbs__item"><a aria-label="Home page" class="breadcrumbs__link" href="/json-p3/"><svg viewBox="0 0 24 24" class="breadcrumbHomeIcon_YNFT"><path d="M10 19v-5h4v5c0 .55.45 1 1 1h3c.55 0 1-.45 1-1v-7h1.7c.46 0 .68-.57.33-.87L12.67 3.6c-.38-.34-.96-.34-1.34 0l-8.36 7.53c-.34.3-.13.87.33.87H5v7c0 .55.45 1 1 1h3c.55 0 1-.45 1-1z" fill="currentColor"></path></svg></a></li><li class="breadcrumbs__item"><span class="breadcrumbs__link">namespaces</span><meta itemprop="position" content="1"></li><li itemscope="" itemprop="itemListElement" itemtype="https://schema.org/ListItem" class="breadcrumbs__item"><a class="breadcrumbs__link" itemprop="item" href="/json-p3/api/namespaces/jsonpath"><span itemprop="name">jsonpath</span></a><meta itemprop="position" content="2"></li><li class="breadcrumbs__item"><span class="breadcrumbs__link">enumerations</span><meta itemprop="position" content="3"></li><li itemscope="" itemprop="itemListElement" itemtype="https://schema.org/ListItem" class="breadcrumbs__item breadcrumbs__item--active"><span class="breadcrumbs__link" itemprop="name">Enumeration: TokenKind</span><meta itemprop="position" content="4"></li></ul></nav><div class="tocCollapsible_ETCw theme-doc-toc-mobile tocMobile_ITEo"><button type="button" class="clean-btn tocCollapsibleButton_TO0P">On this page</button></div><div class="theme-doc-markdown markdown"><header><h1>Enumeration: TokenKind</h1></header>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="enumeration-members">Enumeration Members<a href="#enumeration-members" class="hash-link" aria-label="Direct link to Enumeration Members" title="Direct link to Enumeration Members">​</a></h2>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="and">AND<a href="#and" class="hash-link" aria-label="Direct link to AND" title="Direct link to AND">​</a></h3>
+<blockquote>
+<p><strong>AND</strong>: <code>&quot;TOKEN_AND&quot;</code></p>
+</blockquote>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="defined-in">Defined in<a href="#defined-in" class="hash-link" aria-label="Direct link to Defined in" title="Direct link to Defined in">​</a></h4>
+<p><a href="https://github.com/jg-rp/json-p3/blob/65525c389114c16d131238233fa65e561371ad8d/src/path/token.ts#L7" target="_blank" rel="noopener noreferrer">src/path/token.ts:7</a></p>
+<hr>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="colon">COLON<a href="#colon" class="hash-link" aria-label="Direct link to COLON" title="Direct link to COLON">​</a></h3>
+<blockquote>
+<p><strong>COLON</strong>: <code>&quot;TOKEN_COLON&quot;</code></p>
+</blockquote>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="defined-in-1">Defined in<a href="#defined-in-1" class="hash-link" aria-label="Direct link to Defined in" title="Direct link to Defined in">​</a></h4>
+<p><a href="https://github.com/jg-rp/json-p3/blob/65525c389114c16d131238233fa65e561371ad8d/src/path/token.ts#L8" target="_blank" rel="noopener noreferrer">src/path/token.ts:8</a></p>
+<hr>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="comma">COMMA<a href="#comma" class="hash-link" aria-label="Direct link to COMMA" title="Direct link to COMMA">​</a></h3>
+<blockquote>
+<p><strong>COMMA</strong>: <code>&quot;TOKEN_COMMA&quot;</code></p>
+</blockquote>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="defined-in-2">Defined in<a href="#defined-in-2" class="hash-link" aria-label="Direct link to Defined in" title="Direct link to Defined in">​</a></h4>
+<p><a href="https://github.com/jg-rp/json-p3/blob/65525c389114c16d131238233fa65e561371ad8d/src/path/token.ts#L9" target="_blank" rel="noopener noreferrer">src/path/token.ts:9</a></p>
+<hr>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="current">CURRENT<a href="#current" class="hash-link" aria-label="Direct link to CURRENT" title="Direct link to CURRENT">​</a></h3>
+<blockquote>
+<p><strong>CURRENT</strong>: <code>&quot;TOKEN_CURRENT_VALUE&quot;</code></p>
+</blockquote>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="defined-in-3">Defined in<a href="#defined-in-3" class="hash-link" aria-label="Direct link to Defined in" title="Direct link to Defined in">​</a></h4>
+<p><a href="https://github.com/jg-rp/json-p3/blob/65525c389114c16d131238233fa65e561371ad8d/src/path/token.ts#L10" target="_blank" rel="noopener noreferrer">src/path/token.ts:10</a></p>
+<hr>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="current_key">CURRENT_KEY<a href="#current_key" class="hash-link" aria-label="Direct link to CURRENT_KEY" title="Direct link to CURRENT_KEY">​</a></h3>
+<blockquote>
+<p><strong>CURRENT_KEY</strong>: <code>&quot;TOKEN_CURRENT_KEY&quot;</code></p>
+</blockquote>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="defined-in-4">Defined in<a href="#defined-in-4" class="hash-link" aria-label="Direct link to Defined in" title="Direct link to Defined in">​</a></h4>
+<p><a href="https://github.com/jg-rp/json-p3/blob/65525c389114c16d131238233fa65e561371ad8d/src/path/token.ts#L11" target="_blank" rel="noopener noreferrer">src/path/token.ts:11</a></p>
+<hr>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="ddot">DDOT<a href="#ddot" class="hash-link" aria-label="Direct link to DDOT" title="Direct link to DDOT">​</a></h3>
+<blockquote>
+<p><strong>DDOT</strong>: <code>&quot;TOKEN_DDOT&quot;</code></p>
+</blockquote>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="defined-in-5">Defined in<a href="#defined-in-5" class="hash-link" aria-label="Direct link to Defined in" title="Direct link to Defined in">​</a></h4>
+<p><a href="https://github.com/jg-rp/json-p3/blob/65525c389114c16d131238233fa65e561371ad8d/src/path/token.ts#L12" target="_blank" rel="noopener noreferrer">src/path/token.ts:12</a></p>
+<hr>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="dot">DOT<a href="#dot" class="hash-link" aria-label="Direct link to DOT" title="Direct link to DOT">​</a></h3>
+<blockquote>
+<p><strong>DOT</strong>: <code>&quot;TOKEN_DOT&quot;</code></p>
+</blockquote>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="defined-in-6">Defined in<a href="#defined-in-6" class="hash-link" aria-label="Direct link to Defined in" title="Direct link to Defined in">​</a></h4>
+<p><a href="https://github.com/jg-rp/json-p3/blob/65525c389114c16d131238233fa65e561371ad8d/src/path/token.ts#L13" target="_blank" rel="noopener noreferrer">src/path/token.ts:13</a></p>
+<hr>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="double_quote_string">DOUBLE_QUOTE_STRING<a href="#double_quote_string" class="hash-link" aria-label="Direct link to DOUBLE_QUOTE_STRING" title="Direct link to DOUBLE_QUOTE_STRING">​</a></h3>
+<blockquote>
+<p><strong>DOUBLE_QUOTE_STRING</strong>: <code>&quot;TOKEN_DOUBLE_QUOTE_STRING&quot;</code></p>
+</blockquote>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="defined-in-7">Defined in<a href="#defined-in-7" class="hash-link" aria-label="Direct link to Defined in" title="Direct link to Defined in">​</a></h4>
+<p><a href="https://github.com/jg-rp/json-p3/blob/65525c389114c16d131238233fa65e561371ad8d/src/path/token.ts#L14" target="_blank" rel="noopener noreferrer">src/path/token.ts:14</a></p>
+<hr>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="eof">EOF<a href="#eof" class="hash-link" aria-label="Direct link to EOF" title="Direct link to EOF">​</a></h3>
+<blockquote>
+<p><strong>EOF</strong>: <code>&quot;TOKEN_EOF&quot;</code></p>
+</blockquote>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="defined-in-8">Defined in<a href="#defined-in-8" class="hash-link" aria-label="Direct link to Defined in" title="Direct link to Defined in">​</a></h4>
+<p><a href="https://github.com/jg-rp/json-p3/blob/65525c389114c16d131238233fa65e561371ad8d/src/path/token.ts#L15" target="_blank" rel="noopener noreferrer">src/path/token.ts:15</a></p>
+<hr>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="eq">EQ<a href="#eq" class="hash-link" aria-label="Direct link to EQ" title="Direct link to EQ">​</a></h3>
+<blockquote>
+<p><strong>EQ</strong>: <code>&quot;TOKEN_EQ&quot;</code></p>
+</blockquote>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="defined-in-9">Defined in<a href="#defined-in-9" class="hash-link" aria-label="Direct link to Defined in" title="Direct link to Defined in">​</a></h4>
+<p><a href="https://github.com/jg-rp/json-p3/blob/65525c389114c16d131238233fa65e561371ad8d/src/path/token.ts#L16" target="_blank" rel="noopener noreferrer">src/path/token.ts:16</a></p>
+<hr>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="error">ERROR<a href="#error" class="hash-link" aria-label="Direct link to ERROR" title="Direct link to ERROR">​</a></h3>
+<blockquote>
+<p><strong>ERROR</strong>: <code>&quot;TOKEN_ERROR&quot;</code></p>
+</blockquote>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="defined-in-10">Defined in<a href="#defined-in-10" class="hash-link" aria-label="Direct link to Defined in" title="Direct link to Defined in">​</a></h4>
+<p><a href="https://github.com/jg-rp/json-p3/blob/65525c389114c16d131238233fa65e561371ad8d/src/path/token.ts#L17" target="_blank" rel="noopener noreferrer">src/path/token.ts:17</a></p>
+<hr>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="false">FALSE<a href="#false" class="hash-link" aria-label="Direct link to FALSE" title="Direct link to FALSE">​</a></h3>
+<blockquote>
+<p><strong>FALSE</strong>: <code>&quot;TOKEN_FALSE&quot;</code></p>
+</blockquote>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="defined-in-11">Defined in<a href="#defined-in-11" class="hash-link" aria-label="Direct link to Defined in" title="Direct link to Defined in">​</a></h4>
+<p><a href="https://github.com/jg-rp/json-p3/blob/65525c389114c16d131238233fa65e561371ad8d/src/path/token.ts#L18" target="_blank" rel="noopener noreferrer">src/path/token.ts:18</a></p>
+<hr>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="filter">FILTER<a href="#filter" class="hash-link" aria-label="Direct link to FILTER" title="Direct link to FILTER">​</a></h3>
+<blockquote>
+<p><strong>FILTER</strong>: <code>&quot;TOKEN_FILTER_START&quot;</code></p>
+</blockquote>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="defined-in-12">Defined in<a href="#defined-in-12" class="hash-link" aria-label="Direct link to Defined in" title="Direct link to Defined in">​</a></h4>
+<p><a href="https://github.com/jg-rp/json-p3/blob/65525c389114c16d131238233fa65e561371ad8d/src/path/token.ts#L19" target="_blank" rel="noopener noreferrer">src/path/token.ts:19</a></p>
+<hr>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="function">FUNCTION<a href="#function" class="hash-link" aria-label="Direct link to FUNCTION" title="Direct link to FUNCTION">​</a></h3>
+<blockquote>
+<p><strong>FUNCTION</strong>: <code>&quot;TOKEN_FUNCTION&quot;</code></p>
+</blockquote>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="defined-in-13">Defined in<a href="#defined-in-13" class="hash-link" aria-label="Direct link to Defined in" title="Direct link to Defined in">​</a></h4>
+<p><a href="https://github.com/jg-rp/json-p3/blob/65525c389114c16d131238233fa65e561371ad8d/src/path/token.ts#L20" target="_blank" rel="noopener noreferrer">src/path/token.ts:20</a></p>
+<hr>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="ge">GE<a href="#ge" class="hash-link" aria-label="Direct link to GE" title="Direct link to GE">​</a></h3>
+<blockquote>
+<p><strong>GE</strong>: <code>&quot;TOKEN_GE&quot;</code></p>
+</blockquote>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="defined-in-14">Defined in<a href="#defined-in-14" class="hash-link" aria-label="Direct link to Defined in" title="Direct link to Defined in">​</a></h4>
+<p><a href="https://github.com/jg-rp/json-p3/blob/65525c389114c16d131238233fa65e561371ad8d/src/path/token.ts#L21" target="_blank" rel="noopener noreferrer">src/path/token.ts:21</a></p>
+<hr>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="gt">GT<a href="#gt" class="hash-link" aria-label="Direct link to GT" title="Direct link to GT">​</a></h3>
+<blockquote>
+<p><strong>GT</strong>: <code>&quot;TOKEN_GT&quot;</code></p>
+</blockquote>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="defined-in-15">Defined in<a href="#defined-in-15" class="hash-link" aria-label="Direct link to Defined in" title="Direct link to Defined in">​</a></h4>
+<p><a href="https://github.com/jg-rp/json-p3/blob/65525c389114c16d131238233fa65e561371ad8d/src/path/token.ts#L22" target="_blank" rel="noopener noreferrer">src/path/token.ts:22</a></p>
+<hr>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="index">INDEX<a href="#index" class="hash-link" aria-label="Direct link to INDEX" title="Direct link to INDEX">​</a></h3>
+<blockquote>
+<p><strong>INDEX</strong>: <code>&quot;TOKEN_INDEX&quot;</code></p>
+</blockquote>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="defined-in-16">Defined in<a href="#defined-in-16" class="hash-link" aria-label="Direct link to Defined in" title="Direct link to Defined in">​</a></h4>
+<p><a href="https://github.com/jg-rp/json-p3/blob/65525c389114c16d131238233fa65e561371ad8d/src/path/token.ts#L23" target="_blank" rel="noopener noreferrer">src/path/token.ts:23</a></p>
+<hr>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="key">KEY<a href="#key" class="hash-link" aria-label="Direct link to KEY" title="Direct link to KEY">​</a></h3>
+<blockquote>
+<p><strong>KEY</strong>: <code>&quot;TOKEN_KEY&quot;</code></p>
+</blockquote>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="defined-in-17">Defined in<a href="#defined-in-17" class="hash-link" aria-label="Direct link to Defined in" title="Direct link to Defined in">​</a></h4>
+<p><a href="https://github.com/jg-rp/json-p3/blob/65525c389114c16d131238233fa65e561371ad8d/src/path/token.ts#L24" target="_blank" rel="noopener noreferrer">src/path/token.ts:24</a></p>
+<hr>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="key_double_quote_string">KEY_DOUBLE_QUOTE_STRING<a href="#key_double_quote_string" class="hash-link" aria-label="Direct link to KEY_DOUBLE_QUOTE_STRING" title="Direct link to KEY_DOUBLE_QUOTE_STRING">​</a></h3>
+<blockquote>
+<p><strong>KEY_DOUBLE_QUOTE_STRING</strong>: <code>&quot;TOKEN_KEY_DOUBLE_QUOTE_STRING&quot;</code></p>
+</blockquote>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="defined-in-18">Defined in<a href="#defined-in-18" class="hash-link" aria-label="Direct link to Defined in" title="Direct link to Defined in">​</a></h4>
+<p><a href="https://github.com/jg-rp/json-p3/blob/65525c389114c16d131238233fa65e561371ad8d/src/path/token.ts#L25" target="_blank" rel="noopener noreferrer">src/path/token.ts:25</a></p>
+<hr>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="key_single_quote_string">KEY_SINGLE_QUOTE_STRING<a href="#key_single_quote_string" class="hash-link" aria-label="Direct link to KEY_SINGLE_QUOTE_STRING" title="Direct link to KEY_SINGLE_QUOTE_STRING">​</a></h3>
+<blockquote>
+<p><strong>KEY_SINGLE_QUOTE_STRING</strong>: <code>&quot;TOKEN_KEY_SINGLE_QUOTE_STRING&quot;</code></p>
+</blockquote>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="defined-in-19">Defined in<a href="#defined-in-19" class="hash-link" aria-label="Direct link to Defined in" title="Direct link to Defined in">​</a></h4>
+<p><a href="https://github.com/jg-rp/json-p3/blob/65525c389114c16d131238233fa65e561371ad8d/src/path/token.ts#L26" target="_blank" rel="noopener noreferrer">src/path/token.ts:26</a></p>
+<hr>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="keys">KEYS<a href="#keys" class="hash-link" aria-label="Direct link to KEYS" title="Direct link to KEYS">​</a></h3>
+<blockquote>
+<p><strong>KEYS</strong>: <code>&quot;TOKEN_KEYS&quot;</code></p>
+</blockquote>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="defined-in-20">Defined in<a href="#defined-in-20" class="hash-link" aria-label="Direct link to Defined in" title="Direct link to Defined in">​</a></h4>
+<p><a href="https://github.com/jg-rp/json-p3/blob/65525c389114c16d131238233fa65e561371ad8d/src/path/token.ts#L27" target="_blank" rel="noopener noreferrer">src/path/token.ts:27</a></p>
+<hr>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="keys_filter">KEYS_FILTER<a href="#keys_filter" class="hash-link" aria-label="Direct link to KEYS_FILTER" title="Direct link to KEYS_FILTER">​</a></h3>
+<blockquote>
+<p><strong>KEYS_FILTER</strong>: <code>&quot;TOKEN_KEYS_FILTER&quot;</code></p>
+</blockquote>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="defined-in-21">Defined in<a href="#defined-in-21" class="hash-link" aria-label="Direct link to Defined in" title="Direct link to Defined in">​</a></h4>
+<p><a href="https://github.com/jg-rp/json-p3/blob/65525c389114c16d131238233fa65e561371ad8d/src/path/token.ts#L28" target="_blank" rel="noopener noreferrer">src/path/token.ts:28</a></p>
+<hr>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="lbracket">LBRACKET<a href="#lbracket" class="hash-link" aria-label="Direct link to LBRACKET" title="Direct link to LBRACKET">​</a></h3>
+<blockquote>
+<p><strong>LBRACKET</strong>: <code>&quot;TOKEN_LBRACKET&quot;</code></p>
+</blockquote>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="defined-in-22">Defined in<a href="#defined-in-22" class="hash-link" aria-label="Direct link to Defined in" title="Direct link to Defined in">​</a></h4>
+<p><a href="https://github.com/jg-rp/json-p3/blob/65525c389114c16d131238233fa65e561371ad8d/src/path/token.ts#L29" target="_blank" rel="noopener noreferrer">src/path/token.ts:29</a></p>
+<hr>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="le">LE<a href="#le" class="hash-link" aria-label="Direct link to LE" title="Direct link to LE">​</a></h3>
+<blockquote>
+<p><strong>LE</strong>: <code>&quot;TOKEN_LE&quot;</code></p>
+</blockquote>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="defined-in-23">Defined in<a href="#defined-in-23" class="hash-link" aria-label="Direct link to Defined in" title="Direct link to Defined in">​</a></h4>
+<p><a href="https://github.com/jg-rp/json-p3/blob/65525c389114c16d131238233fa65e561371ad8d/src/path/token.ts#L30" target="_blank" rel="noopener noreferrer">src/path/token.ts:30</a></p>
+<hr>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="lg">LG<a href="#lg" class="hash-link" aria-label="Direct link to LG" title="Direct link to LG">​</a></h3>
+<blockquote>
+<p><strong>LG</strong>: <code>&quot;TOKEN_LG&quot;</code></p>
+</blockquote>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="defined-in-24">Defined in<a href="#defined-in-24" class="hash-link" aria-label="Direct link to Defined in" title="Direct link to Defined in">​</a></h4>
+<p><a href="https://github.com/jg-rp/json-p3/blob/65525c389114c16d131238233fa65e561371ad8d/src/path/token.ts#L31" target="_blank" rel="noopener noreferrer">src/path/token.ts:31</a></p>
+<hr>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="lparen">LPAREN<a href="#lparen" class="hash-link" aria-label="Direct link to LPAREN" title="Direct link to LPAREN">​</a></h3>
+<blockquote>
+<p><strong>LPAREN</strong>: <code>&quot;TOKEN_LPAREN&quot;</code></p>
+</blockquote>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="defined-in-25">Defined in<a href="#defined-in-25" class="hash-link" aria-label="Direct link to Defined in" title="Direct link to Defined in">​</a></h4>
+<p><a href="https://github.com/jg-rp/json-p3/blob/65525c389114c16d131238233fa65e561371ad8d/src/path/token.ts#L32" target="_blank" rel="noopener noreferrer">src/path/token.ts:32</a></p>
+<hr>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="lt">LT<a href="#lt" class="hash-link" aria-label="Direct link to LT" title="Direct link to LT">​</a></h3>
+<blockquote>
+<p><strong>LT</strong>: <code>&quot;TOKEN_LT&quot;</code></p>
+</blockquote>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="defined-in-26">Defined in<a href="#defined-in-26" class="hash-link" aria-label="Direct link to Defined in" title="Direct link to Defined in">​</a></h4>
+<p><a href="https://github.com/jg-rp/json-p3/blob/65525c389114c16d131238233fa65e561371ad8d/src/path/token.ts#L33" target="_blank" rel="noopener noreferrer">src/path/token.ts:33</a></p>
+<hr>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="name">NAME<a href="#name" class="hash-link" aria-label="Direct link to NAME" title="Direct link to NAME">​</a></h3>
+<blockquote>
+<p><strong>NAME</strong>: <code>&quot;TOKEN_NAME&quot;</code></p>
+</blockquote>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="defined-in-27">Defined in<a href="#defined-in-27" class="hash-link" aria-label="Direct link to Defined in" title="Direct link to Defined in">​</a></h4>
+<p><a href="https://github.com/jg-rp/json-p3/blob/65525c389114c16d131238233fa65e561371ad8d/src/path/token.ts#L34" target="_blank" rel="noopener noreferrer">src/path/token.ts:34</a></p>
+<hr>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="ne">NE<a href="#ne" class="hash-link" aria-label="Direct link to NE" title="Direct link to NE">​</a></h3>
+<blockquote>
+<p><strong>NE</strong>: <code>&quot;TOKEN_NE&quot;</code></p>
+</blockquote>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="defined-in-28">Defined in<a href="#defined-in-28" class="hash-link" aria-label="Direct link to Defined in" title="Direct link to Defined in">​</a></h4>
+<p><a href="https://github.com/jg-rp/json-p3/blob/65525c389114c16d131238233fa65e561371ad8d/src/path/token.ts#L35" target="_blank" rel="noopener noreferrer">src/path/token.ts:35</a></p>
+<hr>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="not">NOT<a href="#not" class="hash-link" aria-label="Direct link to NOT" title="Direct link to NOT">​</a></h3>
+<blockquote>
+<p><strong>NOT</strong>: <code>&quot;TOKEN_NOT&quot;</code></p>
+</blockquote>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="defined-in-29">Defined in<a href="#defined-in-29" class="hash-link" aria-label="Direct link to Defined in" title="Direct link to Defined in">​</a></h4>
+<p><a href="https://github.com/jg-rp/json-p3/blob/65525c389114c16d131238233fa65e561371ad8d/src/path/token.ts#L36" target="_blank" rel="noopener noreferrer">src/path/token.ts:36</a></p>
+<hr>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="null">NULL<a href="#null" class="hash-link" aria-label="Direct link to NULL" title="Direct link to NULL">​</a></h3>
+<blockquote>
+<p><strong>NULL</strong>: <code>&quot;TOKEN_NULL&quot;</code></p>
+</blockquote>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="defined-in-30">Defined in<a href="#defined-in-30" class="hash-link" aria-label="Direct link to Defined in" title="Direct link to Defined in">​</a></h4>
+<p><a href="https://github.com/jg-rp/json-p3/blob/65525c389114c16d131238233fa65e561371ad8d/src/path/token.ts#L37" target="_blank" rel="noopener noreferrer">src/path/token.ts:37</a></p>
+<hr>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="number">NUMBER<a href="#number" class="hash-link" aria-label="Direct link to NUMBER" title="Direct link to NUMBER">​</a></h3>
+<blockquote>
+<p><strong>NUMBER</strong>: <code>&quot;NUMBER&quot;</code></p>
+</blockquote>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="defined-in-31">Defined in<a href="#defined-in-31" class="hash-link" aria-label="Direct link to Defined in" title="Direct link to Defined in">​</a></h4>
+<p><a href="https://github.com/jg-rp/json-p3/blob/65525c389114c16d131238233fa65e561371ad8d/src/path/token.ts#L38" target="_blank" rel="noopener noreferrer">src/path/token.ts:38</a></p>
+<hr>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="or">OR<a href="#or" class="hash-link" aria-label="Direct link to OR" title="Direct link to OR">​</a></h3>
+<blockquote>
+<p><strong>OR</strong>: <code>&quot;TOKEN_OR&quot;</code></p>
+</blockquote>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="defined-in-32">Defined in<a href="#defined-in-32" class="hash-link" aria-label="Direct link to Defined in" title="Direct link to Defined in">​</a></h4>
+<p><a href="https://github.com/jg-rp/json-p3/blob/65525c389114c16d131238233fa65e561371ad8d/src/path/token.ts#L39" target="_blank" rel="noopener noreferrer">src/path/token.ts:39</a></p>
+<hr>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="rbracket">RBRACKET<a href="#rbracket" class="hash-link" aria-label="Direct link to RBRACKET" title="Direct link to RBRACKET">​</a></h3>
+<blockquote>
+<p><strong>RBRACKET</strong>: <code>&quot;TOKEN_RBRACKET&quot;</code></p>
+</blockquote>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="defined-in-33">Defined in<a href="#defined-in-33" class="hash-link" aria-label="Direct link to Defined in" title="Direct link to Defined in">​</a></h4>
+<p><a href="https://github.com/jg-rp/json-p3/blob/65525c389114c16d131238233fa65e561371ad8d/src/path/token.ts#L40" target="_blank" rel="noopener noreferrer">src/path/token.ts:40</a></p>
+<hr>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="root">ROOT<a href="#root" class="hash-link" aria-label="Direct link to ROOT" title="Direct link to ROOT">​</a></h3>
+<blockquote>
+<p><strong>ROOT</strong>: <code>&quot;TOKEN_ROOT&quot;</code></p>
+</blockquote>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="defined-in-34">Defined in<a href="#defined-in-34" class="hash-link" aria-label="Direct link to Defined in" title="Direct link to Defined in">​</a></h4>
+<p><a href="https://github.com/jg-rp/json-p3/blob/65525c389114c16d131238233fa65e561371ad8d/src/path/token.ts#L41" target="_blank" rel="noopener noreferrer">src/path/token.ts:41</a></p>
+<hr>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="rparen">RPAREN<a href="#rparen" class="hash-link" aria-label="Direct link to RPAREN" title="Direct link to RPAREN">​</a></h3>
+<blockquote>
+<p><strong>RPAREN</strong>: <code>&quot;TOKEN_RPAREN&quot;</code></p>
+</blockquote>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="defined-in-35">Defined in<a href="#defined-in-35" class="hash-link" aria-label="Direct link to Defined in" title="Direct link to Defined in">​</a></h4>
+<p><a href="https://github.com/jg-rp/json-p3/blob/65525c389114c16d131238233fa65e561371ad8d/src/path/token.ts#L42" target="_blank" rel="noopener noreferrer">src/path/token.ts:42</a></p>
+<hr>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="single_quote_string">SINGLE_QUOTE_STRING<a href="#single_quote_string" class="hash-link" aria-label="Direct link to SINGLE_QUOTE_STRING" title="Direct link to SINGLE_QUOTE_STRING">​</a></h3>
+<blockquote>
+<p><strong>SINGLE_QUOTE_STRING</strong>: <code>&quot;TOKEN_SINGLE_QUOTE_STRING&quot;</code></p>
+</blockquote>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="defined-in-36">Defined in<a href="#defined-in-36" class="hash-link" aria-label="Direct link to Defined in" title="Direct link to Defined in">​</a></h4>
+<p><a href="https://github.com/jg-rp/json-p3/blob/65525c389114c16d131238233fa65e561371ad8d/src/path/token.ts#L43" target="_blank" rel="noopener noreferrer">src/path/token.ts:43</a></p>
+<hr>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="true">TRUE<a href="#true" class="hash-link" aria-label="Direct link to TRUE" title="Direct link to TRUE">​</a></h3>
+<blockquote>
+<p><strong>TRUE</strong>: <code>&quot;TOKEN_TRUE&quot;</code></p>
+</blockquote>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="defined-in-37">Defined in<a href="#defined-in-37" class="hash-link" aria-label="Direct link to Defined in" title="Direct link to Defined in">​</a></h4>
+<p><a href="https://github.com/jg-rp/json-p3/blob/65525c389114c16d131238233fa65e561371ad8d/src/path/token.ts#L44" target="_blank" rel="noopener noreferrer">src/path/token.ts:44</a></p>
+<hr>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="wild">WILD<a href="#wild" class="hash-link" aria-label="Direct link to WILD" title="Direct link to WILD">​</a></h3>
+<blockquote>
+<p><strong>WILD</strong>: <code>&quot;TOKEN_WILD&quot;</code></p>
+</blockquote>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="defined-in-38">Defined in<a href="#defined-in-38" class="hash-link" aria-label="Direct link to Defined in" title="Direct link to Defined in">​</a></h4>
+<p><a href="https://github.com/jg-rp/json-p3/blob/65525c389114c16d131238233fa65e561371ad8d/src/path/token.ts#L45" target="_blank" rel="noopener noreferrer">src/path/token.ts:45</a></p></div><footer class="theme-doc-footer docusaurus-mt-lg"><div class="row margin-top--sm theme-doc-footer-edit-meta-row"><div class="col"><a href="https://github.com/jg-rp/json-p3/tree/docs/docs/api/namespaces/jsonpath/enumerations/TokenKind.md" target="_blank" rel="noopener noreferrer" class="theme-edit-this-page"><svg fill="currentColor" height="20" width="20" viewBox="0 0 40 40" class="iconEdit_Z9Sw" aria-hidden="true"><g><path d="m34.5 11.7l-3 3.1-6.3-6.3 3.1-3q0.5-0.5 1.2-0.5t1.1 0.5l3.9 3.9q0.5 0.4 0.5 1.1t-0.5 1.2z m-29.5 17.1l18.4-18.5 6.3 6.3-18.4 18.4h-6.3v-6.2z"></path></g></svg>Edit this page</a></div><div class="col lastUpdated_JAkA"></div></div></footer></article><nav class="pagination-nav docusaurus-mt-lg" aria-label="Docs pages"><a class="pagination-nav__link pagination-nav__link--prev" href="/json-p3/api/namespaces/jsonpath/classes/Token"><div class="pagination-nav__sublabel">Previous</div><div class="pagination-nav__label">Class: Token</div></a><a class="pagination-nav__link pagination-nav__link--next" href="/json-p3/api/namespaces/jsonpath/functions/compile"><div class="pagination-nav__sublabel">Next</div><div class="pagination-nav__label">Function: compile()</div></a></nav></div></div><div class="col col--3"><div class="tableOfContents_bqdL thin-scrollbar theme-doc-toc-desktop"><ul class="table-of-contents table-of-contents__left-border"><li><a href="#enumeration-members" class="table-of-contents__link toc-highlight">Enumeration Members</a><ul><li><a href="#and" class="table-of-contents__link toc-highlight">AND</a></li><li><a href="#colon" class="table-of-contents__link toc-highlight">COLON</a></li><li><a href="#comma" class="table-of-contents__link toc-highlight">COMMA</a></li><li><a href="#current" class="table-of-contents__link toc-highlight">CURRENT</a></li><li><a href="#current_key" class="table-of-contents__link toc-highlight">CURRENT_KEY</a></li><li><a href="#ddot" class="table-of-contents__link toc-highlight">DDOT</a></li><li><a href="#dot" class="table-of-contents__link toc-highlight">DOT</a></li><li><a href="#double_quote_string" class="table-of-contents__link toc-highlight">DOUBLE_QUOTE_STRING</a></li><li><a href="#eof" class="table-of-contents__link toc-highlight">EOF</a></li><li><a href="#eq" class="table-of-contents__link toc-highlight">EQ</a></li><li><a href="#error" class="table-of-contents__link toc-highlight">ERROR</a></li><li><a href="#false" class="table-of-contents__link toc-highlight">FALSE</a></li><li><a href="#filter" class="table-of-contents__link toc-highlight">FILTER</a></li><li><a href="#function" class="table-of-contents__link toc-highlight">FUNCTION</a></li><li><a href="#ge" class="table-of-contents__link toc-highlight">GE</a></li><li><a href="#gt" class="table-of-contents__link toc-highlight">GT</a></li><li><a href="#index" class="table-of-contents__link toc-highlight">INDEX</a></li><li><a href="#key" class="table-of-contents__link toc-highlight">KEY</a></li><li><a href="#key_double_quote_string" class="table-of-contents__link toc-highlight">KEY_DOUBLE_QUOTE_STRING</a></li><li><a href="#key_single_quote_string" class="table-of-contents__link toc-highlight">KEY_SINGLE_QUOTE_STRING</a></li><li><a href="#keys" class="table-of-contents__link toc-highlight">KEYS</a></li><li><a href="#keys_filter" class="table-of-contents__link toc-highlight">KEYS_FILTER</a></li><li><a href="#lbracket" class="table-of-contents__link toc-highlight">LBRACKET</a></li><li><a href="#le" class="table-of-contents__link toc-highlight">LE</a></li><li><a href="#lg" class="table-of-contents__link toc-highlight">LG</a></li><li><a href="#lparen" class="table-of-contents__link toc-highlight">LPAREN</a></li><li><a href="#lt" class="table-of-contents__link toc-highlight">LT</a></li><li><a href="#name" class="table-of-contents__link toc-highlight">NAME</a></li><li><a href="#ne" class="table-of-contents__link toc-highlight">NE</a></li><li><a href="#not" class="table-of-contents__link toc-highlight">NOT</a></li><li><a href="#null" class="table-of-contents__link toc-highlight">NULL</a></li><li><a href="#number" class="table-of-contents__link toc-highlight">NUMBER</a></li><li><a href="#or" class="table-of-contents__link toc-highlight">OR</a></li><li><a href="#rbracket" class="table-of-contents__link toc-highlight">RBRACKET</a></li><li><a href="#root" class="table-of-contents__link toc-highlight">ROOT</a></li><li><a href="#rparen" class="table-of-contents__link toc-highlight">RPAREN</a></li><li><a href="#single_quote_string" class="table-of-contents__link toc-highlight">SINGLE_QUOTE_STRING</a></li><li><a href="#true" class="table-of-contents__link toc-highlight">TRUE</a></li><li><a href="#wild" class="table-of-contents__link toc-highlight">WILD</a></li></ul></li></ul></div></div></div></div></main></div></div></div><footer class="footer footer--dark"><div class="container container-fluid"><div class="row footer__links"><div class="col footer__col"><div class="footer__title">Getting started</div><ul class="footer__items clean-list"><li class="footer__item"><a class="footer__link-item" href="/json-p3/">Introduction</a></li><li class="footer__item"><a class="footer__link-item" href="/json-p3/#install">Install</a></li><li class="footer__item"><a class="footer__link-item" href="/json-p3/quick-start">Quick start</a></li></ul></div><div class="col footer__col"><div class="footer__title">Guides</div><ul class="footer__items clean-list"><li class="footer__item"><a class="footer__link-item" href="/json-p3/guides/jsonpath-syntax">JSONPath query syntax</a></li><li class="footer__item"><a class="footer__link-item" href="/json-p3/guides/jsonpath-functions">JSONPath functions</a></li><li class="footer__item"><a class="footer__link-item" href="/json-p3/guides/json-pointer">JSON Pointer</a></li><li class="footer__item"><a class="footer__link-item" href="/json-p3/guides/json-patch">JSON Patch</a></li></ul></div><div class="col footer__col"><div class="footer__title">Links</div><ul class="footer__items clean-list"><li class="footer__item"><a href="https://github.com/jg-rp/json-p3" target="_blank" rel="noopener noreferrer" class="footer__link-item">GitHub<svg width="13.5" height="13.5" aria-hidden="true" viewBox="0 0 24 24" class="iconExternalLink_nPIU"><path fill="currentColor" d="M21 13v10h-21v-19h12v2h-10v15h17v-8h2zm3-12h-10.988l4.035 4-6.977 7.07 2.828 2.828 6.977-7.07 4.125 4.172v-11z"></path></svg></a></li><li class="footer__item"><a href="https://github.com/jg-rp/json-p3/blob/main/CHANGELOG.md" target="_blank" rel="noopener noreferrer" class="footer__link-item">Change Log<svg width="13.5" height="13.5" aria-hidden="true" viewBox="0 0 24 24" class="iconExternalLink_nPIU"><path fill="currentColor" d="M21 13v10h-21v-19h12v2h-10v15h17v-8h2zm3-12h-10.988l4.035 4-6.977 7.07 2.828 2.828 6.977-7.07 4.125 4.172v-11z"></path></svg></a></li><li class="footer__item"><a href="https://www.npmjs.com/package/json-p3" target="_blank" rel="noopener noreferrer" class="footer__link-item">NPM<svg width="13.5" height="13.5" aria-hidden="true" viewBox="0 0 24 24" class="iconExternalLink_nPIU"><path fill="currentColor" d="M21 13v10h-21v-19h12v2h-10v15h17v-8h2zm3-12h-10.988l4.035 4-6.977 7.07 2.828 2.828 6.977-7.07 4.125 4.172v-11z"></path></svg></a></li></ul></div></div><div class="footer__bottom text--center"><div class="footer__copyright">Copyright © 2024 James Prior. Built with Docusaurus.</div></div></div></footer></div>
+</body>
+</html>

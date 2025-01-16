@@ -2,8 +2,17 @@ import { isArray, isObject, isString } from "../types";
 import { JSONPathEnvironment } from "./environment";
 import { JSONPathRecursionLimitError } from "./errors";
 import { JSONPathNode } from "./node";
-import { JSONPathSelector } from "./selectors";
+import { JSONPathSelector, NameSelector } from "./selectors";
 import { Token } from "./token";
+
+/**
+ * An identifier that is allowed in both JS and JSONPath.
+ * JSONPath identifiers are generally much more permissive than JS ones, but
+ * they don't allow the character "$", so we take the intersection of the two
+ * when deciding whether to use dot shorthand for canonical serialization of
+ * simple names.
+ */
+const SHORTHAND_COMPATIBLE_IDENTIFIER = /^[\p{ID_Start}_]\p{ID_Continue}*$/u;
 
 /** Base class for all JSONPath segments. Both shorthand and bracketed. */
 export abstract class JSONPathSegment {
@@ -52,7 +61,20 @@ export class ChildSegment extends JSONPathSegment {
   }
 
   public toString(): string {
-    return `[${this.selectors.map((s) => s.toString()).join(", ")}]`;
+    const { selectors } = this;
+    const [selector] = selectors;
+
+    if (selectors.length === 1 && selector instanceof NameSelector) {
+      const inner = selector.toString().slice(1, -1);
+
+      if (SHORTHAND_COMPATIBLE_IDENTIFIER.test(inner)) {
+        return `.${inner}`;
+      }
+
+      return `[${selector}]`;
+    }
+
+    return `[${selectors.map((s) => s.toString()).join(", ")}]`;
   }
 }
 

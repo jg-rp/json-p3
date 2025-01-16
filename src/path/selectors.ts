@@ -71,7 +71,15 @@ export class NameSelector extends JSONPathSelector {
   }
 
   public toString(): string {
-    return `'${this.name}'`;
+    const jsonified = JSON.stringify(this.name);
+
+    const inner = jsonified.slice(1, -1);
+
+    if (inner.includes("'") && !inner.includes('"')) {
+      return jsonified;
+    }
+
+    return `'${inner.replaceAll('\\"', '"').replaceAll("'", "\\'")}'`;
   }
 }
 

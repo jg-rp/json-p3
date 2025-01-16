@@ -12,16 +12,16 @@ const testCases: Case[] = [
   { description: "empty", path: "", want: "", error: true },
   { description: "just root", path: "$", want: "$" },
   { description: "root dot", path: "$.", want: "", error: true },
-  { description: "shorthand name", path: "$.foo.bar", want: "$['foo']['bar']" },
+  { description: "shorthand name", path: "$.foo.bar", want: "$.foo.bar" },
   {
     description: "bracketed name, single quotes",
     path: "$['foo']['bar']",
-    want: "$['foo']['bar']",
+    want: "$.foo.bar",
   },
   {
     description: "bracketed name, double quotes",
     path: "$['foo']['bar']",
-    want: "$['foo']['bar']",
+    want: "$.foo.bar",
   },
   {
     description: "dot bracketed",
@@ -62,17 +62,17 @@ const testCases: Case[] = [
   {
     description: "wild shorthand",
     path: "$.foo.*",
-    want: "$['foo'][*]",
+    want: "$.foo[*]",
   },
   {
     description: "wild",
     path: "$.foo[*]",
-    want: "$['foo'][*]",
+    want: "$.foo[*]",
   },
   {
     description: "descend",
     path: "$.foo..[0]",
-    want: "$['foo']..[0]",
+    want: "$.foo..[0]",
   },
   {
     description: "bald descend",
@@ -83,37 +83,37 @@ const testCases: Case[] = [
   {
     description: "multiple selectors",
     path: "$.foo[1, 2:5, *, 'bar']",
-    want: "$['foo'][1, 2:5:1, *, 'bar']",
+    want: "$.foo[1, 2:5:1, *, 'bar']",
   },
   {
     description: "filter, relative query",
     path: "$[?@.foo]",
-    want: "$[?@['foo']]",
+    want: "$[?@.foo]",
   },
   {
     description: "filter, parenthesized",
     path: "$[?(@.foo)]",
-    want: "$[?@['foo']]",
+    want: "$[?@.foo]",
   },
   {
     description: "filter, logical and",
     path: "$[?@.foo && @.bar]",
-    want: "$[?(@['foo'] && @['bar'])]",
+    want: "$[?(@.foo && @.bar)]",
   },
   {
     description: "filter, logical or",
     path: "$[?@.foo || @.bar]",
-    want: "$[?(@['foo'] || @['bar'])]",
+    want: "$[?(@.foo || @.bar)]",
   },
   {
     description: "filter, logical not",
     path: "$[?!@.foo]",
-    want: "$[?!@['foo']]",
+    want: "$[?!@.foo]",
   },
   {
     description: "filter, comparison",
     path: "$[?@.foo == @.bar]",
-    want: "$[?@['foo'] == @['bar']]",
+    want: "$[?@.foo == @.bar]",
   },
 ];
 

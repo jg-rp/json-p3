@@ -15,22 +15,22 @@ const TEST_CASES: TestCase[] = [
   {
     description: "not binds more tightly than and",
     path: "$[?!@.a && !@.b]",
-    want: "$[?(!@['a'] && !@['b'])]",
+    want: "$[?(!@.a && !@.b)]",
   },
   {
     description: "not binds more tightly than or",
     path: "$[?!@.a || !@.b]",
-    want: "$[?(!@['a'] || !@['b'])]",
+    want: "$[?(!@.a || !@.b)]",
   },
   {
     description: "control precedence with parens",
     path: "$[?!(@.a && !@.b)]",
-    want: "$[?!(@['a'] && !@['b'])]",
+    want: "$[?!(@.a && !@.b)]",
   },
   {
     description: "non-singular query in logical expression",
     path: "$[?@.* && @.b]",
-    want: "$[?(@[*] && @['b'])]",
+    want: "$[?(@[*] && @.b)]",
   },
 ];
 

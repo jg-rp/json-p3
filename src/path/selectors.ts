@@ -32,6 +32,13 @@ export abstract class JSONPathSelector {
    * Return a canonical string representation of this selector.
    */
   public abstract toString(): string;
+
+  /**
+   * Return a string representation of this selector using shorthand notation where possible.
+   */
+  public toShorthandString(): string {
+    return this.toString();
+  }
 }
 
 /**
@@ -410,5 +417,9 @@ export class FilterSelector extends JSONPathSelector {
 
   public toString(): string {
     return `?${this.expression.toString()}`;
+  }
+
+  public toShorthandString(): string {
+    return `?${this.expression.toShorthandString()}`;
   }
 }

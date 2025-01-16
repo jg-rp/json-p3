@@ -2,8 +2,10 @@ import { isArray, isObject, isString } from "../types";
 import { JSONPathEnvironment } from "./environment";
 import { JSONPathRecursionLimitError } from "./errors";
 import { JSONPathNode } from "./node";
-import { JSONPathSelector } from "./selectors";
+import { JSONPathSelector, NameSelector, WildcardSelector } from "./selectors";
 import { Token } from "./token";
+
+const propertyPattern = /[\u0080-\uFFFFa-zA-Z_][\u0080-\uFFFFa-zA-Z0-9_-]*/;
 
 /** Base class for all JSONPath segments. Both shorthand and bracketed. */
 export abstract class JSONPathSegment {
@@ -29,6 +31,13 @@ export abstract class JSONPathSegment {
    * Return a canonical string representation of this segment.
    */
   public abstract toString(): string;
+
+  /**
+   * Return a string representation of this segment using shorthand notation where possible.
+   */
+  public toShorthandString(): string {
+    return this.toString();
+  }
 }
 
 /** The child selection segment. */
@@ -53,6 +62,24 @@ export class ChildSegment extends JSONPathSegment {
 
   public toString(): string {
     return `[${this.selectors.map((s) => s.toString()).join(", ")}]`;
+  }
+
+  public toShorthandString(): string {
+    if (this.selectors.length === 1) {
+      const selector = this.selectors[0];
+
+      if (
+        selector instanceof NameSelector &&
+        propertyPattern.test(selector.name)
+      ) {
+        return `.${selector.name}`;
+      }
+
+      if (selector instanceof WildcardSelector) {
+        return ".*";
+      }
+    }
+    return `[${this.selectors.map((s) => s.toShorthandString()).join(", ")}]`;
   }
 }
 
@@ -90,6 +117,24 @@ export class DescendantSegment extends JSONPathSegment {
 
   public toString(): string {
     return `..[${this.selectors.map((s) => s.toString()).join(", ")}]`;
+  }
+
+  public toShorthandString(): string {
+    if (this.selectors.length === 1) {
+      const selector = this.selectors[0];
+
+      if (
+        selector instanceof NameSelector &&
+        propertyPattern.test(selector.name)
+      ) {
+        return `..${JSON.stringify(selector.name)}`;
+      }
+
+      if (selector instanceof WildcardSelector) {
+        return "..*";
+      }
+    }
+    return `..[${this.selectors.map((s) => s.toShorthandString()).join(", ")}]`;
   }
 
   private *visit(

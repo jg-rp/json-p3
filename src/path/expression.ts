@@ -23,6 +23,13 @@ export abstract class FilterExpression {
    * Return a string representation of the expression.
    */
   public abstract toString(): string;
+
+  /**
+   * Return a string representation of the expression using shorthand notation where possible.
+   */
+  public toShorthandString(): string {
+    return this.toString();
+  }
 }
 
 /**
@@ -115,6 +122,10 @@ export class PrefixExpression extends FilterExpression {
   public toString(): string {
     return `${this.operator}${this.right.toString()}`;
   }
+
+  public toShorthandString(): string {
+    return `${this.operator}${this.right.toShorthandString()}`;
+  }
 }
 
 export class InfixExpression extends FilterExpression {
@@ -166,6 +177,15 @@ export class InfixExpression extends FilterExpression {
     }
     return `${this.left.toString()} ${this.operator} ${this.right.toString()}`;
   }
+
+  public toShorthandString(): string {
+    if (this.logical) {
+      return `(${this.left.toShorthandString()} ${
+        this.operator
+      } ${this.right.toShorthandString()})`;
+    }
+    return `${this.left.toShorthandString()} ${this.operator} ${this.right.toShorthandString()}`;
+  }
 }
 
 export class LogicalExpression extends FilterExpression {
@@ -184,6 +204,10 @@ export class LogicalExpression extends FilterExpression {
 
   public toString(): string {
     return this.expression.toString();
+  }
+
+  public toShorthandString(): string {
+    return this.expression.toShorthandString();
   }
 }
 
@@ -211,6 +235,10 @@ export class RelativeQuery extends FilterQuery {
   public toString(): string {
     return `@${this.path.toString().slice(1)}`;
   }
+
+  public toShorthandString(): string {
+    return `@${this.path.toShorthandString().slice(1)}`;
+  }
 }
 
 export class RootQuery extends FilterQuery {
@@ -222,6 +250,10 @@ export class RootQuery extends FilterQuery {
 
   public toString(): string {
     return this.path.toString();
+  }
+
+  public toShorthandString(): string {
+    return this.path.toShorthandString();
   }
 }
 
@@ -256,6 +288,10 @@ export class FunctionExtension extends FilterExpression {
 
   public toString(): string {
     return `${this.name}(${this.args.map((e) => e.toString()).join(", ")})`;
+  }
+
+  public toShorthandString(): string {
+    return `${this.name}(${this.args.map((e) => e.toShorthandString()).join(", ")})`;
   }
 
   private unpack_node_list(arg: JSONPathNodeList): unknown {

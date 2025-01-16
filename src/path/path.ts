@@ -62,10 +62,17 @@ export class JSONPathQuery {
   }
 
   /**
-   *
+   * Return the canonical string representation of this query as a normalized path.
    */
   public toString(): string {
     return `$${this.segments.map((s) => s.toString()).join("")}`;
+  }
+
+  /**
+   * Return a string representation of this query using shorthand notation where possible.
+   */
+  public toShorthandString(): string {
+    return `$${this.segments.map((s) => s.toShorthandString()).join("")}`;
   }
 
   public singularQuery(): boolean {

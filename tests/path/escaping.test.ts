@@ -30,7 +30,7 @@ const cases = [
 
   { key: "\\", serialized: String.raw`$['\\']` },
   { key: '"', serialized: String.raw`$['"']` },
-  { key: `'`, serialized: `$["'"]` },
+  { key: `'`, serialized: String.raw`$["'"]` },
   { key: '\\"', serialized: String.raw`$['\\"']` },
   { key: `\\'`, serialized: String.raw`$["\\'"]` },
 
@@ -53,6 +53,9 @@ const cases = [
   { key: "null", serialized: "$.null" },
   { key: "Infinity", serialized: "$.Infinity" },
   { key: "__proto__", serialized: "$.__proto__" },
+
+  { key: "\n", serialized: String.raw`$['\n']` },
+  { key: "\t", serialized: String.raw`$['\t']` },
 ];
 
 const obj = Object.fromEntries(cases.map(({ key }) => [key, key]));

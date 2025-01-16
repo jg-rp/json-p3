@@ -1,5 +1,11 @@
 # JSON P3 Change Log
 
+## Version 2.0.1 (unreleased)
+
+**Fixes**
+
+- Fixed the string representation (a normalized path) of name selectors containing `'` or `\`. See [issue #30](https://github.com/jg-rp/json-p3/issues/30).
+
 ## Version 2.0.0
 
 **Breaking changes**

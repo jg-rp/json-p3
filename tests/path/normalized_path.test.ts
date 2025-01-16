@@ -115,6 +115,16 @@ const testCases: Case[] = [
     path: "$[?@.foo == @.bar]",
     want: "$[?@['foo'] == @['bar']]",
   },
+  {
+    description: "issue #30",
+    path: `$["'"]`,
+    want: "$['\\'']",
+  },
+  {
+    description: "quoted name with a slash",
+    path: `$["\\\\"]`,
+    want: "$['\\\\']",
+  },
 ];
 
 describe("parse path", () => {

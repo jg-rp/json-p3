@@ -71,7 +71,7 @@ export class NameSelector extends JSONPathSelector {
   }
 
   public toString(): string {
-    return `'${this.name}'`;
+    return `'${this.name.replace("\\", "\\\\").replace("'", "\\'")}'`;
   }
 }
 

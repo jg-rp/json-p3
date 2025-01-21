@@ -46,10 +46,7 @@ describe("JSONPath API", () => {
       },
     });
     expect(nodes.length).toBe(2);
-    expect(nodes.paths()).toStrictEqual([
-      "$['some']['foo'][0]",
-      "$['some']['bar'][0]",
-    ]);
+    expect(nodes.paths()).toStrictEqual(["$.some.foo[0]", "$.some.bar[0]"]);
   });
   test("pointer from node", () => {
     const nodes = env.query("$.some['foo', 'bar'][0]", {

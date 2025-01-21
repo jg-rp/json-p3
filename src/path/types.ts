@@ -30,3 +30,26 @@ export function hasStringKey(
 }
 
 export const KEY_MARK = "\x02";
+
+/** Options for serializing paths */
+export type SerializationOptions = {
+  /**
+   * `pretty` paths always use:
+   *  - shorthand notation rather than dot notation where possible
+   *  - double quotes rather than single quotes for string literals and where shorthand
+   *    notation is not possible
+   *  - short escape sequences for common non-printing characters such as `\n` and `\t`
+   *
+   * `canonical` paths always use:
+   *  - bracket notation for name and wildcard selectors
+   *  - single quotes for name selectors and string literals
+   *  - short escape sequences for common non-printing characters such as `\n` and `\t`
+   *
+   * `canonical` paths will produce a normalized path where available, but cannot be
+   * considered normalized paths if the query does not represent a singular, absolute node.
+   */
+  form: "pretty" | "canonical";
+};
+export const defaultSerializationOptions: SerializationOptions = {
+  form: "pretty",
+};

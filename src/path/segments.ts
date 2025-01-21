@@ -2,8 +2,12 @@ import { isArray, isObject, isString } from "../types";
 import { JSONPathEnvironment } from "./environment";
 import { JSONPathRecursionLimitError } from "./errors";
 import { JSONPathNode } from "./node";
-import { JSONPathSelector } from "./selectors";
+import { JSONPathSelector, NameSelector } from "./selectors";
 import { Token } from "./token";
+import {
+  type SerializationOptions,
+  defaultSerializationOptions,
+} from "./types";
 
 /** Base class for all JSONPath segments. Both shorthand and bracketed. */
 export abstract class JSONPathSegment {
@@ -26,9 +30,9 @@ export abstract class JSONPathSegment {
   ): Generator<JSONPathNode>;
 
   /**
-   * Return a canonical string representation of this segment.
+   * Return a string representation of this segment.
    */
-  public abstract toString(): string;
+  public abstract toString(options?: SerializationOptions): string;
 }
 
 /** The child selection segment. */
@@ -51,8 +55,19 @@ export class ChildSegment extends JSONPathSegment {
     }
   }
 
-  public toString(): string {
-    return `[${this.selectors.map((s) => s.toString()).join(", ")}]`;
+  public toString(options?: SerializationOptions): string {
+    const { form } = { ...defaultSerializationOptions, ...options };
+
+    if (
+      form === "pretty" &&
+      this.selectors.length === 1 &&
+      this.selectors[0] instanceof NameSelector
+    ) {
+      const shorthand = this.selectors[0].shorthand();
+      if (shorthand != null) return `.${shorthand}`;
+    }
+
+    return `[${this.selectors.map((s) => s.toString(options)).join(", ")}]`;
   }
 }
 
@@ -88,8 +103,8 @@ export class DescendantSegment extends JSONPathSegment {
     }
   }
 
-  public toString(): string {
-    return `..[${this.selectors.map((s) => s.toString()).join(", ")}]`;
+  public toString(options?: SerializationOptions): string {
+    return `..[${this.selectors.map((s) => s.toString(options)).join(", ")}]`;
   }
 
   private *visit(

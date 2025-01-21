@@ -163,9 +163,15 @@ describe("extra features", () => {
     const data = { some: { a: 1, b: 2, c: 3 } };
     const nodes = env.query(path, data);
     expect(nodes.values()).toStrictEqual(["a", "b", "c"]);
-    expect(env.query(nodes.nodes[0].path, data).values()).toStrictEqual(["a"]);
-    expect(env.query(nodes.nodes[1].path, data).values()).toStrictEqual(["b"]);
-    expect(env.query(nodes.nodes[2].path, data).values()).toStrictEqual(["c"]);
+    expect(env.query(nodes.nodes[0].getPath(), data).values()).toStrictEqual([
+      "a",
+    ]);
+    expect(env.query(nodes.nodes[1].getPath(), data).values()).toStrictEqual([
+      "b",
+    ]);
+    expect(env.query(nodes.nodes[2].getPath(), data).values()).toStrictEqual([
+      "c",
+    ]);
   });
 
   test("custom keys pattern", () => {
@@ -217,7 +223,7 @@ const DOCS_EXAMPLE_TEST_CASES: DocsTestCase[] = [
       a: [{ b: "x", c: "z" }, { b: "y" }],
     },
     want: ["c"],
-    want_paths: ["$['a'][0][~'c']"],
+    want_paths: ["$.a[0].~c"],
   },
   {
     description: "key selector, key does not exist",
@@ -235,16 +241,16 @@ const DOCS_EXAMPLE_TEST_CASES: DocsTestCase[] = [
       a: [{ b: "x", c: "z" }, { b: "y" }],
     },
     want: ["b", "b"],
-    want_paths: ["$['a'][0][~'b']", "$['a'][1][~'b']"],
+    want_paths: ["$.a[0].~b", "$.a[1].~b"],
   },
   {
-    description: "key selector, , descendant, double quoted key",
+    description: "key selector, descendant, double quoted key",
     path: '$..[~"b"]',
     data: {
       a: [{ b: "x", c: "z" }, { b: "y" }],
     },
     want: ["b", "b"],
-    want_paths: ["$['a'][0][~'b']", "$['a'][1][~'b']"],
+    want_paths: ["$.a[0].~b", "$.a[1].~b"],
   },
   {
     description: "keys selector, object key",
@@ -253,7 +259,7 @@ const DOCS_EXAMPLE_TEST_CASES: DocsTestCase[] = [
       a: [{ b: "x", c: "z" }, { b: "y" }],
     },
     want: ["b", "c"],
-    want_paths: ["$['a'][0][~'b']", "$['a'][0][~'c']"],
+    want_paths: ["$.a[0].~b", "$.a[0].~c"],
   },
   {
     description: "keys selector, array key",
@@ -285,26 +291,21 @@ const DOCS_EXAMPLE_TEST_CASES: DocsTestCase[] = [
       a: [{ b: "x", c: "z" }, { b: "y" }],
     },
     want: ["a", "b", "c", "b"],
-    want_paths: [
-      "$[~'a']",
-      "$['a'][0][~'b']",
-      "$['a'][0][~'c']",
-      "$['a'][1][~'b']",
-    ],
+    want_paths: ["$.~a", "$.a[0].~b", "$.a[0].~c", "$.a[1].~b"],
   },
   {
     description: "keys filter selector, conditionally select object keys",
     path: "$.*[~?length(@) > 2]",
     data: [{ a: [1, 2, 3], b: [4, 5] }, { c: { x: [1, 2] } }, { d: [1, 2, 3] }],
     want: ["a", "d"],
-    want_paths: ["$[0][~'a']", "$[2][~'d']"],
+    want_paths: ["$[0].~a", "$[2].~d"],
   },
   {
     description: "keys filter selector, existence test",
     path: "$.*[~?@.x]",
     data: [{ a: [1, 2, 3], b: [4, 5] }, { c: { x: [1, 2] } }, { d: [1, 2, 3] }],
     want: ["c"],
-    want_paths: ["$[1][~'c']"],
+    want_paths: ["$[1].~c"],
   },
   {
     description: "keys filter selector, keys from an array",
@@ -318,14 +319,14 @@ const DOCS_EXAMPLE_TEST_CASES: DocsTestCase[] = [
     path: "$[?match(#, '^ab.*') && length(@) > 0 ]",
     data: { abc: [1, 2, 3], def: [4, 5], abx: [6], aby: [] },
     want: [[1, 2, 3], [6]],
-    want_paths: ["$['abc']", "$['abx']"],
+    want_paths: ["$.abc", "$.abx"],
   },
   {
     description: "current key identifier, compare current array index",
     path: "$.abc[?(# >= 1)]",
     data: { abc: [1, 2, 3], def: [4, 5], abx: [6], aby: [] },
     want: [2, 3],
-    want_paths: ["$['abc'][1]", "$['abc'][2]"],
+    want_paths: ["$.abc[1]", "$.abc[2]"],
   },
 ];
 

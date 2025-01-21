@@ -4,7 +4,7 @@ import { FunctionExpressionType } from "./functions/function";
 import { JSONPathNodeList } from "./node";
 import { JSONPathQuery } from "./path";
 import { Token } from "./token";
-import { FilterContext, Nothing } from "./types";
+import { FilterContext, Nothing, SerializationOptions } from "./types";
 import { isNumber, isString } from "../types";
 
 /**
@@ -22,7 +22,7 @@ export abstract class FilterExpression {
   /**
    * Return a string representation of the expression.
    */
-  public abstract toString(): string;
+  public abstract toString(options?: SerializationOptions): string;
 }
 
 /**
@@ -112,8 +112,8 @@ export class PrefixExpression extends FilterExpression {
     );
   }
 
-  public toString(): string {
-    return `${this.operator}${this.right.toString()}`;
+  public toString(options?: SerializationOptions): string {
+    return `${this.operator}${this.right.toString(options)}`;
   }
 }
 
@@ -158,13 +158,13 @@ export class InfixExpression extends FilterExpression {
     return compare(left, this.operator, right);
   }
 
-  public toString(): string {
+  public toString(options?: SerializationOptions): string {
     if (this.logical) {
-      return `(${this.left.toString()} ${
+      return `(${this.left.toString(options)} ${
         this.operator
-      } ${this.right.toString()})`;
+      } ${this.right.toString(options)})`;
     }
-    return `${this.left.toString()} ${this.operator} ${this.right.toString()}`;
+    return `${this.left.toString(options)} ${this.operator} ${this.right.toString(options)}`;
   }
 }
 
@@ -182,8 +182,8 @@ export class LogicalExpression extends FilterExpression {
     return isTruthy(value);
   }
 
-  public toString(): string {
-    return this.expression.toString();
+  public toString(options?: SerializationOptions): string {
+    return this.expression.toString(options);
   }
 }
 
@@ -208,8 +208,8 @@ export class RelativeQuery extends FilterQuery {
       : this.path.query(context.currentValue);
   }
 
-  public toString(): string {
-    return `@${this.path.toString().slice(1)}`;
+  public toString(options?: SerializationOptions): string {
+    return `@${this.path.toString(options).slice(1)}`;
   }
 }
 
@@ -220,8 +220,8 @@ export class RootQuery extends FilterQuery {
       : this.path.query(context.rootValue);
   }
 
-  public toString(): string {
-    return this.path.toString();
+  public toString(options?: SerializationOptions): string {
+    return this.path.toString(options);
   }
 }
 
@@ -254,8 +254,8 @@ export class FunctionExtension extends FilterExpression {
     return func.call(...args);
   }
 
-  public toString(): string {
-    return `${this.name}(${this.args.map((e) => e.toString()).join(", ")})`;
+  public toString(options?: SerializationOptions): string {
+    return `${this.name}(${this.args.map((e) => e.toString(options)).join(", ")})`;
   }
 
   private unpack_node_list(arg: JSONPathNodeList): unknown {

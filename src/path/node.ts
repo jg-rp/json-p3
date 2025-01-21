@@ -1,6 +1,11 @@
 import { JSONPointer } from "../pointer";
 import { JSONValue, isString } from "../types";
-import { KEY_MARK } from "./types";
+import { toCanonical, toQuoted, toShorthand } from "./serialize";
+import {
+  type SerializationOptions,
+  defaultSerializationOptions,
+  KEY_MARK,
+} from "./types";
 
 /**
  * The pair of a JSON value and its location found in the target JSON value.
@@ -17,12 +22,28 @@ export class JSONPathNode {
     readonly root: JSONValue,
   ) {}
 
+  /**
+   * @deprecated Use {@link getPath} with `options.form` set to `canonical` instead.
+   */
   public get path(): string {
+    return this.getPath({ form: "canonical" });
+  }
+
+  /**
+   * Get the path to this node in the target JSON value.
+   *
+   * Given that the path refers to the singular current node, the returned path
+   * will always be a normalized path if `options.form` is set to `canonical`,
+   * following section 2.7 of RFC 9535.
+   */
+  public getPath(options?: SerializationOptions): string {
+    const opts = { ...defaultSerializationOptions, ...options };
+
     return (
       // eslint-disable-next-line prefer-template
       "$" +
       this.location
-        .map((s) => (isString(s) ? this.decode_name_location(s) : `[${s}]`))
+        .map((s) => (isString(s) ? this.decodeNameLocation(s, opts) : `[${s}]`))
         .join("")
     );
   }
@@ -37,10 +58,20 @@ export class JSONPathNode {
     return new JSONPointer(JSONPointer.encode(this.location.map(String)));
   }
 
-  private decode_name_location(name: string): string {
-    return name.startsWith(KEY_MARK)
-      ? `[~'${name.slice(1).replaceAll("'", "\\'")}']`
-      : `['${name.replaceAll("'", "\\'")}']`;
+  private decodeNameLocation(
+    name: string,
+    options: SerializationOptions,
+  ): string {
+    const serialize = options.form === "canonical" ? toCanonical : toQuoted;
+    const hasKeyMark = name.startsWith(KEY_MARK);
+    if (hasKeyMark) name = name.slice(1);
+    const shorthand = toShorthand(name);
+
+    if (hasKeyMark) {
+      return shorthand == null ? `[~${serialize(name)}]` : `.~${shorthand}`;
+    }
+
+    return shorthand == null ? `[${serialize(name)}]` : `.${shorthand}`;
   }
 }
 
@@ -99,8 +130,8 @@ export class JSONPathNodeList {
    * A normalized path contains only property name and index selectors, and
    * always uses bracketed segments, never shorthand selectors.
    */
-  public paths(): string[] {
-    return this.nodes.map((node) => node.path);
+  public paths(options?: SerializationOptions): string[] {
+    return this.nodes.map((node) => node.getPath(options));
   }
 
   /**

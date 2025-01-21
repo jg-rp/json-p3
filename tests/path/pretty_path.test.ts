@@ -4,14 +4,20 @@ import { JSONPathEnvironment } from "../../src/path/environment";
 type Case = {
   description: string;
   path: string;
-  want: string;
-  error?: boolean;
-};
+} & (
+  | {
+      want: string;
+      error?: undefined;
+    }
+  | {
+      error: true;
+    }
+);
 
 const testCases: Case[] = [
-  { description: "empty", path: "", want: "", error: true },
+  { description: "empty", path: "", error: true },
   { description: "just root", path: "$", want: "$" },
-  { description: "root dot", path: "$.", want: "", error: true },
+  { description: "root dot", path: "$.", error: true },
   { description: "shorthand name", path: "$.foo.bar", want: "$.foo.bar" },
   {
     description: "bracketed name, single quotes",
@@ -26,7 +32,6 @@ const testCases: Case[] = [
   {
     description: "dot bracketed",
     path: "$.['foo']",
-    want: "",
     error: true,
   },
   {
@@ -77,7 +82,6 @@ const testCases: Case[] = [
   {
     description: "bald descend",
     path: "$.foo..",
-    want: "",
     error: true,
   },
   {
@@ -118,13 +122,17 @@ const testCases: Case[] = [
 ];
 
 describe("parse path", () => {
-  test.each<Case>(testCases)("$description", ({ path, want, error }: Case) => {
+  test.each<Case>(testCases)("$description", (c: Case) => {
     const env = new JSONPathEnvironment();
-    if (error) {
-      expect(() => env.compile(path)).toThrow(JSONPathError);
+    if (c.error) {
+      expect(() => env.compile(c.path)).toThrow(JSONPathError);
     } else {
-      const _path = env.compile(path);
-      expect(_path.toString()).toBe(want);
+      const path = env.compile(c.path);
+
+      // defaults to `pretty` form
+      expect(path.toString()).toBe(c.want);
+      // explicitly specify `pretty` form
+      expect(path.toString({ form: "pretty" })).toBe(c.want);
     }
   });
 });

@@ -3,8 +3,14 @@ import { JSONPathIndexError } from "./errors";
 import { LogicalExpression } from "./expression";
 import { JSONPathNode } from "./node";
 import { Token } from "./token";
-import { FilterContext, hasStringKey } from "./types";
+import {
+  type FilterContext,
+  type SerializationOptions,
+  defaultSerializationOptions,
+  hasStringKey,
+} from "./types";
 import { isArray, isObject, isString, JSONValue } from "../types";
+import { toCanonical, toQuoted, toShorthand } from "./serialize";
 
 /**
  * Base class for all JSONPath segments and selectors.
@@ -31,7 +37,7 @@ export abstract class JSONPathSelector {
   /**
    * Return a canonical string representation of this selector.
    */
-  public abstract toString(): string;
+  public abstract toString(options?: SerializationOptions): string;
 }
 
 /**
@@ -70,16 +76,13 @@ export class NameSelector extends JSONPathSelector {
     }
   }
 
-  public toString(): string {
-    const jsonified = JSON.stringify(this.name);
+  public toString(options?: SerializationOptions): string {
+    const { form } = { ...defaultSerializationOptions, ...options };
+    return form === "canonical" ? toCanonical(this.name) : toQuoted(this.name);
+  }
 
-    const inner = jsonified.slice(1, -1);
-
-    if (inner.includes("'") && !inner.includes('"')) {
-      return jsonified;
-    }
-
-    return `'${inner.replaceAll('\\"', '"').replaceAll("'", "\\'")}'`;
+  public shorthand(): string | null {
+    return toShorthand(this.name);
   }
 }
 
@@ -416,7 +419,7 @@ export class FilterSelector extends JSONPathSelector {
     }
   }
 
-  public toString(): string {
-    return `?${this.expression.toString()}`;
+  public toString(options?: SerializationOptions): string {
+    return `?${this.expression.toString(options)}`;
   }
 }

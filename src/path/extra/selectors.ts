@@ -3,8 +3,15 @@ import { JSONPathEnvironment } from "../environment";
 import { LogicalExpression } from "../expression";
 import { JSONPathNode } from "../node";
 import { JSONPathSelector } from "../selectors";
+import { toCanonical, toQuoted } from "../serialize";
 import { Token } from "../token";
-import { FilterContext, KEY_MARK, hasStringKey } from "../types";
+import {
+  type FilterContext,
+  type SerializationOptions,
+  KEY_MARK,
+  defaultSerializationOptions,
+  hasStringKey,
+} from "../types";
 
 export class KeySelector extends JSONPathSelector {
   constructor(
@@ -44,8 +51,10 @@ export class KeySelector extends JSONPathSelector {
     }
   }
 
-  public toString(): string {
-    return `~'${this.key.replaceAll("'", "\\'")}'`;
+  public toString(options?: SerializationOptions): string {
+    const { form } = { ...defaultSerializationOptions, ...options };
+    const serialize = form === "canonical" ? toCanonical : toQuoted;
+    return `~${serialize(this.key)}`;
   }
 }
 
@@ -150,7 +159,7 @@ export class KeysFilterSelector extends JSONPathSelector {
     }
   }
 
-  public toString(): string {
-    return `~?${this.expression.toString()}`;
+  public toString(options?: SerializationOptions): string {
+    return `~?${this.expression.toString(options)}`;
   }
 }

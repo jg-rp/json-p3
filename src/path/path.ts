@@ -3,6 +3,7 @@ import { JSONPathNode, JSONPathNodeList } from "./node";
 import { IndexSelector, NameSelector } from "./selectors";
 import { JSONValue } from "../types";
 import { JSONPathSegment, DescendantSegment } from "./segments";
+import { SerializationOptions } from "./types";
 
 /**
  *
@@ -62,10 +63,11 @@ export class JSONPathQuery {
   }
 
   /**
-   *
+   * Return a string representation of this query.
    */
-  public toString(): string {
-    return `$${this.segments.map((s) => s.toString()).join("")}`;
+  public toString(options?: SerializationOptions): string {
+    // return this.prettyPath();
+    return `$${this.segments.map((s) => s.toString(options)).join("")}`;
   }
 
   public singularQuery(): boolean {

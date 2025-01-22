@@ -147,6 +147,26 @@ console.log(nodes.values()); // [ 'John', 'Sally', 'Jane' ]
 
 `compile()` is also re-exported to JSON P3's top-level namespace.
 
+### Query serialization
+
+A [compiled `JSONPathQuery`](#compilation) can be serialized back to a string using its [`toString()`](./api/namespaces/jsonpath/classes/JSONPathQuery.md#tostring) method. As of version 2.1.0, the default string representation uses shorthand notation where possible and double quotes for names and string literals rather than single quotes.
+
+```javascript
+import { jsonpath } from "json-p3";
+
+const path = jsonpath.compile("$['users'][?@.score < 100]['name']");
+console.log(path.toString()); // $.users[?@.score < 100].name
+```
+
+To serialize a `JSONPathQuery` using the canonical bracket notation and single quotes, pass a [`SerializationOptions`](./api/namespaces/jsonpath/type-aliases/SerializationOptions.md) object as an argument to `toString()`.
+
+```javascript
+import { jsonpath } from "json-p3";
+
+const path = jsonpath.compile("$.users[?@.score < 100].name");
+console.log(path.toString({ form: "canonical" })); $['users'][?@['score'] < 100]['name']
+```
+
 ## JSON Pointer
 
 Resolve a JSON Pointer ([RFC 6901](https://datatracker.ietf.org/doc/html/rfc6901)) against some data using `jsonpointer.resolve()`.

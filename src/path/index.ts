@@ -29,7 +29,11 @@ export {
 } from "./errors";
 
 export { Nothing, KEY_MARK } from "./types";
-export type { JSONPathValue, FilterContext } from "./types";
+export type {
+  JSONPathValue,
+  FilterContext,
+  SerializationOptions,
+} from "./types";
 
 export const DEFAULT_ENVIRONMENT = new JSONPathEnvironment();
 

@@ -1,0 +1,70 @@
+{
+  "tests": [
+    {
+      "name": "shorthand name",
+      "query": "$.a",
+      "document": {
+        "a": "A",
+        "b": "B"
+      },
+      "paths": ["$['a']"]
+    },
+    {
+      "name": "double quoted name selector",
+      "query": "$[\"a\"]",
+      "document": {
+        "a": "A"
+      },
+      "paths": ["$['a']"]
+    },
+    {
+      "name": "double quoted name selector, single quote",
+      "query": "$[\"a'\"]",
+      "document": {
+        "a'": "A"
+      },
+      "paths": ["$['a\\'']"]
+    },
+    {
+      "name": "single quoted name selector, escaped single quote",
+      "query": "$['a\\'']",
+      "document": {
+        "a'": "A"
+      },
+      "paths": ["$['a\\'']"]
+    },
+    {
+      "name": "shorthand name, nested",
+      "query": "$.a.b.c",
+      "document": {
+        "a": { "b": { "c": "C" } }
+      },
+      "paths": ["$['a']['b']['c']"]
+    },
+    {
+      "name": "double quoted name selector, nested",
+      "query": "$[\"a\"][\"b\"][\"c\"]",
+      "document": {
+        "a": { "b": { "c": "C" } }
+      },
+      "paths": ["$['a']['b']['c']"]
+    },
+    {
+      "name": "double quoted name selector",
+      "query": "$[\"\\\\\"]",
+      "document": {
+        "\\": "A"
+      },
+      "paths": ["$['\\\\']"]
+    },
+    {
+      "name": "shorthand wildcard",
+      "query": "$.*",
+      "document": {
+        "a": "A",
+        "b": "B"
+      },
+      "paths": ["$['a']", "$['b']"]
+    }
+  ]
+}

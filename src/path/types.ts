@@ -9,7 +9,7 @@ export const Nothing = Symbol.for("jsonpath.nothing");
 export type JSONPathValue = JSONValue | typeof Nothing;
 
 /**
- * Object passed to FilterExpression.evaluate().
+ * Object passed to `FilterExpression.evaluate()`.
  */
 export type FilterContext = {
   environment: JSONPathEnvironment;
@@ -31,7 +31,9 @@ export function hasStringKey(
 
 export const KEY_MARK = "\x02";
 
-/** Options for serializing paths */
+/**
+ * Options for serializing paths.
+ */
 export type SerializationOptions = {
   /**
    * `pretty` paths always use:
@@ -50,6 +52,7 @@ export type SerializationOptions = {
    */
   form: "pretty" | "canonical";
 };
+
 export const defaultSerializationOptions: SerializationOptions = {
   form: "pretty",
 };

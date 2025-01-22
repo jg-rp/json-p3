@@ -6,23 +6,18 @@ import { JSONPathSegment, DescendantSegment } from "./segments";
 import { SerializationOptions } from "./types";
 
 /**
- *
+ * A compiled JSONPath query ready to be applied to different data repeatedly.
  */
 export class JSONPathQuery {
-  /**
-   *
-   * @param environment -
-   * @param segments -
-   */
   constructor(
     readonly environment: JSONPathEnvironment,
     readonly segments: JSONPathSegment[],
   ) {}
 
   /**
-   *
-   * @param value -
-   * @returns
+   * Apply this JSONPath query to _value_.
+   * @param value - A JSON-like object to apply this query to.
+   * @returns Nodes matched by applying this query to _value_.
    */
   public query(value: JSONValue): JSONPathNodeList {
     let nodes = [new JSONPathNode(value, [], value)];
@@ -33,9 +28,9 @@ export class JSONPathQuery {
   }
 
   /**
-   *
-   * @param value -
-   * @returns
+   * Apply this JSONPath query to _value_.
+   * @param value - A JSON-like object to apply this query to.
+   * @returns An iterator over nodes matched by applying this query to _value_.
    */
   public lazyQuery(value: JSONValue): IterableIterator<JSONPathNode> {
     let nodes: IterableIterator<JSONPathNode> = [
@@ -66,10 +61,12 @@ export class JSONPathQuery {
    * Return a string representation of this query.
    */
   public toString(options?: SerializationOptions): string {
-    // return this.prettyPath();
     return `$${this.segments.map((s) => s.toString(options)).join("")}`;
   }
 
+  /**
+   * Return `true` if this query is a _singular query_, or `false` otherwise.
+   */
   public singularQuery(): boolean {
     for (const segment of this.segments) {
       if (segment instanceof DescendantSegment) return false;

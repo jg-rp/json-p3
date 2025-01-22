@@ -12,8 +12,7 @@ type Case = {
 
 const normalized_paths = JSON.parse(
   readFileSync(
-    process.env.JSONP3_NORMALIZED_PATHS ||
-      "tests/path/normalized_test_suit/normalized_paths.json",
+    process.env.JSONP3_NTS_PATH || "tests/path/nts/normalized_paths.json",
     {
       encoding: "utf8",
     },

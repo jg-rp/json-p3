@@ -10,7 +10,7 @@
       "paths": ["$['a']"]
     },
     {
-      "name": "double quoted name selector",
+      "name": "double quotes, name selector",
       "query": "$[\"a\"]",
       "document": {
         "a": "A"
@@ -18,7 +18,7 @@
       "paths": ["$['a']"]
     },
     {
-      "name": "double quoted name selector, single quote",
+      "name": "double quotes, name selector, single quote",
       "query": "$[\"a'\"]",
       "document": {
         "a'": "A"
@@ -26,7 +26,7 @@
       "paths": ["$['a\\'']"]
     },
     {
-      "name": "single quoted name selector, escaped single quote",
+      "name": "single quotes, name selector, escaped single quote",
       "query": "$['a\\'']",
       "document": {
         "a'": "A"
@@ -42,7 +42,7 @@
       "paths": ["$['a']['b']['c']"]
     },
     {
-      "name": "double quoted name selector, nested",
+      "name": "double quotes, name selector, nested",
       "query": "$[\"a\"][\"b\"][\"c\"]",
       "document": {
         "a": { "b": { "c": "C" } }
@@ -50,7 +50,7 @@
       "paths": ["$['a']['b']['c']"]
     },
     {
-      "name": "double quoted name selector",
+      "name": "double quotes, name selector",
       "query": "$[\"\\\\\"]",
       "document": {
         "\\": "A"
@@ -65,6 +65,58 @@
         "b": "B"
       },
       "paths": ["$['a']", "$['b']"]
+    },
+    {
+      "name": "double quotes, name selector, escaped backspace",
+      "query": "$[\"\\b\"]",
+      "document": {
+        "\u0008": "A"
+      },
+      "paths": ["$['\\b']"]
+    },
+    {
+      "name": "double quotes, name selector, escaped form feed",
+      "query": "$[\"\\f\"]",
+      "document": {
+        "\u000C": "A"
+      },
+      "paths": ["$['\\f']"]
+    },
+    {
+      "name": "double quotes, name selector, escaped line feed",
+      "query": "$[\"\\n\"]",
+      "document": {
+        "\u000A": "A"
+      },
+      "paths": ["$['\\n']"]
+    },
+    {
+      "name": "double quotes, name selector, escaped carriage return",
+      "query": "$[\"\\r\"]",
+      "document": {
+        "\u000D": "A"
+      },
+      "paths": ["$['\\r']"]
+    },
+    {
+      "name": "double quotes, name selector, escaped tab",
+      "query": "$[\"\\t\"]",
+      "document": {
+        "\u0009": "A"
+      },
+      "paths": ["$['\\t']"]
+    },
+    {
+      "name": "negative index",
+      "query": "$[-2]",
+      "document": ["A", "B", "C", "D", "E"],
+      "paths": ["$[3]"]
+    },
+    {
+      "name": "negative slice step",
+      "query": "$[-1:-4:-2]",
+      "document": ["A", "B", "C", "D", "E"],
+      "paths": ["$[4]", "$[2]"]
     }
   ]
 }

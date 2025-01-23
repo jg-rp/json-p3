@@ -1,5 +1,14 @@
 # JSON P3 Change Log
 
+## Version 2.1.0 (unreleased)
+
+**Changes**
+
+- Fixed `JSONPathQuery` serialization. `JSONPathQuery.toString()` was not handling name selectors containing `'` or `\`, and was a bit vague about the format serialized paths would use. `JSONPathQuery.toString()` now accepts an options object with a single `form` option. `form` can be one of `"pretty"` (the default) or `"canonical"`. The canonical format uses bracket notation and single quotes, whereas the pretty format uses shorthand notation where possible and double quotes. See [issue #30](https://github.com/jg-rp/json-p3/issues/30) and [PR #32](https://github.com/jg-rp/json-p3/pull/32).
+- Added `JSONPathNode.getPath(options?)`, which returns a string representation of the node's location. As above, the `form` option can be one of `"pretty"` (the default) or `"canonical"`.
+- Deprecated `JSONPathNode.path` in favour of `JSONPathNode.getPath(options?)`.
+- Changed the string representation of _filter selectors_. Both canonical and pretty formats now only include parentheses where necessary.
+
 ## Version 2.0.0
 
 **Breaking changes**

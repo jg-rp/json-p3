@@ -102,12 +102,12 @@ const testCases: Case[] = [
   {
     description: "filter, logical and",
     path: "$[?@.foo && @.bar]",
-    want: "$[?(@.foo && @.bar)]",
+    want: "$[?@.foo && @.bar]",
   },
   {
     description: "filter, logical or",
     path: "$[?@.foo || @.bar]",
-    want: "$[?(@.foo || @.bar)]",
+    want: "$[?@.foo || @.bar]",
   },
   {
     description: "filter, logical not",

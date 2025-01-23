@@ -62,16 +62,21 @@ export class JSONPathNode {
     name: string,
     options: SerializationOptions,
   ): string {
-    const serialize = options.form === "canonical" ? toCanonical : toQuoted;
+    const normalized = options.form === "canonical";
+    const serialize = normalized ? toCanonical : toQuoted;
     const hasKeyMark = name.startsWith(KEY_MARK);
     if (hasKeyMark) name = name.slice(1);
     const shorthand = toShorthand(name);
 
     if (hasKeyMark) {
-      return shorthand == null ? `[~${serialize(name)}]` : `.~${shorthand}`;
+      return normalized || shorthand == null
+        ? `[~${serialize(name)}]`
+        : `.~${shorthand}`;
     }
 
-    return shorthand == null ? `[${serialize(name)}]` : `.${shorthand}`;
+    return normalized || shorthand == null
+      ? `[${serialize(name)}]`
+      : `.${shorthand}`;
   }
 }
 

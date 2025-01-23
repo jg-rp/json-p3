@@ -6,6 +6,7 @@ import { JSONPathQuery } from "./path";
 import { Token } from "./token";
 import { FilterContext, Nothing, SerializationOptions } from "./types";
 import { isNumber, isString } from "../types";
+import { toCanonical } from "./serialize";
 
 /**
  * Base class for all filter expressions.
@@ -70,7 +71,7 @@ export class StringLiteral extends FilterExpressionLiteral {
   }
 
   public toString(): string {
-    return JSON.stringify(this.value);
+    return toCanonical(this.value);
   }
 }
 
@@ -117,6 +118,10 @@ export class PrefixExpression extends FilterExpression {
   }
 }
 
+const PRECEDENCE_LOGICAL_OR = 4;
+const PRECEDENCE_LOGICAL_AND = 5;
+const PRECEDENCE_PREFIX = 7;
+
 export class InfixExpression extends FilterExpression {
   readonly logical: boolean;
 
@@ -159,6 +164,7 @@ export class InfixExpression extends FilterExpression {
   }
 
   public toString(options?: SerializationOptions): string {
+    // Note that `LogicalExpression.toString()` does not call this.
     if (this.logical) {
       return `(${this.left.toString(options)} ${
         this.operator
@@ -183,7 +189,43 @@ export class LogicalExpression extends FilterExpression {
   }
 
   public toString(options?: SerializationOptions): string {
-    return this.expression.toString(options);
+    // Minimize parentheses in logical expressions.
+    function _toString(
+      expression: FilterExpression,
+      parentPrecedence: number,
+    ): string {
+      let precedence: number;
+      let op: string;
+      let left: string;
+      let right: string;
+
+      if (expression instanceof InfixExpression) {
+        if (expression.operator === "&&") {
+          precedence = PRECEDENCE_LOGICAL_AND;
+          op = "&&";
+          left = _toString(expression.left, precedence);
+          right = _toString(expression.right, precedence);
+        } else if (expression.operator === "||") {
+          precedence = PRECEDENCE_LOGICAL_OR;
+          op = "||";
+          left = _toString(expression.left, precedence);
+          right = _toString(expression.right, precedence);
+        } else {
+          return expression.toString(options);
+        }
+      } else if (expression instanceof PrefixExpression) {
+        const operand = _toString(expression.right, PRECEDENCE_PREFIX);
+        const expr = `!${operand}`;
+        return parentPrecedence > PRECEDENCE_PREFIX ? `(${expr})` : expr;
+      } else {
+        return expression.toString(options);
+      }
+
+      const expr = `${left} ${op} ${right}`;
+      return precedence < parentPrecedence ? `(${expr})` : expr;
+    }
+
+    return _toString(this.expression, 0);
   }
 }
 

@@ -194,12 +194,12 @@ export class LogicalExpression extends FilterExpression {
       expression: FilterExpression,
       parentPrecedence: number,
     ): string {
-      let precedence: number;
-      let op: string;
-      let left: string;
-      let right: string;
-
       if (expression instanceof InfixExpression) {
+        let precedence: number;
+        let op: string;
+        let left: string;
+        let right: string;
+
         if (expression.operator === "&&") {
           precedence = PRECEDENCE_LOGICAL_AND;
           op = "&&";
@@ -213,16 +213,18 @@ export class LogicalExpression extends FilterExpression {
         } else {
           return expression.toString(options);
         }
-      } else if (expression instanceof PrefixExpression) {
+
+        const expr = `${left} ${op} ${right}`;
+        return precedence < parentPrecedence ? `(${expr})` : expr;
+      }
+
+      if (expression instanceof PrefixExpression) {
         const operand = _toString(expression.right, PRECEDENCE_PREFIX);
         const expr = `!${operand}`;
         return parentPrecedence > PRECEDENCE_PREFIX ? `(${expr})` : expr;
-      } else {
-        return expression.toString(options);
       }
 
-      const expr = `${left} ${op} ${right}`;
-      return precedence < parentPrecedence ? `(${expr})` : expr;
+      return expression.toString(options);
     }
 
     return _toString(this.expression, 0);

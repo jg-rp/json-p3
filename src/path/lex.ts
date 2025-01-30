@@ -392,7 +392,6 @@ function lexInsideBracketedSelection(l: Lexer): StateFn | null {
     switch (ch) {
       case "]":
         l.emit(TokenKind.RBRACKET);
-        if (l.filterLevel) return lexInsideFilter;
         return lexSegment;
       case "":
         l.error("unclosed bracketed selection");

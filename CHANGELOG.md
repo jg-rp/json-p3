@@ -1,5 +1,11 @@
 # JSON P3 Change Log
 
+## Version 2.1.1 (unreleased)
+
+**Fixes**
+
+- Fixed parsing of filter queries containing multiple consecutive bracketed segments. Previously we were failing to parse queries like `$[?@[0][1]]`.
+
 ## Version 2.1.0
 
 **Changes**

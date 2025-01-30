@@ -37,6 +37,21 @@ const TEST_CASES: TestCase[] = [
     path: "$[?@.* && @.b]",
     want: "$[?@[*] && @.b]",
   },
+  {
+    description: "filter query, multiple shorthand segments",
+    path: "$[?@.a.b.c]",
+    want: "$[?@.a.b.c]",
+  },
+  {
+    description: "filter query, multiple bracketed segments",
+    path: "$[?@[0][1] && $[2][3]]",
+    want: "$[?@[0][1] && $[2][3]]",
+  },
+  {
+    description: "filter query, dotted and bracketed segments",
+    path: "$[?@.a[1][2] && $.b[2].c[3]]",
+    want: "$[?@.a[1][2] && $.b[2].c[3]]",
+  },
 ];
 
 describe("parse", () => {

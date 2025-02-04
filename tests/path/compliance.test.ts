@@ -9,7 +9,9 @@ type Case = {
   selector: string;
   document?: JSONValue;
   result?: JSONValue[];
+  result_paths?: string[];
   results?: JSONValue[][];
+  results_paths?: string[][];
   invalid_selector?: boolean;
 };
 
@@ -30,16 +32,30 @@ const testSuiteName = env.nondeterministic
 describe(testSuiteName, () => {
   test.each<Case>(cts.tests)(
     "$name",
-    ({ selector, document, result, results, invalid_selector }: Case) => {
+    ({
+      selector,
+      document,
+      result,
+      result_paths,
+      results,
+      results_paths,
+      invalid_selector,
+    }: Case) => {
       if (invalid_selector) {
         expect(() => env.compile(selector)).toThrow(JSONPathError);
       } else if (document) {
         if (result) {
-          const rv = env.query(selector, document).values();
-          expect(rv).toStrictEqual(result);
+          const nodes = env.query(selector, document);
+          expect(nodes.values()).toStrictEqual(result);
+          expect(nodes.paths({ form: "canonical" })).toStrictEqual(
+            result_paths,
+          );
         } else if (results) {
-          const rv = env.query(selector, document).values();
-          expect(results).toContainEqual(rv);
+          const nodes = env.query(selector, document);
+          expect(results).toContainEqual(nodes.values());
+          expect(results_paths).toContainEqual(
+            nodes.paths({ form: "canonical" }),
+          );
         }
       }
     },

@@ -1,5 +1,11 @@
 # JSON P3 Change Log
 
+## Version 2.2.0 (unreleased)
+
+**Features**
+
+- Added the `has` function extension. `has` accepts two _value types_, a value and a regex pattern, and returns a _logical type_, just like standard `match` and `search` functions. If the first argument is an object, `has` will return `true` if the object has a property name matching the pattern, or `false` otherwise. `has` is not registered by default. See TODO.
+
 ## Version 2.1.1
 
 **Fixes**

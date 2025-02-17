@@ -1,6 +1,6 @@
 import { JSONPathEnvironment } from "../../src/path";
 import { IRegexpError } from "../../src/path/errors";
-import { Match, Search } from "../../src/path/functions";
+import { Has, Match, Search } from "../../src/path/functions";
 
 describe("match filter", () => {
   test("with caching", () => {
@@ -102,6 +102,126 @@ describe("search filter", () => {
     );
     expect(() =>
       env.query("$[?search(@.a, 'a.*(')]", [{ a: "the end is ab" }]),
+    ).toThrow(IRegexpError);
+  });
+});
+
+describe("has filter, search semantics", () => {
+  test("with caching", () => {
+    const env = new JSONPathEnvironment();
+    env.functionRegister.set("has", new Has({ search: true, cacheSize: 10 }));
+
+    let rv = env.query("$[?has(@, 'a.*')]", [
+      { "the end is ab": 1 },
+      { "the end is bb": 2 },
+    ]);
+    expect(rv.values()).toStrictEqual([{ "the end is ab": 1 }]);
+
+    rv = env.query("$[?has(@, 'a.*')]", [
+      { "the end is bb": 2 },
+      { "the end is ac": 1 },
+    ]);
+    expect(rv.values()).toStrictEqual([{ "the end is ac": 1 }]);
+  });
+
+  test("without caching", () => {
+    const env = new JSONPathEnvironment();
+    env.functionRegister.set("has", new Has({ search: true, cacheSize: 0 }));
+
+    let rv = env.query("$[?has(@, 'a.*')]", [
+      { "the end is ab": 1 },
+      { "the end is bb": 2 },
+    ]);
+    expect(rv.values()).toStrictEqual([{ "the end is ab": 1 }]);
+
+    rv = env.query("$[?has(@, 'a.*')]", [
+      { "the end is bb": 2 },
+      { "the end is ac": 1 },
+    ]);
+    expect(rv.values()).toStrictEqual([{ "the end is ac": 1 }]);
+  });
+
+  test("object data", () => {
+    const env = new JSONPathEnvironment();
+    env.functionRegister.set("has", new Has({ search: true }));
+
+    const rv = env.query("$.obj[?has(@, 'a.*')]", {
+      obj: {
+        a: { "the end is ab": 1 },
+        b: { "the end is bb": 2 },
+      },
+    });
+
+    expect(rv.values()).toStrictEqual([{ "the end is ab": 1 }]);
+  });
+
+  test("throw error without caching", () => {
+    const env = new JSONPathEnvironment();
+
+    env.functionRegister.set(
+      "has",
+      new Has({ cacheSize: 0, throwErrors: true, search: true }),
+    );
+
+    expect(() =>
+      env.query("$[?has(@, 'a.*(')]", [{ a: "the end is ab" }]),
+    ).toThrow(IRegexpError);
+  });
+});
+
+describe("has filter, match semantics", () => {
+  test("with caching", () => {
+    const env = new JSONPathEnvironment();
+    env.functionRegister.set("has", new Has({ search: false, cacheSize: 10 }));
+
+    let rv = env.query("$[?has(@, 'a.*')]", [
+      { ab: 1 },
+      { "the end is ab": 2 },
+    ]);
+    expect(rv.values()).toStrictEqual([{ ab: 1 }]);
+
+    rv = env.query("$[?has(@, 'a.*')]", [{ ac: 1 }, { "the end is ac": 2 }]);
+    expect(rv.values()).toStrictEqual([{ ac: 1 }]);
+  });
+
+  test("without caching", () => {
+    const env = new JSONPathEnvironment();
+    env.functionRegister.set("has", new Has({ search: false, cacheSize: 0 }));
+
+    let rv = env.query("$[?has(@, 'a.*')]", [
+      { ab: 1 },
+      { "the end is ab": 2 },
+    ]);
+    expect(rv.values()).toStrictEqual([{ ab: 1 }]);
+
+    rv = env.query("$[?has(@, 'a.*')]", [{ ac: 1 }, { "the end is ac": 2 }]);
+    expect(rv.values()).toStrictEqual([{ ac: 1 }]);
+  });
+
+  test("object data", () => {
+    const env = new JSONPathEnvironment();
+    env.functionRegister.set("has", new Has({ search: false }));
+
+    const rv = env.query("$.obj[?has(@, 'a.*')]", {
+      obj: {
+        a: { "the end is ab": 1 },
+        b: { ab: 2 },
+      },
+    });
+
+    expect(rv.values()).toStrictEqual([{ ab: 2 }]);
+  });
+
+  test("throw error without caching", () => {
+    const env = new JSONPathEnvironment();
+
+    env.functionRegister.set(
+      "has",
+      new Has({ cacheSize: 0, throwErrors: true, search: false }),
+    );
+
+    expect(() =>
+      env.query("$[?has(@, 'a.*(')]", [{ a: "the end is ab" }]),
     ).toThrow(IRegexpError);
   });
 });

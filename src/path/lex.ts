@@ -472,6 +472,11 @@ function lexInsideFilter(l: Lexer): StateFn | null {
         l.emit(TokenKind.CURRENT);
         return lexSegment;
       case "#":
+        if (l.environment.strict) {
+          l.backup();
+          l.error(`unexpected filter selector token '${ch}'`);
+          return null;
+        }
         l.emit(TokenKind.CURRENT_KEY);
         return lexSegment;
       case ".":

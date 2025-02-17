@@ -2,9 +2,13 @@
 
 ## Version 2.2.0 (unreleased)
 
+**Fixes**
+
+- Fixed a bug where the non-standard current key identifier (`#`) would be accepted when [extra JSONPath syntax](https://jg-rp.github.io/json-p3/guides/jsonpath-extra) is disabled.
+
 **Features**
 
-- Added the `has` function extension. `has` accepts two _value types_, a value and a regex pattern, and returns a _logical type_, just like standard `match` and `search` functions. If the first argument is an object, `has` will return `true` if the object has a property name matching the pattern, or `false` otherwise. `has` is not registered by default. See TODO.
+- Added the `has` function extension ([docs](https://jg-rp.github.io/json-p3/guides/jsonpath-functions)).
 
 ## Version 2.1.1
 

@@ -3,6 +3,7 @@ import { readFileSync } from "fs";
 import { JSONPathEnvironment } from "../../src/path/environment";
 import { JSONPathError, JSONPathSyntaxError } from "../../src/path/errors";
 import { JSONValue } from "../../src/types";
+import { compile } from "../../src/path";
 
 type Case = {
   name: string;
@@ -341,4 +342,35 @@ describe("extra docs examples", () => {
       ).toStrictEqual(want);
     },
   );
+});
+
+describe("extra syntax is disabled by default", () => {
+  test("current key", () => {
+    expect(() => compile("$.some[?# > 1]")).toThrow(JSONPathSyntaxError);
+  });
+
+  test("child keys", () => {
+    expect(() => compile("$.some[~]")).toThrow(JSONPathSyntaxError);
+  });
+
+  test("shorthand keys", () => {
+    expect(() => compile("$.some.~")).toThrow(JSONPathSyntaxError);
+  });
+
+  test("recursive keys", () => {
+    expect(() => compile("$..~")).toThrow(JSONPathSyntaxError);
+  });
+
+  test("just a key", () => {
+    expect(() => compile("$.some[~'other']")).toThrow(JSONPathSyntaxError);
+  });
+  test("just a key, shorthand", () => {
+    expect(() => compile("$.some.~other")).toThrow(JSONPathSyntaxError);
+  });
+
+  test("filter keys", () => {
+    expect(() => compile("$.some[~?match(@, '^b.*')]")).toThrow(
+      JSONPathSyntaxError,
+    );
+  });
 });

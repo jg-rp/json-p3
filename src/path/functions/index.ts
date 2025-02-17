@@ -6,5 +6,6 @@ export { Search } from "./search";
 export { Value } from "./value";
 export { FunctionExpressionType } from "./function";
 export type { FilterFunction } from "./function";
+export type { HasFilterFunctionOptions } from "./has";
 export type { MatchFilterFunctionOptions } from "./match";
 export type { SearchFilterFunctionOptions } from "./search";

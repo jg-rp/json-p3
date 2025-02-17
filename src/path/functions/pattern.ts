@@ -37,3 +37,13 @@ export function mapRegexp(pattern: string): string {
   }
   return parts.join("");
 }
+
+export function fullMatch(pattern: string): string {
+  const parts: string[] = [];
+  const explicitCaret = pattern.startsWith("^");
+  const explicitDollar = pattern.endsWith("$");
+  if (!explicitCaret && !explicitDollar) parts.push("^(?:");
+  parts.push(mapRegexp(pattern));
+  if (!explicitCaret && !explicitDollar) parts.push(")$");
+  return parts.join("");
+}

@@ -1,8 +1,16 @@
 # JSONPath Functions
 
+This page describes the JSONPath functions available to the [filter selector](./jsonpath-syntax.md#filters). Some of these functions are defined by [RFC 9535](https://datatracker.ietf.org/doc/html/rfc9535#name-function-extensions) and are available by default. Others are bundled with JSON P3 but need to be explicitly registered with a [`JSONPathEnvironment`](../api/namespaces/jsonpath/classes/JSONPathEnvironment.md). You can create your own [function extensions](#function-extensions) too.
+
+:::info
+The JSONPath specification defines a [type system for function expressions](https://datatracker.ietf.org/doc/html/rfc9535#name-type-system-for-function-ex), and rules for how those types can be used within an expression. JSON P3 will throw a [JSONPathTypeError](../api/namespaces/jsonpath/classes/JSONPathTypeError.md) at query compile time if it contains expressions that are not deemed to be well-typed.
+
+Please see [Section 2.4.3](https://datatracker.ietf.org/doc/html/rfc9535#name-well-typedness-of-function-) _Well-Typedness of Function Expressions_.
+:::
+
 ## Standard functions
 
-These are the standard, built-in functions available to JSONPath [filters](./jsonpath-syntax.md#filters). You can also create your own [function extensions](#function-extensions).
+These are the standard JSONPath [filter selector](./jsonpath-syntax.md#filters) functions defined by RFC 9535. They are registered with every [`JSONPathEnvironment`](../api/namespaces/jsonpath/classes/JSONPathEnvironment.md) by default.
 
 ### `count()`
 
@@ -64,11 +72,37 @@ Return the value associated with the first node in _nodes_, if _nodes_ has exact
 [Filter queries](./jsonpath-syntax.md#filter-queries) that can result in at most one node are known as "singular queries", and all singular queries will be implicitly replaced with their value as required, without the use of `value()`. `value()` is useful when you need the value from a query that can, theoretically, return multiple nodes.
 :::
 
-## Well-typedness
+## Extra functions
 
-The JSONPath specification defines a [type system for function expressions](https://datatracker.ietf.org/doc/html/rfc9535#name-type-system-for-function-ex), and rules for how those types can be used within an expression. JSON P3 will throw a [JSONPathTypeError](../api/namespaces/jsonpath/classes/JSONPathTypeError.md) at query compile time if it contains expressions that are not deemed to be well-typed.
+These are function extensions that are included with JSON P3, but are not registered by default.
 
-Please see [Section 2.4.3](https://datatracker.ietf.org/doc/html/rfc9535#name-well-typedness-of-function-) _Well-Typedness of Function Expressions_.
+### `has()`
+
+```typescript
+search(value: object, pattern: string): boolean
+```
+
+Return `true` if the first argument is an object value and it contains a property name matching the second argument, or `false` otherwise. _pattern_ should be an I-Regexp string.
+
+To use `has()` in your JSONPath queries, register an instance of `jsonpath.functions.Has` with a [`JSONPathEnvironment`](../api/namespaces/jsonpath/classes/JSONPathEnvironment.md).
+
+```js
+import { jsonpath } from "json-p3";
+
+const env = new jsonpath.JSONPathEnvironment();
+env.functionRegister.set("has", new jsonpath.functions.Has());
+
+const data = [{ abc: 1 }, 42, { abb: 2 }, { a_c: 3 }];
+const nodes = env.query(`$[?has(@, 'ab.')]`, data);
+```
+
+By default, instances of `Has` use search semantics. Set the `search` option to `false` when constructing a `Has` instance to use match semantics instead.
+
+```js
+env.functionRegister.set("has", new jsonpath.functions.Has({ search: false }));
+```
+
+See [HasFilterFunctionOptions](../api/namespaces/jsonpath/namespaces/functions/type-aliases/HasFilterFunctionOptions.md) for details of all available option.
 
 ## Function extensions
 

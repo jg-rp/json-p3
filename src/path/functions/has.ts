@@ -1,20 +1,21 @@
-import { isString } from "../../types";
-import { IRegexpError } from "../errors";
+import { check } from "iregexp-check";
 import { LRUCache } from "../lru_cache";
 import { FilterFunction, FunctionExpressionType } from "./function";
-import { fullMatch } from "./pattern";
-import { check } from "iregexp-check";
+import { isObject, isString } from "../../types";
+import { IRegexpError } from "../errors";
+import { mapRegexp, fullMatch } from "./pattern";
 
-export type MatchFilterFunctionOptions = {
+export type HasFilterFunctionOptions = {
   /**
-   * The maximum number of regular expressions to cache.
+   * The maximum number of regular expressions to cache. Defaults
+   * to 10.
    */
   cacheSize?: number;
 
   /**
-   * If _true_, throw errors from regex checking, construction and matching.
-   * The standard and default behavior is to ignore these errors and return
-   * _false_.
+   * If _true_, throw errors from regex construction and matching.
+   * The standard and default behavior is to ignore these errors
+   * and return _false_.
    */
   throwErrors?: boolean;
 
@@ -27,9 +28,19 @@ export type MatchFilterFunctionOptions = {
    * will be thrown.
    */
   iRegexpCheck?: boolean;
+
+  /**
+   * if _true_, use regex search semantics when testing patterns against
+   * property names. Defaults to _true_.
+   */
+  search?: boolean;
 };
 
-export class Match implements FilterFunction {
+/**
+ * A function extension that returns `true` if the first argument is an object
+ * value and it contains a property matching the second argument.
+ */
+export class Has implements FilterFunction {
   readonly argTypes = [
     FunctionExpressionType.ValueType,
     FunctionExpressionType.ValueType,
@@ -40,22 +51,27 @@ export class Match implements FilterFunction {
   readonly cacheSize: number;
   readonly throwErrors: boolean;
   readonly iRegexpCheck: boolean;
+  readonly search: boolean;
   #cache: LRUCache<string, RegExp>;
 
-  constructor(readonly options: MatchFilterFunctionOptions = {}) {
+  constructor(readonly options: HasFilterFunctionOptions = {}) {
     this.cacheSize = options.cacheSize ?? 10;
     this.throwErrors = options.throwErrors ?? false;
     this.iRegexpCheck = options.iRegexpCheck ?? true;
+    this.search = options.search ?? true;
     this.#cache = new LRUCache(this.cacheSize);
   }
 
   // eslint-disable-next-line sonarjs/cognitive-complexity
-  public call(s: string, pattern: string): boolean {
+  public call(value: unknown, pattern: string): boolean {
     if (this.cacheSize > 0) {
       const re = this.#cache.get(pattern);
       if (re) {
         try {
-          return re.test(s);
+          if (isObject(value)) {
+            return Object.keys(value).some((k) => !!k.match(re));
+          }
+          return false;
         } catch (error) {
           if (this.throwErrors) throw error;
           return false;
@@ -82,9 +98,17 @@ export class Match implements FilterFunction {
     }
 
     try {
-      const re = new RegExp(fullMatch(pattern), "u");
+      const re = this.search
+        ? new RegExp(mapRegexp(pattern), "u")
+        : new RegExp(mapRegexp(fullMatch(pattern)), "u");
+
       if (this.cacheSize > 0) this.#cache.set(pattern, re);
-      return re.test(s);
+
+      if (isObject(value)) {
+        return Object.keys(value).some((k) => !!k.match(re));
+      }
+
+      return false;
     } catch (error) {
       if (this.throwErrors) throw error;
       return false;

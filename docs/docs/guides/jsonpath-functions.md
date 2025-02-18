@@ -1,6 +1,6 @@
 # JSONPath Functions
 
-This page describes the JSONPath functions available to the [filter selector](./jsonpath-syntax.md#filters). Some of these functions are defined by [RFC 9535](https://datatracker.ietf.org/doc/html/rfc9535#name-function-extensions) and are available by default. Others are bundled with JSON P3 but need to be explicitly registered with a [`JSONPathEnvironment`](../api/namespaces/jsonpath/classes/JSONPathEnvironment.md). You can create your own [function extensions](#function-extensions) too.
+This page describes functions that can be called as part of a [filter expression](./jsonpath-syntax.md#filters). Some of these functions are defined by [RFC 9535](https://datatracker.ietf.org/doc/html/rfc9535#name-function-extensions) and are available by default. Others are bundled with JSON P3 but need to be explicitly registered with a [`JSONPathEnvironment`](../api/namespaces/jsonpath/classes/JSONPathEnvironment.md). You can create your own [function extensions](#function-extensions) too.
 
 :::info
 The JSONPath specification defines a [type system for function expressions](https://datatracker.ietf.org/doc/html/rfc9535#name-type-system-for-function-ex), and rules for how those types can be used within an expression. JSON P3 will throw a [JSONPathTypeError](../api/namespaces/jsonpath/classes/JSONPathTypeError.md) at query compile time if it contains expressions that are not deemed to be well-typed.

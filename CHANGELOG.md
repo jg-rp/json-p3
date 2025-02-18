@@ -4,7 +4,7 @@
 
 **Fixes**
 
-- Fixed a bug where the non-standard current key identifier (`#`) would be accepted when [extra JSONPath syntax](https://jg-rp.github.io/json-p3/guides/jsonpath-extra) is disabled.
+- Fixed a bug where the non-standard _current key identifier_ (`#`) would be accepted when [extra JSONPath syntax](https://jg-rp.github.io/json-p3/guides/jsonpath-extra) is disabled.
 
 **Features**
 

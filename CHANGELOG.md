@@ -1,5 +1,11 @@
 # JSON P3 Change Log
 
+## Version 2.2.1
+
+**Fixes**
+
+- Update iregexp-check to fix range quantifiers with multiple digits. See [issue 40](https://github.com/jg-rp/json-p3/issues/40).
+
 ## Version 2.2.0
 
 **Fixes**

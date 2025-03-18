@@ -1,4 +1,4 @@
-import { JSONValue } from "../../src";
+import { compile, JSONValue } from "../../src";
 import { JSONPathEnvironment } from "../../src/path/environment";
 import {
   JSONPathIndexError,
@@ -49,7 +49,7 @@ describe("syntax error", () => {
     const query = "$[?((@.foo)]";
     expect(() => env.query(query, {})).toThrow(JSONPathSyntaxError);
     expect(() => env.query(query, {})).toThrow(
-      "expected an expression, found ']' ('((@.foo)]':11)",
+      "unbalanced brackets ('((@.foo)]':11)",
     );
   });
 });
@@ -181,6 +181,12 @@ describe("escape sequence decode errors", () => {
     expect(() => env.query(query, {})).toThrow(JSONPathSyntaxError);
     expect(() => env.query(query, {})).toThrow(
       "invalid \\uXXXX escape sequence ('$['ab\\u26':3)",
+    );
+  });
+
+  test("well-typed nested functions, unbalanced parens", () => {
+    expect(() => compile("$.values[?match(@.a, value($..['regex'])]")).toThrow(
+      JSONPathSyntaxError,
     );
   });
 });

@@ -34,7 +34,13 @@ class Lexer {
    * If the stack is empty, we are not in a function call. Remember that
    * function arguments can use arbitrarily nested in parentheses.
    */
-  public parenStack: number[] = [];
+  public funcCallStack: number[] = [];
+
+  /**
+   * A stack of parentheses and square brackets used to check for balanced
+   * brackets.
+   */
+  public bracketStack: Array<[string, number]> = [];
 
   /** Tokens resulting from tokenizing a JSONPath query. */
   public tokens: Token[] = [];
@@ -205,12 +211,26 @@ export function tokenize(
 ): Token[] {
   const [lexer, tokens] = lex(environment, path);
   lexer.run();
+
+  // If there's an error, it will be the last token with kind set to ERROR.
   if (tokens.length && tokens[tokens.length - 1].kind === TokenKind.ERROR) {
     throw new JSONPathSyntaxError(
       tokens[tokens.length - 1].value,
       tokens[tokens.length - 1],
     );
   }
+
+  // If the bracket stack is not empty, we hav unbalanced brackets.
+  // This might not be reachable.
+  if (lexer.bracketStack.length !== 0) {
+    const [ch, index] = lexer.bracketStack[lexer.bracketStack.length - 1];
+    const msg = "unbalanced brackets";
+    throw new JSONPathSyntaxError(
+      msg,
+      new Token(TokenKind.ERROR, ch, index, path),
+    );
+  }
+
   return tokens;
 }
 
@@ -242,6 +262,7 @@ function lexSegment(l: Lexer): StateFn | null {
       }
       return lexDotSelector;
     case "[":
+      l.bracketStack.push(["[", l.start]);
       l.emit(TokenKind.LBRACKET);
       return lexInsideBracketedSelection;
     default:
@@ -300,6 +321,7 @@ function lexDescendantSelection(l: Lexer): StateFn | null {
       l.emit(TokenKind.WILD);
       return lexSegment;
     case "[":
+      l.bracketStack.push(["[", l.start]);
       l.emit(TokenKind.LBRACKET);
       return lexInsideBracketedSelection;
     default:
@@ -391,6 +413,16 @@ function lexInsideBracketedSelection(l: Lexer): StateFn | null {
     const ch = l.next();
     switch (ch) {
       case "]":
+        if (
+          l.bracketStack.length === 0 ||
+          l.bracketStack[l.bracketStack.length - 1][0] !== "["
+        ) {
+          l.backup();
+          l.error("unbalanced brackets");
+          return null;
+        }
+
+        l.bracketStack.pop();
         l.emit(TokenKind.RBRACKET);
         return lexSegment;
       case "":
@@ -432,17 +464,13 @@ function lexInsideFilter(l: Lexer): StateFn | null {
         return null;
       case "]":
         l.filterLevel -= 1;
-        if (l.parenStack.length === 1) {
-          l.error("unbalanced parentheses");
-          return null;
-        }
         l.backup();
         return lexInsideBracketedSelection;
       case ",":
         l.emit(TokenKind.COMMA);
         // If we have unbalanced parens, we are inside a function call and a
         // comma separates arguments. Otherwise a comma separates selectors.
-        if (l.parenStack.length) continue;
+        if (l.funcCallStack.length) continue;
         l.filterLevel -= 1;
         return lexInsideBracketedSelection;
       case "'":
@@ -450,18 +478,30 @@ function lexInsideFilter(l: Lexer): StateFn | null {
       case '"':
         return lexDoubleQuoteStringInsideFilterExpression;
       case "(":
+        l.bracketStack.push(["(", l.start]);
         l.emit(TokenKind.LPAREN);
         // Are we in a function call? If so, a function argument contains parens.
-        if (l.parenStack.length) l.parenStack[l.parenStack.length - 1] += 1;
+        if (l.funcCallStack.length)
+          l.funcCallStack[l.funcCallStack.length - 1] += 1;
         continue;
       case ")":
+        if (
+          l.bracketStack.length === 0 ||
+          l.bracketStack[l.bracketStack.length - 1][0] !== "("
+        ) {
+          l.backup();
+          l.error("unbalanced brackets");
+          return null;
+        }
+
+        l.bracketStack.pop();
         l.emit(TokenKind.RPAREN);
         // Are we closing a function call or a parenthesized expression?
-        if (l.parenStack.length) {
-          if (l.parenStack[l.parenStack.length - 1] === 1) {
-            l.parenStack.pop();
+        if (l.funcCallStack.length) {
+          if (l.funcCallStack[l.funcCallStack.length - 1] === 1) {
+            l.funcCallStack.pop();
           } else {
-            l.parenStack[l.parenStack.length - 1] -= 1;
+            l.funcCallStack[l.funcCallStack.length - 1] -= 1;
           }
         }
         continue;
@@ -562,8 +602,9 @@ function lexInsideFilter(l: Lexer): StateFn | null {
         // functions
         if (l.acceptMatchRun(functionNamePattern) && l.peek() === "(") {
           // Keep track of parentheses for this function call.
-          l.parenStack.push(1);
+          l.funcCallStack.push(1);
           l.emit(TokenKind.FUNCTION);
+          l.bracketStack.push(["(", l.start]);
           l.next();
           l.ignore();
           continue;

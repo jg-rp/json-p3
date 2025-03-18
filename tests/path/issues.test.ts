@@ -12,6 +12,7 @@ describe("issues", () => {
   });
 
   test("issue 42", () => {
+    // This was failing with an "unbalanced parentheses" syntax error.
     expect(compile("$[? count(@.likes[? @.location]) > 3]")).toBeInstanceOf(
       JSONPathQuery,
     );

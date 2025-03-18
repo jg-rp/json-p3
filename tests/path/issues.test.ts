@@ -1,4 +1,4 @@
-import { query } from "../../src/path";
+import { query, compile, JSONPathQuery } from "../../src";
 
 describe("issues", () => {
   test("issue 40", () => {
@@ -9,5 +9,12 @@ describe("issues", () => {
     expect(nodes.values()).toStrictEqual([
       "d449f7a5-9153-4f39-a05d-dca1c35538ec",
     ]);
+  });
+
+  test("issue 42", () => {
+    // This was failing with an "unbalanced parentheses" syntax error.
+    expect(compile("$[? count(@.likes[? @.location]) > 3]")).toBeInstanceOf(
+      JSONPathQuery,
+    );
   });
 });

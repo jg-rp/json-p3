@@ -1,5 +1,11 @@
 # JSON P3 Change Log
 
+## Version 2.2.2
+
+**Fixes**
+
+- Fixed an issue where we'd get syntax errors claiming "unbalanced parentheses" when the query has balanced brackets.
+
 ## Version 2.2.1
 
 **Fixes**

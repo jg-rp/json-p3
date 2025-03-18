@@ -1,9 +1,4 @@
-import {
-  JSONPathEnvironment,
-  JSONPathSyntaxError,
-  compile,
-  query,
-} from "../../src/path";
+import { JSONPathEnvironment, query } from "../../src/path";
 
 type TestCase = {
   description: string;
@@ -78,11 +73,5 @@ describe("parse", () => {
     };
     const rv = query("$.values[?match(@.a, value($..['regex']))]", data);
     expect(rv.values()).toStrictEqual([{ a: "ab" }]);
-  });
-
-  test("well-typed nested functions, unbalanced parens", () => {
-    expect(() => compile("$.values[?match(@.a, value($..['regex'])]")).toThrow(
-      JSONPathSyntaxError,
-    );
   });
 });

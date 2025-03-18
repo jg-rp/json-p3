@@ -4,7 +4,7 @@
 
 **Fixes**
 
-- Fixed an issue where we'd get syntax errors claiming "unbalanced parentheses" when the query has balanced brackets.
+- Fixed an issue where we'd get syntax errors claiming "unbalanced parentheses" when the query has balanced brackets. See [#43](https://github.com/jg-rp/json-p3/pull/43).
 
 ## Version 2.2.1
 

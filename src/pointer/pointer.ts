@@ -32,7 +32,6 @@ export class JSONPointer {
   static encode(tokens: string[]) {
     if (!tokens.length) return "";
     return (
-      // eslint-disable-next-line prefer-template
       "/" +
       tokens
         .map((token) => token.replaceAll("~", "~0").replaceAll("/", "~1"))
@@ -273,7 +272,7 @@ export class JSONPointer {
 const RE_RELATIVE_POINTER =
   /(?<ORIGIN>\d+)(?<INDEX_G>(?<SIGN>[+-])(?<INDEX>\d))?(?<POINTER>.*)/s;
 
-const RE_INT = /(0|[1-9][0-9]*)/;
+const RE_INT = /(0|[1-9]\d*)/;
 
 /**
  * A relative JSON Pointer.

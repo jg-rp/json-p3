@@ -40,7 +40,6 @@ export class JSONPathNode {
     const opts = { ...defaultSerializationOptions, ...options };
 
     return (
-      // eslint-disable-next-line prefer-template
       "$" +
       this.location
         .map((s) => (isString(s) ? this.decodeNameLocation(s, opts) : `[${s}]`))

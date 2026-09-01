@@ -248,16 +248,14 @@ export class JSONPathEnvironment {
     )) {
       switch (typ) {
         case FunctionExpressionType.ValueType:
-          if (
-            !(
-              arg instanceof FilterExpressionLiteral ||
-              arg instanceof CurrentKey ||
-              (arg instanceof FilterQuery && arg.path.singularQuery()) ||
-              (arg instanceof FunctionExtension &&
-                this.functionRegister.get(arg.name)?.returnType ===
-                  FunctionExpressionType.ValueType)
-            )
-          ) {
+          if (!(
+            arg instanceof FilterExpressionLiteral ||
+            arg instanceof CurrentKey ||
+            (arg instanceof FilterQuery && arg.path.singularQuery()) ||
+            (arg instanceof FunctionExtension &&
+              this.functionRegister.get(arg.name)?.returnType ===
+                FunctionExpressionType.ValueType)
+          )) {
             throw new JSONPathTypeError(
               `${token.value}() argument ${idx} must be of ValueType`,
               arg.token,
@@ -273,14 +271,12 @@ export class JSONPathEnvironment {
           }
           break;
         case FunctionExpressionType.NodesType:
-          if (
-            !(
-              arg instanceof FilterQuery ||
-              (arg instanceof FunctionExtension &&
-                this.functionRegister.get(arg.name)?.returnType ===
-                  FunctionExpressionType.NodesType)
-            )
-          ) {
+          if (!(
+            arg instanceof FilterQuery ||
+            (arg instanceof FunctionExtension &&
+              this.functionRegister.get(arg.name)?.returnType ===
+                FunctionExpressionType.NodesType)
+          )) {
             throw new JSONPathTypeError(
               `${token.value}() argument ${idx} must be of NodesType`,
               arg.token,

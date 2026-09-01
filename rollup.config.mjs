@@ -70,12 +70,39 @@ const browserBundles = {
   output: [
     {
       file: pkg.browser,
-      format: "iife",
+      format: "es",
       name,
       banner,
     },
     {
       file: pkg["browser-min"],
+      format: "es",
+      name,
+      plugins: [terser()],
+      sourcemap: true,
+      banner,
+    },
+  ],
+};
+
+const iifeBundles = {
+  input: "./src/index.ts",
+  external: [],
+  plugins: [
+    replace(replaceVersionNumber),
+    // Allows node_modules resolution
+    resolve({ extensions }),
+    // Compile TypeScript/JavaScript files
+    babel({
+      extensions,
+      babelHelpers: "bundled",
+      include: ["src/**/*"],
+    }),
+  ],
+
+  output: [
+    {
+      file: pkg.jsdelivr,
       format: "iife",
       name,
       plugins: [terser()],
@@ -85,4 +112,4 @@ const browserBundles = {
   ],
 };
 
-export default [nodeBundles, browserBundles];
+export default [nodeBundles, browserBundles, iifeBundles];

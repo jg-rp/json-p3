@@ -597,7 +597,6 @@ export class Parser {
             rv.push(this.stringFromCodePoint(codepoint, token));
             break;
           default:
-            // TODO: This is unreachable. The lexer will catch unknown escape sequences.
             throw new JSONPathSyntaxError(
               `unknown escape sequence at index ${token.index + index - 1}`,
               token,
@@ -648,13 +647,11 @@ export class Parser {
 
     if (isHighSurrogate(codepoint)) {
       // Expect a surrogate pair.
-      if (
-        !(
-          index + 9 < length &&
-          value[index + 4] === "\\" &&
-          value[index + 5] === "u"
-        )
-      ) {
+      if (!(
+        index + 9 < length &&
+        value[index + 4] === "\\" &&
+        value[index + 5] === "u"
+      )) {
         throw new JSONPathSyntaxError(
           `incomplete escape sequence at index ${token.index + index - 2}`,
           token,

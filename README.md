@@ -58,7 +58,6 @@ JSON P3 has zero runtime dependencies.
 | --------------------- | -------------------------------------------------------------------------- |
 | `json-p3.cjs.js`      | A CommonJS formatted bundle.                                               |
 | `json-p3.esm.js`      | An ECMAScript module formatted bundle.                                     |
-| `json-p3-iife.js`     | A bundle formatted as an Immediately Invoked Function Expression.          |
 | `json-p3-iife.min.js` | A minified bundle formatted as an Immediately Invoked Function Expression. |
 
 ## Compliance Environment Variables

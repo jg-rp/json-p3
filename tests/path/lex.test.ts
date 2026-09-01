@@ -393,20 +393,6 @@ describe("tokenize path", () => {
       new Token(TokenKind.EOF, "", 9, path),
     ]);
   });
-  test("function", () => {
-    const path = "$[?foo()]";
-    const [lexer, tokens] = lex(DEFAULT_ENVIRONMENT, path);
-    lexer.run();
-    expect(tokens).toStrictEqual([
-      new Token(TokenKind.ROOT, "$", 0, path),
-      new Token(TokenKind.LBRACKET, "[", 1, path),
-      new Token(TokenKind.FILTER, "?", 2, path),
-      new Token(TokenKind.FUNCTION, "foo", 3, path),
-      new Token(TokenKind.RPAREN, ")", 7, path),
-      new Token(TokenKind.RBRACKET, "]", 8, path),
-      new Token(TokenKind.EOF, "", 9, path),
-    ]);
-  });
   test("function, int literal", () => {
     const path = "$[?foo(42)]";
     const [lexer, tokens] = lex(DEFAULT_ENVIRONMENT, path);

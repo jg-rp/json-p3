@@ -8,7 +8,7 @@ import { Token, TokenKind } from "./token";
 const exponentPattern = /[eE][+-]?\d+/y;
 const functionNamePattern = /[a-z][a-z_0-9]*/y;
 const indexPattern = /-?\d+/y;
-const intPattern = /-?[0-9]+/y;
+const intPattern = /-?\d+/y;
 const namePattern = /[\u0080-\uFFFFa-zA-Z_][\u0080-\uFFFFa-zA-Z0-9_-]*/y;
 
 const whitespace = new Set([" ", "\n", "\t", "\r"]);
@@ -389,7 +389,6 @@ function lexInsideBracketedSelection(l: Lexer): StateFn | null {
     }
 
     if (!l.environment.strict && l.acceptMatchRun(l.environment.keysPattern)) {
-      // FIXME: fall back to legacy behavior if keysPattern is not the default
       switch (l.peek()) {
         case "'":
           l.ignore(); // ~

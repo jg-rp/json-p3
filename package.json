@@ -1,6 +1,6 @@
 {
   "name": "json-p3",
-  "version": "2.2.2",
+  "version": "2.2.3",
   "author": "James Prior",
   "license": "MIT",
   "description": "JSONPath, JSON Pointer and JSON Patch",
@@ -29,9 +29,10 @@
   ],
   "main": "dist/json-p3.cjs.js",
   "module": "dist/json-p3.esm.js",
-  "browser": "dist/json-p3.iife.js",
-  "browser-min": "dist/json-p3.iife.min.js",
+  "browser": "dist/json-p3.browser.js",
+  "browser-min": "dist/json-p3.browser.min.js",
   "jsdelivr": "dist/json-p3.iife.min.js",
+  "unpkg": "dist/json-p3.iife.min.js",
   "types": "dist/index.d.ts",
   "files": [
     "dist/**/*"

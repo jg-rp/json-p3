@@ -1,5 +1,9 @@
 # JSON P3 Change Log
 
+## Version 2.2.3 (unreleased)
+
+- Fixed a packaging issue where `browser` was pointing to an IIFE bundle. See [#45](https://github.com/jg-rp/json-p3/issues/45).
+
 ## Version 2.2.2
 
 **Fixes**

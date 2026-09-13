@@ -1,4 +1,10 @@
-import { query, compile, JSONPathQuery } from "../../src";
+import {
+  query,
+  compile,
+  lazyQuery,
+  JSONPathNodeList,
+  JSONPathQuery,
+} from "../../src";
 
 describe("issues", () => {
   test("issue 40", () => {
@@ -28,6 +34,10 @@ describe("issues", () => {
     for (const t of cases) {
       const nodes = query(t.path, t.data);
       expect(nodes.values()).toStrictEqual(t.want);
+
+      const it = lazyQuery(t.path, t.data);
+      const rv = new JSONPathNodeList(Array.from(it)).values();
+      expect(rv).toStrictEqual(t.want);
     }
   });
 });

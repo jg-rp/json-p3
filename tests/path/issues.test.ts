@@ -17,4 +17,17 @@ describe("issues", () => {
       JSONPathQuery,
     );
   });
+
+  test("issue 47", () => {
+    const cases = [
+      { path: "$[1:]", data: ["a"], want: [] },
+      { path: "$[3:]", data: ["a", "b", "c"], want: [] },
+      { path: "$[2:]", data: ["a", "b", "c"], want: ["c"] },
+    ];
+
+    for (const t of cases) {
+      const nodes = query(t.path, t.data);
+      expect(nodes.values()).toStrictEqual(t.want);
+    }
+  });
 });

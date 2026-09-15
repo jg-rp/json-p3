@@ -2,7 +2,9 @@
 
 ## Version 2.3.1 (unreleased)
 
-- Fixed a bug with the slice selector where a start index equal to the target array's length and default end and step values result in selecting the last value in the array. See [issue 47](https://github.com/jg-rp/json-p3/issues/47).
+- Fixed a bug with the JSONPath slice selector where a start index equal to the target array's length and default end and step values result in selecting the last value in the array. See [issue 47](https://github.com/jg-rp/json-p3/issues/47).
+
+- Fixed a bug with the JSON Patch `add` operation. Previously we would fail to add an item to an array given the array's length as a destination. We now append to the array in this scenario, as required by RFC 6902.
 
 ## Version 2.3.0
 

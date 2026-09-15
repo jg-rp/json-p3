@@ -157,4 +157,13 @@ describe("JSON Patch", () => {
       a: "b",
     });
   });
+
+  test("add to length is equivalent to add to end with `-`", () => {
+    const data = { foo: ["bar", "baz"] };
+    let patch = new JSONPatch().add("/foo/2", 99);
+    expect(patch.apply(data)).toStrictEqual({ foo: ["bar", "baz", 99] });
+
+    patch = new JSONPatch().add("/foo/4", 42);
+    expect(() => patch.apply(data)).toThrow("index out of range (add:0)");
+  });
 });

@@ -205,97 +205,74 @@ export class SliceSelector extends JSONPathSelector {
     }
   }
 
-  // eslint-disable-next-line sonarjs/cognitive-complexity
   private slice(
     arr: JSONValue[],
     start?: number,
     stop?: number,
     step?: number,
   ): Array<[number, JSONValue]> {
-    if (!arr.length) return [];
+    const len = arr.length;
+    step = step ?? 1;
 
-    // Handle negative start and stop values
-    if (start === undefined || start === null) {
-      start = step && step < 0 ? arr.length - 1 : 0;
-    } else if (start < 0) {
-      start = Math.max(arr.length + start, 0);
-    } else {
-      start = Math.min(start, arr.length - 1);
-    }
+    if (step === 0 || !len) return [];
 
-    if (stop === undefined || stop === null) {
-      stop = step && step < 0 ? -1 : arr.length;
-    } else if (stop < 0) {
-      stop = Math.max(arr.length + stop, -1);
-    } else {
-      stop = Math.min(stop, arr.length);
-    }
+    const result: Array<[number, JSONValue]> = [];
+    let i: number;
 
-    // Handle step value
-    if (step === 0) {
-      return [];
-    }
-    if (!step) {
-      step = 1;
-    }
-
-    // Perform the slice
-    const slicedArray: Array<[number, JSONValue]> = [];
     if (step > 0) {
-      for (let i = start; i < stop; i += step) {
-        slicedArray.push([i, arr[i]]);
+      i = this.normalizeIndex(start, 0, len, step);
+      const stop_ = this.normalizeIndex(stop, len, len, step);
+      for (; i < stop_; i += step) {
+        result.push([i, arr[i]]);
       }
     } else {
-      for (let i = start; i > stop; i += step) {
-        slicedArray.push([i, arr[i]]);
+      i = this.normalizeIndex(start, len - 1, len, step);
+      const stop_ = this.normalizeIndex(stop, -1, len, step);
+      for (; i > stop_; i += step) {
+        result.push([i, arr[i]]);
       }
     }
 
-    return slicedArray;
+    return result;
   }
 
-  // eslint-disable-next-line sonarjs/cognitive-complexity
   private *lazySlice(
     arr: JSONValue[],
     start?: number,
     stop?: number,
     step?: number,
   ): Generator<[number, JSONValue]> {
-    if (!arr.length) return;
+    const len = arr.length;
+    step = step ?? 1;
 
-    // Handle negative and undefined start values
-    if (start === undefined || start === null) {
-      start = step && step < 0 ? arr.length - 1 : 0;
-    } else if (start < 0) {
-      start = Math.max(arr.length + start, 0);
+    if (step === 0 || !len) return [];
+
+    let i: number;
+
+    if (step > 0) {
+      i = this.normalizeIndex(start, 0, len, step);
+      const stop_ = this.normalizeIndex(stop, len, len, step);
+      for (; i < stop_; i += step) {
+        yield [i, arr[i]];
+      }
     } else {
-      start = Math.min(start, arr.length - 1);
+      i = this.normalizeIndex(start, len - 1, len, step);
+      const stop_ = this.normalizeIndex(stop, -1, len, step);
+      for (; i > stop_; i += step) {
+        yield [i, arr[i]];
+      }
     }
+  }
 
-    // Handle negative and undefined stop values
-    if (stop === undefined || stop === null) {
-      stop = step && step < 0 ? -1 : arr.length;
-    } else if (stop < 0) {
-      stop = Math.max(arr.length + stop, -1);
-    } else {
-      stop = Math.min(stop, arr.length);
-    }
-
-    // Perform the slice
-    if (step === undefined) {
-      // Default to a step of 1
-      for (let i = start; i < stop; i += 1) {
-        yield [i, arr[i]];
-      }
-    } else if (step > 0) {
-      for (let i = start; i < stop; i += step) {
-        yield [i, arr[i]];
-      }
-    } else if (step < 0) {
-      for (let i = start; i > stop; i += step) {
-        yield [i, arr[i]];
-      }
-    }
+  private normalizeIndex(
+    n: number | undefined,
+    defaultValue: number,
+    len: number,
+    step: number,
+  ): number {
+    if (n === undefined) return defaultValue;
+    if (n < 0) return step < 0 ? Math.max(n + len, -1) : Math.max(n + len, 0);
+    return step < 0 ? Math.min(n, len - 1) : Math.min(n, len);
   }
 }
 

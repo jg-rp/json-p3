@@ -14,10 +14,10 @@
   },
   "scripts": {
     "test": "jest",
-    "build:types": "tsc --emitDeclarationOnly",
+    "build:types": "tsc -p tsconfig.build.json --emitDeclarationOnly",
     "build:js": "rollup -c",
     "build": "npm run build:types && npm run build:js",
-    "type-check": "tsc --noEmit",
+    "type-check": "tsc -p tsconfig.build.json --noEmit",
     "coverage": "jest --collectCoverage",
     "clean": "rm -rf ./lib ./dist ./coverage ./docs/docs/api",
     "lint": "eslint src tests --ext .js,.jsx,.ts,.tsx"

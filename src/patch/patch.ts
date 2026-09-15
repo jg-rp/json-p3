@@ -47,39 +47,7 @@ export class OpAdd implements Op {
   ) {}
 
   public apply(value: JSONValue, index: number): JSONValue {
-    const [parent, obj] = this.path.resolveWithParent(value);
-    if (parent === UNDEFINED) {
-      // Replace the root object.
-      return this.value;
-    }
-
-    const target = this.path.tokens.at(-1);
-    if (target === undefined) {
-      // this should not be possible
-      throw new JSONPatchError(
-        `unexpected operation on 'undefined' (${this.name}:${index})`,
-      );
-    } else if (isArray(parent)) {
-      if (obj === UNDEFINED) {
-        if (target === "-") {
-          parent.push(this.value);
-        } else {
-          throw new JSONPatchError(
-            `index out of range (${this.name}:${index})`,
-          );
-        }
-      } else {
-        parent.splice(Number(target), 0, this.value);
-      }
-    } else if (isObject(parent)) {
-      parent[target] = this.value;
-    } else {
-      throw new JSONPatchError(
-        `unexpected operation on '${typeof parent}' (${this.name}:${index})`,
-      );
-    }
-
-    return value;
+    return add(value, this.path, this.value, this.name, index);
   }
 
   public toObject(): OpObject {
@@ -228,35 +196,7 @@ export class OpMove implements Op {
       delete sourceParent[sourceTarget];
     }
 
-    const [destParent, _] = this.path.resolveWithParent(value);
-    if (destParent === UNDEFINED) {
-      // move source to root
-      return sourceObj;
-    }
-
-    const destTarget = this.path.tokens.at(-1);
-    if (destTarget === undefined) {
-      // this should not be possible
-      throw new JSONPatchError(
-        `unexpected operation on 'undefined' (${this.name}:${index})`,
-      );
-    }
-
-    if (isArray(destParent)) {
-      if (destTarget === "-") {
-        destParent.push(sourceObj);
-      } else {
-        destParent.splice(Number(destTarget), 0, sourceObj);
-      }
-    } else if (isObject(destParent)) {
-      destParent[destTarget] = sourceObj;
-    } else {
-      throw new JSONPatchError(
-        `unexpected operation on '${typeof parent}' (${this.name}:${index})`,
-      );
-    }
-
-    return value;
+    return add(value, this.path, sourceObj, this.name, index);
   }
 
   public toObject(): OpObject {
@@ -287,35 +227,7 @@ export class OpCopy implements Op {
       );
     }
 
-    const [destParent] = this.path.resolveWithParent(value);
-    if (destParent === UNDEFINED) {
-      // copy source to root
-      return this.deepCopy(sourceObj);
-    }
-
-    const destTarget = this.path.tokens.at(-1);
-    if (destTarget === undefined) {
-      // this should not be possible
-      throw new JSONPatchError(
-        `unexpected operation on 'undefined' (${this.name}:${index})`,
-      );
-    }
-
-    if (isArray(destParent)) {
-      if (destTarget === "-") {
-        destParent.push(this.deepCopy(sourceObj));
-      } else {
-        destParent.splice(Number(destTarget), 0, this.deepCopy(sourceObj));
-      }
-    } else if (isObject(destParent)) {
-      destParent[destTarget] = this.deepCopy(sourceObj);
-    } else {
-      throw new JSONPatchError(
-        `unexpected operation on '${typeof destParent}' (${this.name}:${index})`,
-      );
-    }
-
-    return value;
+    return add(value, this.path, sourceObj, this.name, index);
   }
 
   // eslint-disable-next-line sonarjs/no-identical-functions
@@ -354,6 +266,58 @@ export class OpTest implements Op {
   public toObject(): OpObject {
     return { op: this.name, path: this.path.toString(), value: this.value };
   }
+}
+
+/**
+ * Add _value_ to _data_ at _path_.
+ *
+ * This is semantically the `add` operation, used by `OpAdd`, `OpMove` and
+ * `OpCopy`.
+ */
+function add(
+  data: JSONValue,
+  path: JSONPointer,
+  value: JSONValue,
+  opLabel: string,
+  opIndex: number,
+): JSONValue {
+  const [parent, obj] = path.resolveWithParent(data);
+
+  if (parent === UNDEFINED) {
+    // Replace the root object.
+    return value;
+  }
+
+  const target = path.tokens.at(-1);
+
+  if (target === undefined) {
+    throw new JSONPatchError(
+      `unexpected operation on 'undefined' (${opLabel}:${opIndex})`,
+    );
+  }
+
+  if (isArray(parent)) {
+    if (obj === UNDEFINED) {
+      if (!(target === "-" || Number(target) === parent.length)) {
+        throw new JSONPatchError(`index out of range (${opLabel}:${opIndex})`);
+      }
+
+      parent.push(value);
+      return data;
+    }
+
+    parent.splice(Number(target), 0, value);
+    return data;
+  }
+
+  if (isObject(parent)) {
+    parent[target] = value;
+    return data;
+  }
+
+  throw new JSONPatchError(
+    `unexpected operation on '${typeof parent}' (${opLabel}:${opIndex})`,
+  );
 }
 
 /**

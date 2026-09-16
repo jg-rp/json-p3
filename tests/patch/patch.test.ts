@@ -87,7 +87,7 @@ describe("JSON Patch", () => {
     const patch = new JSONPatch().move("/foo/baz", "/foo/qux");
     expect(() => patch.apply(data)).toThrow(JSONPatchError);
     expect(() => patch.apply(data)).toThrow(
-      "source object does not exist (move:0)",
+      "can't move nonexistent property (move:0)",
     );
   });
   test("move to root", () => {

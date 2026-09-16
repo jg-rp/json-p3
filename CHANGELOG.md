@@ -1,6 +1,6 @@
 # JSON P3 Change Log
 
-## Version 2.3.1 (unreleased)
+## Version 2.3.1
 
 - Fixed a bug with the JSONPath slice selector where a start index equal to the target array's length and default end and step values result in selecting the last value in the array. See [issue 47](https://github.com/jg-rp/json-p3/issues/47).
 

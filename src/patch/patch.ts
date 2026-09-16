@@ -64,37 +64,7 @@ export class OpRemove implements Op {
   constructor(readonly path: JSONPointer) {}
 
   public apply(value: JSONValue, index: number): JSONValue {
-    const [parent, obj] = this.path.resolveWithParent(value);
-    if (parent === UNDEFINED) {
-      throw new JSONPatchError(`can't remove root (${this.name}:${index})`);
-    }
-
-    const target = this.path.tokens.at(-1);
-    if (target === undefined) {
-      // this should not be possible
-      throw new JSONPatchError(
-        `unexpected operation on 'undefined' (${this.name}:${index})`,
-      );
-    } else if (isArray(parent)) {
-      if (obj === UNDEFINED) {
-        throw new JSONPatchError(
-          `can't remove nonexistent item (${this.name}:${index})`,
-        );
-      }
-      parent.splice(Number(target), 1);
-    } else if (isObject(parent)) {
-      if (obj === UNDEFINED) {
-        throw new JSONPatchError(
-          `can't remove nonexistent property (${this.name}:${index})`,
-        );
-      }
-      delete parent[target];
-    } else {
-      throw new JSONPatchError(
-        `unexpected operation on '${typeof parent}' (${this.name}:${index})`,
-      );
-    }
-
+    remove(value, this.path, this.name, index);
     return value;
   }
 
@@ -135,21 +105,24 @@ export class OpReplace implements Op {
           `can't replace nonexistent item (${this.name}:${index})`,
         );
       }
+
       parent.splice(Number(target), 1, this.value);
-    } else if (isObject(parent)) {
+      return value;
+    }
+
+    if (isObject(parent)) {
       if (obj === UNDEFINED) {
         throw new JSONPatchError(
           `can't replace nonexistent property (${this.name}:${index})`,
         );
       }
       parent[target] = this.value;
-    } else {
-      throw new JSONPatchError(
-        `unexpected operation on '${typeof parent}' (${this.name}:${index})`,
-      );
+      return value;
     }
 
-    return value;
+    throw new JSONPatchError(
+      `unexpected operation on '${typeof parent}' (${this.name}:${index})`,
+    );
   }
 
   public toObject(): OpObject {
@@ -175,28 +148,8 @@ export class OpMove implements Op {
       );
     }
 
-    const [sourceParent, sourceObj] = this.from.resolveWithParent(value);
-    if (sourceObj === UNDEFINED) {
-      throw new JSONPatchError(
-        `source object does not exist (${this.name}:${index})`,
-      );
-    }
-
-    const sourceTarget = this.from.tokens.at(-1);
-    if (sourceTarget === undefined) {
-      // this should not be possible
-      throw new JSONPatchError(
-        `unexpected operation on 'undefined' (${this.name}:${index})`,
-      );
-    }
-
-    if (isArray(sourceParent)) {
-      sourceParent.splice(Number(sourceTarget), 1);
-    } else if (isObject(sourceParent)) {
-      delete sourceParent[sourceTarget];
-    }
-
-    return add(value, this.path, sourceObj, this.name, index);
+    const obj = remove(value, this.from, this.name, index);
+    return add(value, this.path, obj, this.name, index);
   }
 
   public toObject(): OpObject {
@@ -313,6 +266,57 @@ function add(
   if (isObject(parent)) {
     parent[target] = value;
     return data;
+  }
+
+  throw new JSONPatchError(
+    `unexpected operation on '${typeof parent}' (${opLabel}:${opIndex})`,
+  );
+}
+
+/**
+ * Remove the element at _path_ from _data_ and return the removed value.
+ *
+ * This is semantically the `remove` operation used by `OpRemove` and
+ * `OpMove`.
+ */
+function remove(
+  data: JSONValue,
+  path: JSONPointer,
+  opLabel: string,
+  opIndex: number,
+): JSONValue {
+  const [parent, obj] = path.resolveWithParent(data);
+
+  if (parent === UNDEFINED) {
+    throw new JSONPatchError(`can't remove root (${opLabel}:${opIndex})`);
+  }
+
+  const target = path.tokens.at(-1);
+
+  if (target === undefined) {
+    throw new JSONPatchError(
+      `unexpected operation on 'undefined' (${opLabel}:${opIndex})`,
+    );
+  }
+
+  if (isArray(parent)) {
+    if (obj === UNDEFINED) {
+      throw new JSONPatchError(
+        `can't ${opLabel} nonexistent item (${opLabel}:${opIndex})`,
+      );
+    }
+    parent.splice(Number(target), 1);
+    return obj;
+  }
+
+  if (isObject(parent)) {
+    if (obj === UNDEFINED) {
+      throw new JSONPatchError(
+        `can't ${opLabel} nonexistent property (${opLabel}:${opIndex})`,
+      );
+    }
+    delete parent[target];
+    return obj;
   }
 
   throw new JSONPatchError(

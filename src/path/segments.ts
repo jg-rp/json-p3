@@ -41,7 +41,7 @@ export class ChildSegment extends JSONPathSegment {
     const rv: JSONPathNode[] = [];
     for (const node of nodes) {
       for (const selector of this.selectors) {
-        rv.push(...selector.resolve(node));
+        for (const match of selector.resolve(node)) rv.push(match);
       }
     }
     return rv;
@@ -85,7 +85,7 @@ export class DescendantSegment extends JSONPathSegment {
     for (const node of nodes) {
       for (const _node of visitor(node)) {
         for (const selector of this.selectors) {
-          rv.push(...selector.resolve(_node));
+          for (const match of selector.resolve(_node)) rv.push(match);
         }
       }
     }

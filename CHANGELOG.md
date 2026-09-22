@@ -1,6 +1,6 @@
 # JSON P3 Change Log
 
-## Version 2.3.2 (unreleased)
+## Version 2.3.2
 
 - Fixed `RangeError: Maximum call stack size exceeded` when a single selector matches a very large number of nodes, for example `$.a[*]` against an array of about 130,000 or more elements. The child and descendant segments spread each selector's results into `Array.prototype.push`, which is bounded by the engine's argument limit. `lazyQuery` was not affected.
 

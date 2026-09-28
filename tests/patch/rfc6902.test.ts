@@ -32,15 +32,15 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { JSONValue } from "../../src/types";
-import { JSONPatch, OpObject, apply } from "../../src/patch";
+import { JSONPatch, type OpObject, apply } from "../../src/patch";
+import { type JSONLike } from "../../src/types";
 
 type Case = {
   description: string;
-  data: JSONValue;
+  data: JSONLike;
   patch: JSONPatch;
   op: OpObject;
-  want: JSONValue;
+  want: JSONLike;
 };
 
 const TEST_CASES: Case[] = [
@@ -154,7 +154,7 @@ const TEST_CASES: Case[] = [
   },
 ];
 
-function deepCopy(value: JSONValue): JSONValue {
+function deepCopy(value: JSONLike): JSONLike {
   return JSON.parse(JSON.stringify(value));
 }
 

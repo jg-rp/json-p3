@@ -1,43 +1,34 @@
-export const version = "__VERSION__";
-
 export * as jsonpath from "./path";
+
 export {
   DEFAULT_ENVIRONMENT,
-  FunctionExpressionType,
-  JSONPathQuery,
-  JSONPathEnvironment,
+  NODES_TYPE,
+  VALUE_TYPE,
+  LOGICAL_TYPE,
+  DetailedJSONPathError,
   JSONPathError,
-  JSONPathIndexError,
-  JSONPathLexerError,
-  JSONPathNode,
-  JSONPathNodeList,
+  JSONPathEnvironment,
+  JSONPathNameError,
   JSONPathSyntaxError,
   JSONPathTypeError,
-  JSONPathRecursionLimitError,
-  Token,
-  TokenKind,
-  Nothing,
-  lazyQuery,
-  query,
+  JSONPathQuery,
   compile,
+  find,
+  findIter,
+  query,
+  lazyQuery,
+  findAll,
+  findAllIter,
+  findOne,
+  match,
+  test,
 } from "./path";
-export type { JSONPathEnvironmentOptions, FilterFunction } from "./path";
+
+export type { FilterFunction, ExpressionType, JSONPathEnvironmentOptions } from "./path";
+
+export { JSONPathNode, JSONPathNodeList } from "./path";
+
+export type { JSONLike } from "./types";
 
 export * as jsonpointer from "./pointer";
-export {
-  JSONPointer,
-  RelativeJSONPointer,
-  resolve,
-  UNDEFINED,
-} from "./pointer";
-
-export * as jsonpatch from "./patch";
-export {
-  JSONPatch,
-  JSONPatchError,
-  JSONPatchTestFailure,
-  apply,
-} from "./patch";
-export type { OpObject } from "./patch";
-
-export type { JSONValue } from "./types";
+export { JSONPointer, RelativeJSONPointer, resolve, UNDEFINED } from "./pointer";

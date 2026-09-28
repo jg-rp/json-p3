@@ -1,58 +1,10 @@
-import { readFileSync } from "fs";
-
-import { JSONPathEnvironment } from "../../src/path/environment";
-import { JSONPathError, JSONPathSyntaxError } from "../../src/path/errors";
-import { JSONValue } from "../../src/types";
-import { compile } from "../../src/path";
-
-type Case = {
-  name: string;
-  selector: string;
-  document?: JSONValue;
-  result?: JSONValue[];
-  results?: JSONValue[][];
-  invalid_selector?: boolean;
-};
-
-const cts = JSON.parse(
-  readFileSync(process.env.JSONP3_CTS_PATH || "tests/path/cts/cts.json", {
-    encoding: "utf8",
-  }),
-);
-
-const env = new JSONPathEnvironment({
-  strict: false,
-  nondeterministic: process.env.JSONP3_CTS_NONDETERMINISTIC === "true",
-});
-
-const testSuiteName = env.nondeterministic
-  ? "compliance test suite (extra, nondeterministic)"
-  : "compliance test suite (extra)";
-
-describe(testSuiteName, () => {
-  test.each<Case>(cts.tests)(
-    "$name",
-    ({ selector, document, result, results, invalid_selector }: Case) => {
-      if (invalid_selector) {
-        expect(() => env.compile(selector)).toThrow(JSONPathError);
-      } else if (document) {
-        if (result) {
-          const rv = env.query(selector, document).values();
-          expect(rv).toStrictEqual(result);
-        } else if (results) {
-          const rv = env.query(selector, document).values();
-          expect(results).toContainEqual(rv);
-        }
-      }
-    },
-  );
-});
+import { compile, JSONPathEnvironment, JSONPathSyntaxError, type JSONLike } from "../../src";
 
 type TestCase = {
   description: string;
   path: string;
-  data: JSONValue;
-  want: JSONValue;
+  data: JSONLike;
+  want: JSONLike;
 };
 
 const TEST_CASES: TestCase[] = [
@@ -149,70 +101,41 @@ const TEST_CASES: TestCase[] = [
 ];
 
 describe("extra features", () => {
-  test.each<TestCase>(TEST_CASES)(
-    "$description",
-    ({ path, data, want }: TestCase) => {
-      expect(env.query(path, data).values()).toStrictEqual(want);
-      expect(
-        Array.from(env.lazyQuery(path, data)).map((n) => n.value),
-      ).toStrictEqual(want);
-    },
-  );
+  const env = new JSONPathEnvironment({ strict: false });
+
+  test.each<TestCase>(TEST_CASES)("$description", ({ path, data, want }: TestCase) => {
+    expect(env.query(path, data).values()).toStrictEqual(want);
+    expect(env.findAll(path, data)).toStrictEqual(want);
+    expect(Array.from(env.lazyQuery(path, data)).map((n) => n.value)).toStrictEqual(want);
+    expect(Array.from(env.findAllIter(path, data))).toStrictEqual(want);
+  });
 
   test("keys from an object, location is valid", () => {
     const path = "$.some.~";
     const data = { some: { a: 1, b: 2, c: 3 } };
     const nodes = env.query(path, data);
     expect(nodes.values()).toStrictEqual(["a", "b", "c"]);
-    expect(env.query(nodes.nodes[0].getPath(), data).values()).toStrictEqual([
-      "a",
-    ]);
-    expect(env.query(nodes.nodes[1].getPath(), data).values()).toStrictEqual([
-      "b",
-    ]);
-    expect(env.query(nodes.nodes[2].getPath(), data).values()).toStrictEqual([
-      "c",
-    ]);
-  });
-
-  test("custom keys pattern", () => {
-    const path = "$.some[*~]";
-    const data = { some: { other: "foo", thing: "bar" } };
-    const laxEnv = new JSONPathEnvironment({
-      strict: false,
-      keysPattern: /\*~/y,
-    });
-    const nodes = laxEnv.query(path, data);
-    expect(nodes.values()).toStrictEqual(["other", "thing"]);
-  });
-
-  test("custom keys pattern, shorthand", () => {
-    const path = "$.some.*~";
-    const data = { some: { other: "foo", thing: "bar" } };
-    const laxEnv = new JSONPathEnvironment({
-      strict: false,
-      keysPattern: /\*~/y,
-    });
-    const nodes = laxEnv.query(path, data);
-    expect(nodes.values()).toStrictEqual(["other", "thing"]);
+    expect(env.query(nodes.nodes[0]!.normalizedPath(), data).values()).toStrictEqual(["a"]);
+    expect(env.query(nodes.nodes[1]!.normalizedPath(), data).values()).toStrictEqual(["b"]);
+    expect(env.query(nodes.nodes[2]!.normalizedPath(), data).values()).toStrictEqual(["c"]);
   });
 });
 
 describe("extra errors", () => {
+  const env = new JSONPathEnvironment({ strict: false });
+
   test("segments after current key identifier", () => {
     const query = "$.some[?#.foo > 1]";
     expect(() => env.query(query, {})).toThrow(JSONPathSyntaxError);
-    expect(() => env.query(query, {})).toThrow(
-      "expected token 'TOKEN_COMMA', found 'TOKEN_NAME' ('[?#.foo >':10)",
-    );
+    expect(() => env.query(query, {})).toThrow("expected a comma or closing bracket");
   });
 });
 
 type DocsTestCase = {
   description: string;
   path: string;
-  data: JSONValue;
-  want: JSONValue;
+  data: JSONLike;
+  want: JSONLike;
   want_paths: string[];
 };
 
@@ -271,20 +194,6 @@ const DOCS_EXAMPLE_TEST_CASES: DocsTestCase[] = [
     want: [],
     want_paths: [],
   },
-  // {
-  //   description: "keys selector, non-deterministic ordering",
-  //   path: "$.a[0][~, ~]",
-  //   data: {
-  //     a: [{ b: "x", c: "z" }, { b: "y" }],
-  //   },
-  //   want: ["b", "c", "b", "c"], // non-deterministic
-  //   want_paths: [
-  //     "$['a'][0][~'b']",
-  //     "$['a'][0][~'c']",
-  //     "$['a'][0][~'b']",
-  //     "$['a'][0][~'c']",
-  //   ],
-  // },
   {
     description: "keys selector, descendant keys",
     path: "$..[~]",
@@ -332,14 +241,14 @@ const DOCS_EXAMPLE_TEST_CASES: DocsTestCase[] = [
 ];
 
 describe("extra docs examples", () => {
+  const env = new JSONPathEnvironment({ strict: false });
+
   test.each<DocsTestCase>(DOCS_EXAMPLE_TEST_CASES)(
     "$description",
     ({ path, data, want, want_paths }: DocsTestCase) => {
       expect(env.query(path, data).values()).toStrictEqual(want);
-      expect(env.query(path, data).paths()).toStrictEqual(want_paths);
-      expect(
-        Array.from(env.lazyQuery(path, data)).map((n) => n.value),
-      ).toStrictEqual(want);
+      expect(env.query(path, data).shorthandPaths()).toStrictEqual(want_paths);
+      expect(Array.from(env.lazyQuery(path, data)).map((n) => n.value)).toStrictEqual(want);
     },
   );
 });
@@ -369,8 +278,6 @@ describe("extra syntax is disabled by default", () => {
   });
 
   test("filter keys", () => {
-    expect(() => compile("$.some[~?match(@, '^b.*')]")).toThrow(
-      JSONPathSyntaxError,
-    );
+    expect(() => compile("$.some[~?match(@, '^b.*')]")).toThrow(JSONPathSyntaxError);
   });
 });

@@ -1,10 +1,8 @@
-import { readFileSync } from "fs";
+import { describe, test, expect } from "vitest";
 
-import type { JSONLike } from "../../src/types";
+import type { JSONLike } from "../dist";
 
-import { JSONPathNodeList } from "../../src";
-import { JSONPathEnvironment } from "../../src/path/environment";
-import { JSONPathError } from "../../src/path/errors";
+import { JSONPathEnvironment, JSONPathError, JSONPathNodeList } from "../dist/json-p3.browser.esm";
 
 type Case = {
   name: string;
@@ -17,11 +15,7 @@ type Case = {
   invalid_selector?: boolean;
 };
 
-const cts = JSON.parse(
-  readFileSync(process.env.JSONP3_CTS_PATH || "cts/cts.json", {
-    encoding: "utf8",
-  }),
-);
+import cts from "../cts/cts.json";
 
 const validQueries = cts.tests.filter((c: Case) => !c.invalid_selector);
 

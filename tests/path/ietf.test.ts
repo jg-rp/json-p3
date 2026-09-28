@@ -37,14 +37,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { JSONValue } from "../../src/types";
+import type { JSONLike } from "../../src/types";
+
 import { query } from "../../src";
 
 type TestCase = {
   description: string;
   path: string;
-  data: JSONValue;
-  want: JSONValue;
+  data: JSONLike;
+  want: JSONLike;
 };
 
 const FILTER_SELECTOR_DATA = {
@@ -176,9 +177,7 @@ const TEST_CASES: TestCase[] = [
     description: "filter selector - Nested filters",
     path: "$[?(@[?(@.b)])]",
     data: FILTER_SELECTOR_DATA,
-    want: [
-      [3, 5, 1, 2, 4, 6, { b: "j" }, { b: "k" }, { b: {} }, { b: "kilo" }],
-    ],
+    want: [[3, 5, 1, 2, 4, 6, { b: "j" }, { b: "k" }, { b: {} }, { b: "kilo" }]],
   },
   {
     description: "filter selector - Array value logical OR",
@@ -217,8 +216,7 @@ const TEST_CASES: TestCase[] = [
     want: [3, 5, 1, 2, 4, 6],
   },
   {
-    description:
-      "filter selector - Comparisons of primitive and of structured values",
+    description: "filter selector - Comparisons of primitive and of structured values",
     path: "$.a[?(@ == @)]",
     data: FILTER_SELECTOR_DATA,
     want: [3, 5, 1, 2, 4, 6, { b: "j" }, { b: "k" }, { b: {} }, { b: "kilo" }],
@@ -332,8 +330,7 @@ const TEST_CASES: TestCase[] = [
     want: [],
   },
   {
-    description:
-      "null semantics - Not JSON null at all, just a member name string",
+    description: "null semantics - Not JSON null at all, just a member name string",
     path: "$.null",
     data: { a: null, b: [null], c: [{}], null: 1 },
     want: [1],
@@ -365,10 +362,7 @@ const TEST_CASES: TestCase[] = [
 ];
 
 describe("IETF examples", () => {
-  test.each<TestCase>(TEST_CASES)(
-    "$description",
-    ({ path, data, want }: TestCase) => {
-      expect(query(path, data).values()).toStrictEqual(want);
-    },
-  );
+  test.each<TestCase>(TEST_CASES)("$description", ({ path, data, want }: TestCase) => {
+    expect(query(path, data).values()).toStrictEqual(want);
+  });
 });

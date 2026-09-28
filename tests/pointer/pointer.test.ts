@@ -9,64 +9,58 @@ import {
 
 describe("resolve JSON pointer", () => {
   test("string representation", () => {
-    const pointer = new JSONPointer("/some/thing/1");
+    const pointer = JSONPointer.fromString("/some/thing/1");
     expect(pointer.toString()).toBe("/some/thing/1");
   });
   test("missing key", () => {
-    const pointer = new JSONPointer("/some/other");
+    const pointer = JSONPointer.fromString("/some/other");
     const data = { some: { thing: "else" } };
     expect(() => pointer.resolve(data)).toThrow(JSONPointerKeyError);
-    expect(() => pointer.resolve(data)).toThrow(
-      "no such property '/some/other'",
-    );
+    expect(() => pointer.resolve(data)).toThrow("no such property '/some/other'");
   });
   test("index out of range", () => {
-    const pointer = new JSONPointer("/some/thing/7");
+    const pointer = JSONPointer.fromString("/some/thing/7");
     const data = { some: { thing: [1, 2, 3] } };
     expect(() => pointer.resolve(data)).toThrow(JSONPointerIndexError);
-    expect(() => pointer.resolve(data)).toThrow(
-      "index out of range '/some/thing/7'",
-    );
+    expect(() => pointer.resolve(data)).toThrow("index out of range '/some/thing/7'");
   });
   test("property of a primitive", () => {
-    const pointer = new JSONPointer("/some/thing/else");
+    const pointer = JSONPointer.fromString("/some/thing/else");
     const data = { some: { thing: "foo" } };
     expect(() => pointer.resolve(data)).toThrow(JSONPointerTypeError);
-    expect(() => pointer.resolve(data)).toThrow(
-      "found primitive value, expected an object '/some/thing/else'",
-    );
+    expect(() => pointer.resolve(data)).toThrow("unexpected primitive '/some/thing/else'");
   });
   test("resolve with default", () => {
-    const pointer = new JSONPointer("/some/other");
+    const pointer = JSONPointer.fromString("/some/other");
     const data = { some: { thing: "else" } };
     expect(pointer.resolve(data, null)).toBe(null);
   });
   test("no leading slash", () => {
-    expect(() => new JSONPointer("some/other")).toThrow(JSONPointerSyntaxError);
+    expect(() => JSONPointer.fromString("some/other")).toThrow(JSONPointerSyntaxError);
   });
   test("resolve with parent", () => {
-    const pointer = new JSONPointer("/some/thing");
+    const pointer = JSONPointer.fromString("/some/thing");
     const data = { some: { thing: [1, 2, 3] } };
     const [parent, target] = pointer.resolveWithParent(data);
     expect(parent).toStrictEqual(data["some"]);
     expect(target).toStrictEqual(data["some"]["thing"]);
   });
   test("resolve root with parent", () => {
-    const pointer = new JSONPointer("");
+    const pointer = JSONPointer.fromString("");
     const data = { some: { thing: [1, 2, 3] } };
     const [parent, target] = pointer.resolveWithParent(data);
     expect(parent).toStrictEqual(UNDEFINED);
     expect(target).toStrictEqual(data);
   });
   test("resolve with parent and missing target", () => {
-    const pointer = new JSONPointer("/some/other");
+    const pointer = JSONPointer.fromString("/some/other");
     const data = { some: { thing: [1, 2, 3] } };
     const [parent, target] = pointer.resolveWithParent(data);
     expect(parent).toStrictEqual(data["some"]);
     expect(target).toStrictEqual(UNDEFINED);
   });
   test("resolve with parent and type error", () => {
-    const pointer = new JSONPointer("/some/thing/1");
+    const pointer = JSONPointer.fromString("/some/thing/1");
     const data = { some: { thing: "else" } };
     expect(() => pointer.resolveWithParent(data)).toThrow(JSONPointerTypeError);
   });
@@ -80,9 +74,7 @@ describe("resolve JSON pointer", () => {
   });
   test("convenience resolve with explicit undefined default", () => {
     const data = { some: { thing: "else" } };
-    expect(() => resolve("/some/other", data, UNDEFINED)).toThrow(
-      JSONPointerResolutionError,
-    );
+    expect(() => resolve("/some/other", data, UNDEFINED)).toThrow(JSONPointerResolutionError);
   });
   test("trailing slash", () => {
     const data = { foo: { "": [1, 2, 3], " ": [4, 5, 6] } };
@@ -94,14 +86,12 @@ describe("resolve JSON pointer", () => {
   });
   test("index with leading zero", () => {
     const data = { some: { thing: [1, 2, 3] } };
-    expect(() => resolve("/some/thing/01", data)).toThrow(
-      JSONPointerIndexError,
-    );
+    expect(() => resolve("/some/thing/01", data)).toThrow(JSONPointerIndexError);
   });
 });
 
 describe("join pointers", () => {
-  const pointer = new JSONPointer("/foo");
+  const pointer = JSONPointer.fromString("/foo");
   test("repr of pointer", () => {
     expect(pointer.toString()).toBe("/foo");
   });
@@ -127,13 +117,14 @@ describe("join pointers", () => {
     expect(pointer.join("/bar", "0").toString()).toBe("/bar/0");
   });
   test("throw on non-string token", () => {
+    // oxlint-disable-next-line typescript/no-unsafe-type-assertion
     expect(() => pointer.join(0 as never)).toThrow(JSONPointerTypeError);
   });
 });
 
 describe("parent of a pointer", () => {
   const data = { some: { thing: [1, 2, 3] } };
-  const pointer = new JSONPointer("/some/thing/0");
+  const pointer = JSONPointer.fromString("/some/thing/0");
   let parent = pointer.parent();
 
   test("pointer", () => {
@@ -163,12 +154,12 @@ describe("parent of a pointer", () => {
 describe("pointer exists", () => {
   const data = { some: { thing: [1, 2, 3] }, other: undefined };
   test("truthy value", () => {
-    expect(new JSONPointer("/some/thing").exists(data)).toBe(true);
+    expect(JSONPointer.fromString("/some/thing").exists(data)).toBe(true);
   });
   test("falsy value", () => {
-    expect(new JSONPointer("/other").exists(data)).toBe(true);
+    expect(JSONPointer.fromString("/other").exists(data)).toBe(true);
   });
   test("does not exist", () => {
-    expect(new JSONPointer("/nosuchthing").exists(data)).toBe(false);
+    expect(JSONPointer.fromString("/nosuchthing").exists(data)).toBe(false);
   });
 });

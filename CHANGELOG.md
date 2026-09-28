@@ -1,5 +1,49 @@
 # JSON P3 Change Log
 
+## Version 3.0.0 (unreleased)
+
+**Features**
+
+- Added `findAll`, `findAllIter`, `JSONPathEnvironment.findAll`, `JSONPathEnvironment.findAllIter`, `JSONPathQuery.findAll` and `JSONPathQuery.findAllIter`, all of which return JSON values, not JSONPath nodes. By not tracking node location information (required for RFC 9535 compliance), `findAll` and `findAllIter` are significantly faster and more memory efficient than `find` and `findIter`.
+
+- Added `test`, `JSONPathEnvironment.test` and `JSONPathQuery.test`, all of which return `true` if the query expression matches at least one node, or `false` otherwise.
+
+- Added diagnostic data to JSONPath errors and functions for rendering pretty error messages.
+
+**Performance improvements**
+
+TODO: JSONPath
+
+- lighter weight tokens (plain old objects)
+- simpler tokenizer
+- lighter weight AST nodes (plain old object tagged with a kind)
+- external AST iteration
+- lighter weight transient nodes that become JSONPathNode instances on exit.
+
+TODO: JSON Pointer
+
+- Errors as values
+
+**JSONPath API Changes**
+
+- Renamed `RegexFunctionOptions.cacheSize` to `RegexFunctionOptions.cacheCapacity`.
+- Changed `JSONPathEnvironment.functionRegister` to be a plain object instead of a map and renamed it to `JSONPathEnvironment.functions`.
+- Removed the `keysPattern` `JSONPathEnvironment` option. It is no longer possible to configure custom syntax for the keys selector.
+- Replaced `FunctionExpressionType` with `ExpressionType` and constants `NODES_TYPE`, `VALUE_TYPE`, `LOGICAL_TYPE`.
+- Removed `JSONPathQuery.valuesOrSingular`.
+- Removed `JSONPathNode.path` and `JSONPathNodeList.paths` that accepted options in favour of `JSONPathNode.normalizedPath`, `JSONPathNode.shorthandPath`, `JSONPathNodeList.normalizedPaths` and `JSONPathNodeList.shorthandPaths`.
+- Removed `JSONPathIndexError`. XXX:
+- Removed `IRegexpError`. Now you get a `JSONPathError` when debugging regex filter functions.
+- Renamed `JSONPathRecursionLimitError` to `JSONPathRecursionError`.
+- Renamed type `JSONValue` to `JSONLike`;
+
+- Depreciated `lazyQuery`, `JSONPathEnvironment.lazyQuery` and `JSONPathQuery.lazyQuery` in favour of `findIter`, `JSONPathEnvironment.findIter` and `JSONPathQuery.findIter`.
+
+**JSON Pointer API Changes**
+
+- Changed the `JSONPointer` constructor to accept tokens (`string[]`) instead of an RFC 6901 formatted string.
+- Added static method `JSONPointer.fromString(pointer)` for creating a `JSONPointer` from an RFC 6901 formatted string.
+
 ## Version 2.3.2
 
 - Fixed `RangeError: Maximum call stack size exceeded` when a single selector matches a very large number of nodes, for example `$.a[*]` against an array of about 130,000 or more elements. The child and descendant segments spread each selector's results into `Array.prototype.push`, which is bounded by the engine's argument limit. `lazyQuery` was not affected.

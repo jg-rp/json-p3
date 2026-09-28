@@ -8,9 +8,8 @@
  * entries in a different order to compare equal.
  */
 
-import { isObject } from "./types";
+import { isPlainObject } from "./types";
 
-// eslint-disable-next-line sonarjs/cognitive-complexity
 export function deepEquals(a: unknown, b: unknown): boolean {
   if (a === b) {
     return true;
@@ -29,7 +28,9 @@ export function deepEquals(a: unknown, b: unknown): boolean {
       return true;
     }
     return false;
-  } else if (isObject(a) && isObject(b)) {
+  }
+
+  if (isPlainObject(a) && isPlainObject(b)) {
     const keysA = Object.keys(a);
     const keysB = Object.keys(b);
 
@@ -38,6 +39,7 @@ export function deepEquals(a: unknown, b: unknown): boolean {
     }
 
     for (const key of keysA) {
+      // oxlint-disable-next-line typescript/no-unsafe-type-assertion
       if (!deepEquals(a[key as keyof typeof a], b[key as keyof typeof b])) {
         return false;
       }

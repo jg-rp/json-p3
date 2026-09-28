@@ -1,15 +1,15 @@
-import { JSONValue } from "../types";
-import { JSONPatch, OpObject } from "./patch";
+import { type JSONLike } from "../types";
+import { JSONPatch, type OpObject } from "./patch";
 
 export { JSONPatch } from "./patch";
 export { JSONPatchError, JSONPatchTestFailure } from "./errors";
 export type { OpObject } from "./patch";
 
 /**
- * Apply the JSON Patch _patch_ to JSON-like data _value_.
+ * Apply JSON Patch operations `ops` to JSON-like data.
  * @param ops - JSON Patch operations following RFC 6902.
- * @param value - The target JSON-like document to patch.
+ * @param data - The target JSON-like document to patch.
  */
-export function apply(ops: OpObject[], value: JSONValue): JSONValue {
-  return new JSONPatch(ops).apply(value);
+export function apply(ops: OpObject[], data: JSONLike): JSONLike {
+  return new JSONPatch(ops).apply(data);
 }

@@ -7,7 +7,7 @@
     "moduleDetection": "force",
     "jsx": "react-jsx",
     "allowJs": true,
-    "types": ["bun", "jest"],
+    "types": ["bun"],
 
     // Bundler mode
     "moduleResolution": "bundler",
@@ -26,7 +26,5 @@
     "noUnusedLocals": false,
     "noUnusedParameters": false,
     "noPropertyAccessFromIndexSignature": false
-  },
-  "include": ["src"],
-  "exclude": ["cts"]
+  }
 }

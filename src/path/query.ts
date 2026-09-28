@@ -26,14 +26,14 @@ export class JSONPathQuery {
   }
 
   /**
-   * @depreciated Use {@link find} instead.
+   * @deprecated Use {@link find} instead.
    */
   query(data: JSONLike): JSONPathNodeList {
     return this.find(data);
   }
 
   /**
-   * @depreciated Use {@link findIter} instead.
+   * @deprecated Use {@link findIter} instead.
    */
   lazyQuery(data: JSONLike): IterableIterator<JSONPathNode> {
     return this.findIter(data);
@@ -55,7 +55,7 @@ export class JSONPathQuery {
   }
 
   /**
-   * @depreciated Use {@link findOne} instead.
+   * @deprecated Use {@link findOne} instead.
    */
   match(data: JSONLike): JSONPathNode | undefined {
     return this.findOne(data);

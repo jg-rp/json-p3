@@ -120,14 +120,14 @@ export class JSONPathEnvironment {
   }
 
   /**
-   * @depreciated Use {@link find} instead.
+   * @deprecated Use {@link find} instead.
    */
   query(expression: string, data: JSONLike): JSONPathNodeList {
     return this.compile(expression).query(data);
   }
 
   /**
-   * @depreciated Use {@link findIter} instead.
+   * @deprecated Use {@link findIter} instead.
    */
   lazyQuery(expression: string, data: JSONLike): IterableIterator<JSONPathNode> {
     return this.compile(expression).lazyQuery(data);
@@ -146,7 +146,7 @@ export class JSONPathEnvironment {
   }
 
   /**
-   * @depreciated Use {@link findOne} instead.
+   * @deprecated Use {@link findOne} instead.
    */
   match(expression: string, data: JSONLike): JSONPathNode | undefined {
     return this.compile(expression).match(data);

@@ -44,14 +44,14 @@ export function findIter(expression: string, data: JSONLike): IterableIterator<J
 }
 
 /**
- * @depreciated Use {@link find} instead.
+ * @deprecated Use {@link find} instead.
  */
 export function query(expression: string, data: JSONLike): JSONPathNodeList {
   return DEFAULT_ENVIRONMENT.query(expression, data);
 }
 
 /**
- * @depreciated Use {@link findIter} instead.
+ * @deprecated Use {@link findIter} instead.
  */
 export function lazyQuery(expression: string, data: JSONLike): IterableIterator<JSONPathNode> {
   return DEFAULT_ENVIRONMENT.lazyQuery(expression, data);

@@ -31,4 +31,19 @@ export { JSONPathNode, JSONPathNodeList } from "./path";
 export type { JSONLike } from "./types";
 
 export * as jsonpointer from "./pointer";
-export { JSONPointer, RelativeJSONPointer, resolve, UNDEFINED } from "./pointer";
+export {
+  JSONPointer,
+  RelativeJSONPointer,
+  resolve,
+  UNDEFINED,
+  JSONPointerError,
+  JSONPointerIndexError,
+  JSONPointerKeyError,
+  JSONPointerResolutionError,
+  JSONPointerSyntaxError,
+  JSONPointerTypeError,
+} from "./pointer";
+
+export * as jsonpatch from "./patch";
+export { JSONPatch, JSONPatchError, JSONPatchTestFailure, apply } from "./patch";
+export type { OpObject } from "./patch";

@@ -6,10 +6,7 @@ import { Allotment } from "allotment";
 import "allotment/dist/style.css";
 import clsx from "clsx";
 
-import {
-  JSONPathEnvironment,
-  version as p3version,
-} from "@site/../dist/json-p3.esm";
+import { JSONPathEnvironment } from "@site/../dist/json-p3.esm";
 
 const ENV = new JSONPathEnvironment({ strict: false });
 
@@ -110,7 +107,7 @@ export default function Playground() {
       setQuery(value.trim());
       const rv = ENV.query(value.trim(), data);
       setResult(JSON.stringify(rv.values(), undefined, "  "));
-      setResultPaths(JSON.stringify(rv.paths(), undefined, "  "));
+      setResultPaths(JSON.stringify(rv.normalizedPaths(), undefined, "  "));
     } catch (error) {
       setResult(JSON.stringify(String(error), undefined, "  "));
       setResultPaths("[]");
@@ -128,7 +125,7 @@ export default function Playground() {
       setData(_data);
       const rv = ENV.query(query, _data);
       setResult(JSON.stringify(rv.values(), undefined, "  "));
-      setResultPaths(JSON.stringify(rv.paths(), undefined, "  "));
+      setResultPaths(JSON.stringify(rv.normalizedPaths(), undefined, "  "));
     } catch (error) {
       setResult(JSON.stringify(String(error), undefined, "  "));
       setResultPaths("[]");
@@ -294,7 +291,7 @@ export default function Playground() {
             </Link>{" "}
             is enabled.
             <br />
-            <span className="font-bold">JSON P3 Version {p3version}</span>
+            <span className="font-bold">JSON P3</span>
           </p>
         </div>
       </div>

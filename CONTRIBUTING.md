@@ -17,42 +17,42 @@ $ cd json-p3
 $ git submodule update --init
 ```
 
-We use [npm](https://docs.npmjs.com/cli/v10/commands/npm) to mange packages and run scripts during development. Install development dependencies with:
+We use [Bun](https://bun.com/docs/pm/cli/install) to manage packages and run scripts during development. Install development dependencies with:
 
 ```shell
-$ npm install --production=false
+$ bun install
 ```
 
-And run tests with the _test_ script.
+We also use Bun's test runner.
 
 ```shell
-$ npm test
+$ bun test
+```
+
+And [vitest](https://github.com/vitest-dev/vitest) for testing against browser and Node.js runtimes.
+
+```shell
+bunx playwright install --with-deps
+bun run test:browser
+bun run test:node
 ```
 
 Check for linting errors with the _lint_ script.
 
 ```shell
-$ npm run lint
+bun run lint
 ```
 
-And check for typing errors with the _type-check_ script.
+And check for type errors with the _type-check_ script.
 
 ```shell
-$ npm run type-check
+bun run type-check
 ```
 
-Generate an HTML test coverage report with the _coverage_ script.
+Built distribution bundles and type files with Bun's bundler.
 
 ```shell
-$ npm run coverage
-```
-
-Then open `coverage/index.html` in your browser.
-
-Build distribution bundles and generate `.ts` files with the _build_ script. This will write bundles to the `dist/` folder.
-
-```shell
-$ npm run build
+bun run dist
 ```
 
 ## Documentation
@@ -61,5 +61,5 @@ $ npm run build
 
 ```shell
 $ cd docs
-$ npm run start
+$ bun run start
 ```

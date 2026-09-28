@@ -1,4 +1,5 @@
 import { Bench, nToMs } from "tinybench";
+
 import { resolve } from "../dist/json-p3.esm.js";
 
 const testDocument = {

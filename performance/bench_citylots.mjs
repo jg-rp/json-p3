@@ -1,5 +1,6 @@
-import { performance } from "perf_hooks";
 import fs from "fs";
+import { performance } from "perf_hooks";
+
 import { compile } from "../dist/json-p3.esm.js";
 
 const fixtures = [
@@ -23,20 +24,14 @@ const fixtures = [
 const queries = {
   shallow: compile("$.features..properties"),
   deep: compile("$.features..properties.BLOCK_NUM"),
-  conditional: compile(
-    "$.features[?@.properties.STREET=='UNKNOWN'].properties.BLOCK_NUM",
-  ),
-  regex: compile(
-    "$.features[?match(@.properties.STREET, 'UNKNOWN')].properties.BLOCK_NUM",
-  ),
+  conditional: compile("$.features[?@.properties.STREET=='UNKNOWN'].properties.BLOCK_NUM"),
+  regex: compile("$.features[?match(@.properties.STREET, 'UNKNOWN')].properties.BLOCK_NUM"),
 };
 
 const number = 1;
 const repeat = 5;
 
-console.log(
-  `${"Benchmark".padEnd(35)} | ${"Min (s)".padEnd(10)} | ${"Mean (s)".padEnd(10)}`,
-);
+console.log(`${"Benchmark".padEnd(35)} | ${"Min (s)".padEnd(10)} | ${"Mean (s)".padEnd(10)}`);
 console.log("-".repeat(62));
 
 for (const fixture of fixtures) {
@@ -55,12 +50,8 @@ for (const fixture of fixtures) {
 
     const perRunTimes = times.map((t) => t / number);
     const minTime = Math.min(...times).toFixed(4);
-    const meanTime = (
-      perRunTimes.reduce((a, b) => a + b, 0) / perRunTimes.length
-    ).toFixed(4);
+    const meanTime = (perRunTimes.reduce((a, b) => a + b, 0) / perRunTimes.length).toFixed(4);
 
-    console.log(
-      `${benchName.padEnd(35)} | ${minTime.padEnd(10)} | ${meanTime.padEnd(10)}`,
-    );
+    console.log(`${benchName.padEnd(35)} | ${minTime.padEnd(10)} | ${meanTime.padEnd(10)}`);
   }
 }

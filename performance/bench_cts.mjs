@@ -1,14 +1,12 @@
-import { Bench, nToMs } from "tinybench";
 import fs from "fs";
+import { Bench, nToMs } from "tinybench";
+
 import { compile, findAll, query } from "../dist/json-p3.esm.js";
 
 const cts = JSON.parse(
-  fs.readFileSync(
-    process.env.JSONP3_CTS_PATH || "../jsonpath-compliance-test-suite/cts.json",
-    {
-      encoding: "utf8",
-    },
-  ),
+  fs.readFileSync(process.env.JSONP3_CTS_PATH || "../jsonpath-compliance-test-suite/cts.json", {
+    encoding: "utf8",
+  }),
 );
 
 const queries = cts.tests

@@ -1,5 +1,6 @@
 // oxlint-disable no-await-in-loop
 import fs from "fs";
+
 import { compile } from "../dist/json-p3.esm.js";
 
 const fixtures = [

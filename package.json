@@ -1,10 +1,45 @@
 {
   "name": "json-p3",
   "version": "2.3.1",
+  "description": "JSONPath, JSON Pointer and JSON Patch",
+  "keywords": [
+    "JSON",
+    "JSON Patch",
+    "JSON Pointer",
+    "JSONPath"
+  ],
+  "homepage": "https://github.com/jg-rp/json-p3",
+  "bugs": {
+    "url": "https://github.com/jg-rp/json-p3/issues"
+  },
+  "license": "MIT",
   "author": "James Prior",
   "repository": {
     "type": "git",
     "url": "https://github.com/jg-rp/json-p3.git"
+  },
+  "files": [
+    "dist/**/*"
+  ],
+  "type": "module",
+  "main": "dist/json-p3.esm.js",
+  "module": "dist/json-p3.esm.js",
+  "browser": "dist/json-p3.browser.esm.js",
+  "types": "dist/json-p3.d.ts",
+  "scripts": {
+    "test:browser": "bun run dist && vitest run --config vitest.browser.config.ts --browser",
+    "test:node": "bun run dist && vitest run --config vitest.node.bundle.config.ts",
+    "build:types": "bun run tsc -p tsconfig.build.json",
+    "build:js": "bun build.ts",
+    "dist": "rm -rf ./dist && bun run build:js && bun run build:types",
+    "lint": "bun run oxlint",
+    "type-check": "bun run tsc -p tsconfig.build.json --noEmit",
+    "publish": "bun run dist && bun publish",
+    "fmt": "bun run oxfmt",
+    "fmt:check": "bun run oxfmt --check"
+  },
+  "dependencies": {
+    "iregexp-check": "^0.1.2"
   },
   "devDependencies": {
     "@types/bun": "latest",
@@ -20,41 +55,6 @@
   "peerDependencies": {
     "typescript": "^7.0.2"
   },
-  "bugs": {
-    "url": "https://github.com/jg-rp/json-p3/issues"
-  },
-  "description": "JSONPath, JSON Pointer and JSON Patch",
-  "homepage": "https://github.com/jg-rp/json-p3",
-  "license": "MIT",
-  "type": "module",
-  "main": "dist/json-p3.esm.js",
-  "module": "dist/json-p3.esm.js",
-  "browser": "dist/json-p3.browser.esm.js",
   "browser-min": "dist/json-p3.browser.min.esm.js",
-  "jsdeliver": "dist/json-p3.browser.min.esm.js",
-  "types": "dist/json-p3.d.ts",
-  "files": [
-    "dist/**/*"
-  ],
-  "scripts": {
-    "test:browser": "bun run dist && vitest run --config vitest.browser.config.ts --browser",
-    "test:node": "bun run dist && vitest run --config vitest.node.bundle.config.ts",
-    "build:types": "bun run tsc -p tsconfig.build.json",
-    "build:js": "bun build.ts",
-    "dist": "rm -rf ./dist && bun run build:js && bun run build:types",
-    "lint": "bun run oxlint",
-    "type-check": "bun run tsc -p tsconfig.build.json --noEmit",
-    "publish": "bun run dist && bun publish",
-    "fmt": "bun run oxfmt",
-    "fmt:check": "bun run oxfmt --check"
-  },
-  "keywords": [
-    "JSON",
-    "JSONPath",
-    "JSON Pointer",
-    "JSON Patch"
-  ],
-  "dependencies": {
-    "iregexp-check": "^0.1.2"
-  }
+  "jsdeliver": "dist/json-p3.browser.min.esm.js"
 }

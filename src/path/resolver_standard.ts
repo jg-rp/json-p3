@@ -420,44 +420,36 @@ export class StandardResolver extends Resolver {
 
       case EQ_EXPRESSION:
         return this.eq(
-          this.unpackNodeList(this.evaluateExpression(expr.left, currentKey, currentValue, lazy)),
-          this.unpackNodeList(this.evaluateExpression(expr.right, currentKey, currentValue, lazy)),
+          this.evaluateExpression(expr.left, currentKey, currentValue, lazy),
+          this.evaluateExpression(expr.right, currentKey, currentValue, lazy),
         );
 
       case NE_EXPRESSION:
         return !this.eq(
-          this.unpackNodeList(this.evaluateExpression(expr.left, currentKey, currentValue, lazy)),
-          this.unpackNodeList(this.evaluateExpression(expr.right, currentKey, currentValue, lazy)),
+          this.evaluateExpression(expr.left, currentKey, currentValue, lazy),
+          this.evaluateExpression(expr.right, currentKey, currentValue, lazy),
         );
 
       case LT_EXPRESSION:
         return this.lt(
-          this.unpackNodeList(this.evaluateExpression(expr.left, currentKey, currentValue, lazy)),
-          this.unpackNodeList(this.evaluateExpression(expr.right, currentKey, currentValue, lazy)),
+          this.evaluateExpression(expr.left, currentKey, currentValue, lazy),
+          this.evaluateExpression(expr.right, currentKey, currentValue, lazy),
         );
 
       case LE_EXPRESSION:
-        left = this.unpackNodeList(
-          this.evaluateExpression(expr.left, currentKey, currentValue, lazy),
-        );
-        right = this.unpackNodeList(
-          this.evaluateExpression(expr.right, currentKey, currentValue, lazy),
-        );
+        left = this.evaluateExpression(expr.left, currentKey, currentValue, lazy);
+        right = this.evaluateExpression(expr.right, currentKey, currentValue, lazy);
         return this.lt(left, right) || this.eq(left, right);
 
       case GT_EXPRESSION:
         return this.lt(
-          this.unpackNodeList(this.evaluateExpression(expr.right, currentKey, currentValue, lazy)),
-          this.unpackNodeList(this.evaluateExpression(expr.left, currentKey, currentValue, lazy)),
+          this.evaluateExpression(expr.right, currentKey, currentValue, lazy),
+          this.evaluateExpression(expr.left, currentKey, currentValue, lazy),
         );
 
       case GE_EXPRESSION:
-        left = this.unpackNodeList(
-          this.evaluateExpression(expr.left, currentKey, currentValue, lazy),
-        );
-        right = this.unpackNodeList(
-          this.evaluateExpression(expr.right, currentKey, currentValue, lazy),
-        );
+        left = this.evaluateExpression(expr.left, currentKey, currentValue, lazy);
+        right = this.evaluateExpression(expr.right, currentKey, currentValue, lazy);
         return this.lt(right, left) || this.eq(left, right);
 
       case ABSOLUTE_QUERY_EXPRESSION:
@@ -584,23 +576,5 @@ export class StandardResolver extends Resolver {
     if (n === undefined) return defaultValue;
     if (n < 0) return step < 0 ? Math.max(n + length, -1) : Math.max(n + length, 0);
     return step < 0 ? Math.min(n, length - 1) : Math.min(n, length);
-  }
-
-  private unpackNodeList(value: unknown): unknown {
-    // TODO: inline this in eq and benchmark
-    if (value instanceof InternalNodeList) {
-      switch (value.length) {
-        case 0:
-          return Nothing;
-
-        case 1:
-          return value.nodes[0]!.value;
-
-        default:
-          return value;
-      }
-    }
-
-    return value;
   }
 }

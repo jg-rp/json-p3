@@ -17,23 +17,98 @@ export abstract class Resolver {
   }
 
   eq(left: unknown, right: unknown): boolean {
-    if (left === Nothing && right === Nothing) {
-      return true;
+    if (left instanceof InternalNodeList) {
+      switch (left.length) {
+        case 0:
+          left = Nothing;
+          break;
+        case 1:
+          left = left.nodes[0]!.value;
+          break;
+        default:
+          return false;
+      }
+    } else if (left instanceof BasicNodeList) {
+      switch (left.length) {
+        case 0:
+          left = Nothing;
+          break;
+        case 1:
+          left = left.nodes[0];
+          break;
+        default:
+          return false;
+      }
     }
 
-    if (
-      left instanceof InternalNodeList ||
-      right instanceof InternalNodeList ||
-      left instanceof BasicNodeList ||
-      right instanceof BasicNodeList
-    ) {
-      return false;
+    if (right instanceof InternalNodeList) {
+      switch (right.length) {
+        case 0:
+          right = Nothing;
+          break;
+        case 1:
+          right = right.nodes[0]!.value;
+          break;
+        default:
+          return false;
+      }
+    } else if (right instanceof BasicNodeList) {
+      switch (right.length) {
+        case 0:
+          right = Nothing;
+          break;
+        case 1:
+          right = right.nodes[0];
+          break;
+        default:
+          return false;
+      }
+    }
+
+    if (left === Nothing && right === Nothing) {
+      return true;
     }
 
     return deepEquals(left, right);
   }
 
   lt(left: unknown, right: unknown): boolean {
+    if (left instanceof InternalNodeList) {
+      switch (left.length) {
+        case 1:
+          left = left.nodes[0]!.value;
+          break;
+        default:
+          return false;
+      }
+    } else if (left instanceof BasicNodeList) {
+      switch (left.length) {
+        case 1:
+          left = left.nodes[0];
+          break;
+        default:
+          return false;
+      }
+    }
+
+    if (right instanceof InternalNodeList) {
+      switch (right.length) {
+        case 1:
+          right = right.nodes[0]!.value;
+          break;
+        default:
+          return false;
+      }
+    } else if (right instanceof BasicNodeList) {
+      switch (right.length) {
+        case 1:
+          right = right.nodes[0];
+          break;
+        default:
+          return false;
+      }
+    }
+
     if ((isString(left) && isString(right)) || (isNumber(left) && isNumber(right)))
       return left < right;
     return false;

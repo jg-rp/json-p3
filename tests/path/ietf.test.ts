@@ -363,6 +363,6 @@ const TEST_CASES: TestCase[] = [
 
 describe("IETF examples", () => {
   test.each<TestCase>(TEST_CASES)("$description", ({ path, data, want }: TestCase) => {
-    expect(query(path, data).values()).toStrictEqual(want);
+    expect(query(path, data).map((n) => n.value)).toStrictEqual(want);
   });
 });

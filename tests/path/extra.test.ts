@@ -110,7 +110,7 @@ describe("extra features", () => {
   const env = new JSONPathEnvironment({ strict: false });
 
   test.each<TestCase>(TEST_CASES)("$description", ({ path, data, want }: TestCase) => {
-    expect(env.query(path, data).values()).toStrictEqual(want);
+    expect(env.query(path, data).map((n) => n.value)).toStrictEqual(want);
     expect(env.findAll(path, data)).toStrictEqual(want);
     expect(Array.from(env.lazyQuery(path, data)).map((n) => n.value)).toStrictEqual(want);
     expect(Array.from(env.findAllIter(path, data))).toStrictEqual(want);
@@ -121,9 +121,9 @@ describe("extra features", () => {
     const data = { some: { a: 1, b: 2, c: 3 } };
     const nodes = new JSONPathNodeList(env.query(path, data));
     expect(nodes.values()).toStrictEqual(["a", "b", "c"]);
-    expect(env.query(nodes.nodes[0]!.normalizedPath(), data).values()).toStrictEqual(["a"]);
-    expect(env.query(nodes.nodes[1]!.normalizedPath(), data).values()).toStrictEqual(["b"]);
-    expect(env.query(nodes.nodes[2]!.normalizedPath(), data).values()).toStrictEqual(["c"]);
+    expect(env.findAll(nodes.nodes[0]!.normalizedPath(), data)).toStrictEqual(["a"]);
+    expect(env.findAll(nodes.nodes[1]!.normalizedPath(), data)).toStrictEqual(["b"]);
+    expect(env.findAll(nodes.nodes[2]!.normalizedPath(), data)).toStrictEqual(["c"]);
   });
 });
 
@@ -252,10 +252,10 @@ describe("extra docs examples", () => {
   test.each<DocsTestCase>(DOCS_EXAMPLE_TEST_CASES)(
     "$description",
     ({ path, data, want, want_paths }: DocsTestCase) => {
-      expect(env.query(path, data).values()).toStrictEqual(want);
-      expect(new JSONPathNodeList(env.query(path, data)).shorthandPaths()).toStrictEqual(
-        want_paths,
-      );
+      expect(env.query(path, data).map((n) => n.value)).toStrictEqual(want);
+      expect(
+        new JSONPathNodeList(env.query(path, data)).map((n) => n.shorthandPath()),
+      ).toStrictEqual(want_paths);
       expect(Array.from(env.lazyQuery(path, data)).map((n) => n.value)).toStrictEqual(want);
     },
   );

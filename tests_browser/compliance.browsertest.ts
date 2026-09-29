@@ -35,7 +35,7 @@ describe("compliance test suite", () => {
       if (invalid_selector) {
         expect(() => env.compile(selector)).toThrow(JSONPathError);
       } else if (document) {
-        const nodes = env.find(selector, document);
+        const nodes = new JSONPathNodeList(env.find(selector, document));
         if (result) {
           expect(nodes.values()).toStrictEqual(result);
           expect(nodes.normalizedPaths()).toStrictEqual(result_paths);

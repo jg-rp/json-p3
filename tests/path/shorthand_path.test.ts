@@ -28,6 +28,6 @@ describe("node to shorthand path", () => {
     const query = compile(expr);
     const nodes = query.find(data);
     expect(nodes.length).toBe(1);
-    expect(nodes.shorthandPaths()[0]).toBe(want);
+    expect(nodes[0]!.shorthandPath()).toBe(want);
   });
 });

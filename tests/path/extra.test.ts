@@ -1,6 +1,7 @@
 import {
   compile,
   JSONPathEnvironment,
+  JSONPathNodeList,
   JSONPathSyntaxError,
   type JSONLike,
 } from "../../src/json-p3";
@@ -118,7 +119,7 @@ describe("extra features", () => {
   test("keys from an object, location is valid", () => {
     const path = "$.some.~";
     const data = { some: { a: 1, b: 2, c: 3 } };
-    const nodes = env.query(path, data);
+    const nodes = new JSONPathNodeList(env.query(path, data));
     expect(nodes.values()).toStrictEqual(["a", "b", "c"]);
     expect(env.query(nodes.nodes[0]!.normalizedPath(), data).values()).toStrictEqual(["a"]);
     expect(env.query(nodes.nodes[1]!.normalizedPath(), data).values()).toStrictEqual(["b"]);
@@ -252,7 +253,9 @@ describe("extra docs examples", () => {
     "$description",
     ({ path, data, want, want_paths }: DocsTestCase) => {
       expect(env.query(path, data).values()).toStrictEqual(want);
-      expect(env.query(path, data).shorthandPaths()).toStrictEqual(want_paths);
+      expect(new JSONPathNodeList(env.query(path, data)).shorthandPaths()).toStrictEqual(
+        want_paths,
+      );
       expect(Array.from(env.lazyQuery(path, data)).map((n) => n.value)).toStrictEqual(want);
     },
   );

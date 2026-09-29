@@ -10,13 +10,13 @@ describe("large result sets", () => {
   test("wildcard child segment", () => {
     const nodes = find("$.a[*]", data);
     expect(nodes.length).toBe(n);
-    expect(nodes.nodes[n - 1].value).toStrictEqual({ b: n - 1 });
+    expect(nodes.at(-1)!.value).toStrictEqual({ b: n - 1 });
   });
 
   test("wildcard followed by name", () => {
     const nodes = find("$.a[*].b", data);
     expect(nodes.length).toBe(n);
-    expect(nodes.nodes[n - 1].value).toBe(n - 1);
+    expect(nodes.at(-1)!.value).toBe(n - 1);
   });
 
   test("descendant segment", () => {

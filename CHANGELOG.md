@@ -4,6 +4,10 @@
 
 **Features**
 
+- Added `find`, `JSONPathEnvironment.find` and `JSONPathQuery.find`, all of which return `Array<JSONPathNode>`, **not** an instance of `JSONPathNodeList`.
+
+  `JSONPathNodeList` is now opt-in: `nodeList = new JSONPathNodeList(find(expr, data))`.
+
 - Added `findAll`, `findAllIter`, `JSONPathEnvironment.findAll`, `JSONPathEnvironment.findAllIter`, `JSONPathQuery.findAll` and `JSONPathQuery.findAllIter`, all of which return JSON values, not JSONPath nodes. By not tracking node location information (required for RFC 9535 compliance), `findAll` and `findAllIter` are significantly faster and more memory efficient than `find` and `findIter`.
 
 - Added `test`, `JSONPathEnvironment.test` and `JSONPathQuery.test`, all of which return `true` if the query expression matches at least one node, or `false` otherwise.
@@ -25,6 +29,10 @@ TODO: JSON Pointer
 - Errors as values
 
 **JSONPath API Changes**
+
+- Depreciated `query`, `JSONPathEnvironment.query` and `JSONPathQuery.query` in favour of `find`.
+
+- Changed `query`, `JSONPathEnvironment.query` and `JSONPathQuery.query` to return `Array<JSONPathNode>` instead of `JSONPathNodeList`. `query` is identical to `find`, above.
 
 - Renamed `RegexFunctionOptions.cacheSize` to `RegexFunctionOptions.cacheCapacity`.
 - Changed `JSONPathEnvironment.functionRegister` to be a plain object instead of a map and renamed it to `JSONPathEnvironment.functions`.

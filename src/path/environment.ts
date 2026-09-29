@@ -1,5 +1,5 @@
 import type { JSONLike } from "../types";
-import type { JSONPathNode, JSONPathNodeList } from "./nodes";
+import type { JSONPathNode } from "./nodes";
 import type { Parser } from "./parser";
 import type { Token } from "./token";
 
@@ -111,7 +111,7 @@ export class JSONPathEnvironment {
     return new JSONPathQuery(this, new this.parser(this, expression, tokenize(expression)).parse());
   }
 
-  find(expression: string, data: JSONLike): JSONPathNodeList {
+  find(expression: string, data: JSONLike): JSONPathNode[] {
     return this.compile(expression).find(data);
   }
 
@@ -122,7 +122,7 @@ export class JSONPathEnvironment {
   /**
    * @deprecated Use {@link find} instead.
    */
-  query(expression: string, data: JSONLike): JSONPathNodeList {
+  query(expression: string, data: JSONLike): JSONPathNode[] {
     return this.compile(expression).query(data);
   }
 

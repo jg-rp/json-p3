@@ -2,7 +2,7 @@ import type { JSONLike } from "../types";
 import type { Segment } from "./ast";
 import type { JSONPathEnvironment } from "./environment";
 
-import { JSONPathNode, JSONPathNodeList } from "./nodes";
+import { JSONPathNode } from "./nodes";
 import { BasicResolver } from "./resolver_basic";
 import { StandardResolver } from "./resolver_standard";
 import { canonicalPath, shorthandPath } from "./serialize";
@@ -13,9 +13,9 @@ export class JSONPathQuery {
     readonly segments: Segment[],
   ) {}
 
-  find(data: JSONLike): JSONPathNodeList {
+  find(data: JSONLike): JSONPathNode[] {
     const nodes = new StandardResolver(this.environment, data).resolve(this.segments);
-    return new JSONPathNodeList(nodes.map((node) => new JSONPathNode(node)));
+    return nodes.map((node) => new JSONPathNode(node));
   }
 
   *findIter(data: JSONLike): IterableIterator<JSONPathNode> {
@@ -28,7 +28,7 @@ export class JSONPathQuery {
   /**
    * @deprecated Use {@link find} instead.
    */
-  query(data: JSONLike): JSONPathNodeList {
+  query(data: JSONLike): JSONPathNode[] {
     return this.find(data);
   }
 

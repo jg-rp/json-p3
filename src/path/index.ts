@@ -2,7 +2,7 @@ import type { JSONLike } from "../types";
 import type { JSONPathQuery } from "./query";
 
 import { JSONPathEnvironment } from "./environment";
-import { JSONPathNode, JSONPathNodeList } from "./nodes";
+import { JSONPathNode } from "./nodes";
 
 export { JSONPathEnvironment } from "./environment";
 export type { JSONPathEnvironmentOptions } from "./environment";
@@ -35,7 +35,7 @@ export function compile(expression: string): JSONPathQuery {
   return DEFAULT_ENVIRONMENT.compile(expression);
 }
 
-export function find(expression: string, data: JSONLike): JSONPathNodeList {
+export function find(expression: string, data: JSONLike): JSONPathNode[] {
   return DEFAULT_ENVIRONMENT.find(expression, data);
 }
 
@@ -46,7 +46,7 @@ export function findIter(expression: string, data: JSONLike): IterableIterator<J
 /**
  * @deprecated Use {@link find} instead.
  */
-export function query(expression: string, data: JSONLike): JSONPathNodeList {
+export function query(expression: string, data: JSONLike): JSONPathNode[] {
   return DEFAULT_ENVIRONMENT.query(expression, data);
 }
 

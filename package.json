@@ -26,6 +26,12 @@
   "module": "dist/json-p3.esm.js",
   "browser": "dist/json-p3.browser.esm.js",
   "types": "dist/json-p3.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/json-p3.d.ts",
+      "import": "./dist/json-p3.esm.js"
+    }
+  },
   "scripts": {
     "test:browser": "bun run dist && vitest run --config vitest.browser.config.ts --browser",
     "test:node": "bun run dist && vitest run --config vitest.node.bundle.config.ts",

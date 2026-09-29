@@ -13,7 +13,7 @@ const banner = `/*
  */`;
 
 await Bun.build({
-  entrypoints: ["./src/index.ts"],
+  entrypoints: ["./src/json-p3.ts"],
   outdir: "./dist",
   target: "node",
   format: "esm",
@@ -26,7 +26,7 @@ await Bun.build({
 });
 
 await Bun.build({
-  entrypoints: ["./src/index.ts"],
+  entrypoints: ["./src/json-p3.ts"],
   outdir: "./dist",
   target: "node",
   format: "esm",
@@ -39,7 +39,7 @@ await Bun.build({
 });
 
 await Bun.build({
-  entrypoints: ["./src/index.ts"],
+  entrypoints: ["./src/json-p3.ts"],
   outdir: "./dist",
   target: "browser",
   format: "esm",
@@ -54,7 +54,7 @@ await Bun.build({
 });
 
 await Bun.build({
-  entrypoints: ["./src/index.ts"],
+  entrypoints: ["./src/json-p3.ts"],
   outdir: "./dist",
   target: "browser",
   format: "esm",

@@ -2,7 +2,7 @@ import { readFileSync } from "fs";
 
 import type { JSONLike } from "../../src/types";
 
-import { JSONPathNodeList } from "../../src";
+import { JSONPathNodeList } from "../../src/json-p3";
 import { JSONPathEnvironment } from "../../src/path/environment";
 import { JSONPathError } from "../../src/path/errors";
 

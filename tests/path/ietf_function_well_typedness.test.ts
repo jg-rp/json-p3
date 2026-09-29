@@ -45,7 +45,7 @@ import {
   JSONPathEnvironment,
   JSONPathTypeError,
   JSONPathNodeList,
-} from "../../src";
+} from "../../src/json-p3";
 
 type TestCase = {
   description: string;

@@ -1,4 +1,4 @@
-import { find, findIter } from "../../src";
+import { find, findIter } from "../../src/json-p3";
 
 // Selecting from an array large enough that spreading the result into
 // function call arguments would exceed the engine's argument limit and
@@ -10,13 +10,13 @@ describe("large result sets", () => {
   test("wildcard child segment", () => {
     const nodes = find("$.a[*]", data);
     expect(nodes.length).toBe(n);
-    expect(nodes.nodes[n - 1]!.value).toStrictEqual({ b: n - 1 });
+    expect(nodes.nodes[n - 1].value).toStrictEqual({ b: n - 1 });
   });
 
   test("wildcard followed by name", () => {
     const nodes = find("$.a[*].b", data);
     expect(nodes.length).toBe(n);
-    expect(nodes.nodes[n - 1]!.value).toBe(n - 1);
+    expect(nodes.nodes[n - 1].value).toBe(n - 1);
   });
 
   test("descendant segment", () => {

@@ -39,7 +39,7 @@
 
 import type { JSONLike } from "../../src/types";
 
-import { query } from "../../src";
+import { query } from "../../src/json-p3";
 
 type TestCase = {
   description: string;

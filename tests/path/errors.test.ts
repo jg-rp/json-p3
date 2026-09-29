@@ -1,4 +1,4 @@
-import { compile, type JSONLike } from "../../src";
+import { compile, type JSONLike } from "../../src/json-p3";
 import { JSONPathEnvironment } from "../../src/path/environment";
 import {
   JSONPathRecursionError,

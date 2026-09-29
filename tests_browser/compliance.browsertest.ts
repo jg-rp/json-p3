@@ -1,8 +1,7 @@
+import type { JSONLike } from "json-p3";
+
+import { JSONPathEnvironment, JSONPathError, JSONPathNodeList } from "json-p3";
 import { describe, test, expect } from "vitest";
-
-import type { JSONLike } from "../dist";
-
-import { JSONPathEnvironment, JSONPathError, JSONPathNodeList } from "../dist/json-p3.browser.esm";
 
 type Case = {
   name: string;

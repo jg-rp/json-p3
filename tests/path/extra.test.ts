@@ -1,4 +1,9 @@
-import { compile, JSONPathEnvironment, JSONPathSyntaxError, type JSONLike } from "../../src";
+import {
+  compile,
+  JSONPathEnvironment,
+  JSONPathSyntaxError,
+  type JSONLike,
+} from "../../src/json-p3";
 
 type TestCase = {
   description: string;

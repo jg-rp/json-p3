@@ -27,6 +27,5 @@
     "noUnusedParameters": false,
     "noPropertyAccessFromIndexSignature": false
   },
-  "include": ["src"],
   "exclude": ["cts"]
 }

@@ -1,4 +1,4 @@
-import { query, compile, findIter, JSONPathNodeList, JSONPathQuery } from "../../src";
+import { query, compile, findIter, JSONPathNodeList, JSONPathQuery } from "../../src/json-p3";
 
 describe("issues", () => {
   test("issue 40", () => {

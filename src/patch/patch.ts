@@ -36,7 +36,7 @@ export interface Op {
  * The JSON Patch _add_ operation.
  */
 export class OpAdd implements Op {
-  name: string = "add";
+  name = "add" as const;
 
   constructor(
     readonly path: JSONPointer,
@@ -56,7 +56,7 @@ export class OpAdd implements Op {
  * The JSON Patch _remove_ operation.
  */
 export class OpRemove implements Op {
-  name: string = "remove";
+  name = "remove" as const;
 
   constructor(readonly path: JSONPointer) {}
 
@@ -74,7 +74,7 @@ export class OpRemove implements Op {
  * The JSON Patch _replace_ operation.
  */
 export class OpReplace implements Op {
-  name: string = "replace";
+  name = "replace" as const;
 
   constructor(
     readonly path: JSONPointer,
@@ -123,7 +123,7 @@ export class OpReplace implements Op {
  * The JSON Patch _move_ operation.
  */
 export class OpMove implements Op {
-  name: string = "move";
+  name = "move" as const;
 
   constructor(
     readonly from: JSONPointer,
@@ -154,7 +154,7 @@ export class OpMove implements Op {
  * The JSON Patch _copy_ operation.
  */
 export class OpCopy implements Op {
-  name = "copy";
+  name = "copy" as const;
 
   constructor(
     readonly from: JSONPointer,
@@ -187,7 +187,7 @@ export class OpCopy implements Op {
  * The JSON Patch _test_ operation.
  */
 export class OpTest implements Op {
-  name: string = "test";
+  name = "test" as const;
 
   constructor(
     readonly path: JSONPointer,

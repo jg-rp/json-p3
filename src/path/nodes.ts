@@ -1,3 +1,5 @@
+import type { OpObject } from "../patch";
+
 import { JSONPointer } from "../pointer";
 import { isString, type JSONLike } from "../types";
 import { canonicalString, RE_IDENT, shorthandString } from "./serialize";
@@ -28,6 +30,7 @@ export class JSONPathNode {
   readonly value: JSONLike;
   readonly location: Array<string | number>;
   private parent: InternalNode | undefined;
+  private ptr?: JSONPointer;
 
   constructor(node: InternalNode) {
     this.value = node.value;
@@ -80,11 +83,42 @@ export class JSONPathNode {
     return this.parent ? new JSONPathNode(this.parent) : undefined;
   }
 
+  get pointer(): JSONPointer {
+    if (!this.ptr) {
+      this.ptr = new JSONPointer(this.location.map(String));
+    }
+    return this.ptr;
+  }
+
   /**
    * Return this node's location as a {@link JSONPointer}.
    */
   toPointer(): JSONPointer {
     return new JSONPointer(this.location.map(String));
+  }
+
+  addOp(value: JSONLike): OpObject {
+    return { op: "add", path: this.toPointer().toString(), value };
+  }
+
+  removeOp(): OpObject {
+    return { op: "remove", path: this.toPointer().toString() };
+  }
+
+  replaceOp(value: JSONLike): OpObject {
+    return { op: "replace", path: this.toPointer().toString(), value };
+  }
+
+  moveOp(to: JSONPointer): OpObject {
+    return { op: "move", from: this.toPointer().toString(), path: to.toString() };
+  }
+
+  copyOp(to: JSONPointer): OpObject {
+    return { op: "copy", from: this.toPointer().toString(), path: to.toString() };
+  }
+
+  testOp(value: JSONLike): OpObject {
+    return { op: "test", path: this.toPointer().toString(), value };
   }
 }
 
@@ -102,10 +136,14 @@ export class JSONPathNodeList {
     return this.nodes[Symbol.iterator]();
   }
 
+  map<U>(callback: (value: JSONPathNode, index: number, array: JSONPathNode[]) => U): U[] {
+    return this.nodes.map(callback);
+  }
+
   /**
    * @returns An array containing the values at each node in the list.
    */
-  public values(): JSONLike[] {
+  values(): JSONLike[] {
     return this.nodes.map((node) => node.value);
   }
 
@@ -115,11 +153,11 @@ export class JSONPathNodeList {
    * A location is an array of property names and array indices that were
    * required to reach the node's value in the target JSON value.
    */
-  public locations(): Array<Array<string | number>> {
+  locations(): Array<Array<string | number>> {
     return this.nodes.map((node) => node.location);
   }
 
-  public entries(): Array<[string, JSONLike]> {
+  entries(): Array<[string, JSONLike]> {
     return this.nodes.map((node) => [node.normalizedPath(), node.value]);
   }
 
@@ -129,11 +167,11 @@ export class JSONPathNodeList {
    * A normalized path contains only property name and index selectors, and
    * always uses bracketed segments, never shorthand selectors.
    */
-  public normalizedPaths(): string[] {
+  normalizedPaths(): string[] {
     return this.nodes.map((node) => node.normalizedPath());
   }
 
-  public shorthandPaths(): string[] {
+  shorthandPaths(): string[] {
     return this.nodes.map((node) => node.shorthandPath());
   }
 

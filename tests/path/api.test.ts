@@ -30,24 +30,17 @@ describe("JSONPathNode API", () => {
     expect(nodes.shorthandPaths()).toStrictEqual(["$.some.foo[0]", "$.some.bar[0]"]);
   });
 
-  //   TODO: test("pointer from node", () => {
-  //     const nodes = env.query("$.some['foo', 'bar'][0]", {
-  //       some: {
-  //         foo: [1, 2, 3],
-  //         bar: [4, 5, 6],
-  //         baz: [7, 8, 9],
-  //       },
-  //     });
-  //     expect(nodes.length).toBe(2);
-  //     expect(nodes.pointers().map((p) => p.toString())).toStrictEqual([
-  //       "/some/foo/0",
-  //       "/some/bar/0",
-  //     ]);
-  //   });
-  //   TODO: test("pointer from empty node", () => {
-  //     const node = new JSONPathNode("", [], {});
-  //     expect(node.toPointer().toString()).toBe("");
-  //   });
+  test("pointer from node", () => {
+    const nodes = env.find("$.some['foo', 'bar'][0]", {
+      some: {
+        foo: [1, 2, 3],
+        bar: [4, 5, 6],
+        baz: [7, 8, 9],
+      },
+    });
+    expect(nodes.length).toBe(2);
+    expect(nodes.pointers().map((p) => p.toString())).toStrictEqual(["/some/foo/0", "/some/bar/0"]);
+  });
 
   test("match first available node", () => {
     const node = env.match("$.foo", { foo: [1, 2, 3] });

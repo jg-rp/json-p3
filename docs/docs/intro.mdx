@@ -63,129 +63,61 @@ And import the module:
 <TabItem value="esm" label="ESM">
 
 ```js
-import { query } from "json-p3";
+import { jsonpath } from "json-p3";
 ```
 
 </TabItem>
 <TabItem value="cjs" label="CJS">
 
 ```js
-const { query } = require("json-p3");
+const { jsonpath } = require("json-p3");
 ```
 
 </TabItem>
 </Tabs>
 
-### Browser
-
-Download and include JSON P3 in a script tag:
-
-```html
-<script src="path/to/json-p3.iife.min.js"></script>
-<script>
-  const data = {
-    players: [{ name: "Sue" }, { name: "John" }, { name: "Sally" }],
-    visitors: [{ name: "Brian" }, { name: "Roy" }],
-  };
-  const nodes = json_p3.query("$..name", data);
-  console.log(nodes.values());
-  // [ 'Sue', 'John', 'Sally', 'Brian', 'Roy' ]
-</script>
-```
-
-Or use a CDN
-
-```html
-<script src="https://cdn.jsdelivr.net/npm/json-p3@1.1.1/dist/json-p3.iife.min.js"></script>
-<script>
-  const data = {
-    players: [{ name: "Sue" }, { name: "John" }, { name: "Sally" }],
-    visitors: [{ name: "Brian" }, { name: "Roy" }],
-  };
-  const nodes = json_p3.query("$..name", data);
-  console.log(nodes.values());
-  // [ 'Sue', 'John', 'Sally', 'Brian', 'Roy' ]
-</script>
-```
 
 ## Example
 
-This example uses a JSONPath query to find players with a low score, converts each node from the query result to a `JSONPointer`, then uses that pointer to build a `JSONPatch` that, when applied to our original data, boosts each player's score by 20.
+This example uses a JSONPath expression to find users with a "pending" status, then builds a JSON Patch to change those user's status to "active". Note that `jsonpatch.apply()` updates `data` in place.
 
 ```javascript
-import { query, JSONPatch } from "json-p3";
+import { jsonpath, jsonpatch } from "json-p3";
+
+const query = "$.users[?@.status == 'pending'].status";
 
 const data = {
-  teams: [
-    {
-      name: "A Team",
-      players: [
-        {
-          name: "Sue",
-          score: 110,
-        },
-        {
-          name: "John",
-          score: 86,
-        },
-      ],
-    },
-    {
-      name: "B Team",
-      players: [
-        {
-          name: "Sally",
-          score: 84,
-        },
-        {
-          name: "Jane",
-          score: 55,
-        },
-      ],
-    },
+  users: [
+    { id: "usr_101", name: "Alice", status: "pending" },
+    { id: "usr_102", name: "Bob", status: "active" },
+    { id: "usr_103", name: "Charlie", status: "pending" },
   ],
 };
 
-const nodes = query("$..players[?@.score < 90]", data);
-const patch = new JSONPatch();
+const nodes = jsonpath.find(query, data);
+const patchOps = nodes.map((node) => node.replaceOp("active"));
 
-for (const node of nodes) {
-  const pointer = node.toPointer().join("score");
-  patch.replace(pointer, node.value.score + 20);
-}
-
-patch.apply(data);
-console.log(JSON.stringify(data, undefined, "  "));
+jsonpatch.apply(patchOps, data);
+console.log(JSON.stringify(data, null, 2));
 ```
 
 ```json title="output"
 {
-  "teams": [
+  "users": [
     {
-      "name": "A Team",
-      "players": [
-        {
-          "name": "Sue",
-          "score": 110
-        },
-        {
-          "name": "John",
-          "score": 106
-        }
-      ]
+      "id": "usr_101",
+      "name": "Alice",
+      "status": "active"
     },
     {
-      "name": "B Team",
-      "players": [
-        {
-          "name": "Sally",
-          "score": 104
-        },
-        {
-          "name": "Jane",
-          "score": 75
-        }
-      ]
+      "id": "usr_102",
+      "name": "Bob",
+      "status": "active"
+    },
+    {
+      "id": "usr_103",
+      "name": "Charlie",
+      "status": "active"
     }
   ]
 }

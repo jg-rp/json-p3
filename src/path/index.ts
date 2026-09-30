@@ -18,6 +18,8 @@ export type {
   HasFilterFunctionOptions,
 } from "./functions";
 
+export * as functions from "./functions";
+
 export {
   JSONPathError,
   JSONPathNameError,

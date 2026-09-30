@@ -8,7 +8,7 @@ JSON P3 includes some extra, non-standard JSONPath syntax that is disabled by de
 import { JSONPathEnvironment } from "json-p3";
 
 const env = new JSONPathEnvironment({ strict: false });
-values = env.query("$.some.path", data).values();
+const values = env.findAll("$.some.path", data);
 ```
 
 :::warning

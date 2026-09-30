@@ -2,6 +2,10 @@
 
 This page gets you started using JSONPath, JSON Pointer and JSON Patch with JavaScript. See [JSONPath Syntax](./guides/jsonpath-syntax.md) for an introduction to JSONPath syntax.
 
+:::info
+This guide is for JSON P3 version 3. See [quick-start.md](https://github.com/jg-rp/json-p3/blob/74ef87f9f9be5093acf6202394f5ec7b462bdcee/docs/docs/quick-start.md) for documentation for version 2 and earlier.
+:::
+
 ## JSONPath
 
 Find _nodes_ matching a JSONPath query expression with [`jsonpath.find(expr, data)`](./api/globals.md#find).

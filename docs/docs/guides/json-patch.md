@@ -1,8 +1,16 @@
 # JSON Patch
 
-JSON Patch ([RFC 6902](https://datatracker.ietf.org/doc/html/rfc6902)) is a standard for describing update operations to perform on JSON-like data. Each operation includes, at least, an `op` string and a `path`, which is a [JSON Pointer](./json-pointer.md).
+JSON Patch ([RFC 6902](https://datatracker.ietf.org/doc/html/rfc6902)) is a standard for describing update operations to perform on JSON-like data, where an operation is a JSON object including, at least, an `op` string and a `path`.
 
-Use [`jsonpatch.apply(ops, data)`](../api/json-p3/namespaces/jsonpatch/functions/apply.md) to apply _ops_ to _data_, where _ops_ should be an array of [`OpObject`s](../api/type-aliases/OpObject.md), as per RFC 6902. Patch operation are applied sequentially and, unless the target JSON document's root value is replaced, **data is modified in place**.
+Use [`jsonpatch.apply(ops, data)`](../api/json-p3/namespaces/jsonpatch/functions/apply.md) to apply _ops_ to _data_. The first argument must be an array of [`OpObject`s](../api/type-aliases/OpObject.md), as per RFC 6902. The second argument is JSON-like data to apply the patch to. **Data is updated in place.**
+
+:::danger
+`apply` is not atomic. If a patch operation fails, data could be left in an inconsistent state. Section 5 of RFC 6902 states:
+
+> Note that the HTTP PATCH method is atomic
+
+`apply` does not assume it is being used to handle HTTP PATCH requests. It is up to the caller to deep copy data before calling `apply`, if necessary.
+:::
 
 ```javascript
 import { jsonpatch } from "json-p3";

@@ -1,11 +1,11 @@
 import { deepEquals } from "../deep_equals";
 import { isNumber, isString } from "../types";
-import { BasicNodeList, InternalNodeList } from "./nodes";
+import { BasicNodeList, NodeList } from "./nodes";
 import { Nothing } from "./nothing";
 
 export abstract class Resolver {
   isTruthy(value: unknown): boolean {
-    if (value instanceof InternalNodeList || value instanceof BasicNodeList) {
+    if (value instanceof NodeList || value instanceof BasicNodeList) {
       return value.length > 0;
     }
 
@@ -17,7 +17,7 @@ export abstract class Resolver {
   }
 
   eq(left: unknown, right: unknown): boolean {
-    if (left instanceof InternalNodeList) {
+    if (left instanceof NodeList) {
       switch (left.length) {
         case 0:
           left = Nothing;
@@ -41,7 +41,7 @@ export abstract class Resolver {
       }
     }
 
-    if (right instanceof InternalNodeList) {
+    if (right instanceof NodeList) {
       switch (right.length) {
         case 0:
           right = Nothing;
@@ -73,7 +73,7 @@ export abstract class Resolver {
   }
 
   lt(left: unknown, right: unknown): boolean {
-    if (left instanceof InternalNodeList) {
+    if (left instanceof NodeList) {
       switch (left.length) {
         case 1:
           left = left.nodes[0]!.value;
@@ -91,7 +91,7 @@ export abstract class Resolver {
       }
     }
 
-    if (right instanceof InternalNodeList) {
+    if (right instanceof NodeList) {
       switch (right.length) {
         case 1:
           right = right.nodes[0]!.value;

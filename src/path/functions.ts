@@ -3,7 +3,7 @@ import { check } from "iregexp-check";
 import { isArray, isPlainObject, isString } from "../types";
 import { JSONPathError } from "./errors";
 import { LRUCache } from "./lru_cache";
-import { BasicNodeList, type JSONPathNodeList } from "./nodes";
+import { BasicNodeList, NodeList } from "./nodes";
 import { Nothing } from "./nothing";
 
 export const LOGICAL_TYPE = 1 as const;
@@ -36,7 +36,7 @@ export class Count implements FilterFunction {
   readonly argTypes = [NODES_TYPE];
   readonly returnType = VALUE_TYPE;
 
-  public call(nodes: JSONPathNodeList): number {
+  public call(nodes: NodeList | BasicNodeList): number {
     return nodes.length;
   }
 }
@@ -149,7 +149,7 @@ export class Value implements FilterFunction {
   readonly argTypes = [NODES_TYPE];
   readonly returnType = VALUE_TYPE;
 
-  public call(nodes: JSONPathNodeList | BasicNodeList): unknown {
+  public call(nodes: NodeList | BasicNodeList): unknown {
     if (nodes.length === 1) {
       return nodes instanceof BasicNodeList ? nodes.nodes[0] : nodes.nodes[0]!.value;
     }

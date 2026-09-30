@@ -35,7 +35,7 @@ import {
 } from "./ast";
 import { JSONPathError, JSONPathRecursionError } from "./errors";
 import { NODES_TYPE } from "./functions";
-import { InternalNodeList, type InternalNode } from "./nodes";
+import { NodeList, type InternalNode } from "./nodes";
 import { Nothing } from "./nothing";
 import { Resolver } from "./resolver";
 
@@ -454,24 +454,22 @@ export class StandardResolver extends Resolver {
 
       case ABSOLUTE_QUERY_EXPRESSION:
         if (lazy) {
-          return new InternalNodeList(Array.from(this.resolveIter(expr.segments)));
+          return new NodeList(Array.from(this.resolveIter(expr.segments)));
         }
 
-        return new InternalNodeList(this.resolve(expr.segments));
+        return new NodeList(this.resolve(expr.segments));
 
       case RELATIVE_QUERY_EXPRESSION:
         // oxlint-disable-next-line typescript/no-unsafe-type-assertion
         const resolverClass = this.constructor as StandardResolverClass;
 
         if (lazy) {
-          return new InternalNodeList(
+          return new NodeList(
             Array.from(new resolverClass(this.env, currentValue).resolveIter(expr.segments)),
           );
         }
 
-        return new InternalNodeList(
-          new resolverClass(this.env, currentValue).resolve(expr.segments),
-        );
+        return new NodeList(new resolverClass(this.env, currentValue).resolve(expr.segments));
 
       case FUNCTION_EXPRESSION:
         const func = this.env.functions[expr.name];
@@ -483,7 +481,7 @@ export class StandardResolver extends Resolver {
 
         for (let i = 0; i < args.length; i++) {
           arg = args[i];
-          if (arg instanceof InternalNodeList && func?.argTypes[i] !== NODES_TYPE) {
+          if (arg instanceof NodeList && func?.argTypes[i] !== NODES_TYPE) {
             if (arg.length === 0) {
               args[i] = Nothing;
             } else if (arg.length == 1) {

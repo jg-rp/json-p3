@@ -1,80 +1,73 @@
-import { JSONPathEnvironment, JSONPathNode, JSONPathNodeList } from "../../src/path";
+import { JSONPathEnvironment, JSONPathNode } from "../../src/path";
 import { JSONPointer } from "../../src/pointer";
 
 describe("JSONPathNode API", () => {
   const env = new JSONPathEnvironment();
 
   test("locations from a node list", () => {
-    const nodes = new JSONPathNodeList(
-      env.query("$.some['foo', 'bar'][0]", {
-        some: {
-          foo: [1, 2, 3],
-          bar: [4, 5, 6],
-          baz: [7, 8, 9],
-        },
-      }),
-    );
+    const nodes = env.query("$.some['foo', 'bar'][0]", {
+      some: {
+        foo: [1, 2, 3],
+        bar: [4, 5, 6],
+        baz: [7, 8, 9],
+      },
+    });
     expect(nodes.length).toBe(2);
-    expect(nodes.locations()).toStrictEqual([
+    expect(nodes.map((n) => n.location)).toStrictEqual([
       ["some", "foo", 0],
       ["some", "bar", 0],
     ]);
   });
 
   test("paths from a node list", () => {
-    const nodes = new JSONPathNodeList(
-      env.query("$.some['foo', 'bar'][0]", {
-        some: {
-          foo: [1, 2, 3],
-          bar: [4, 5, 6],
-          baz: [7, 8, 9],
-        },
-      }),
-    );
+    const nodes = env.query("$.some['foo', 'bar'][0]", {
+      some: {
+        foo: [1, 2, 3],
+        bar: [4, 5, 6],
+        baz: [7, 8, 9],
+      },
+    });
     expect(nodes.length).toBe(2);
-    expect(nodes.shorthandPaths()).toStrictEqual(["$.some.foo[0]", "$.some.bar[0]"]);
+    expect(nodes.map((n) => n.shorthandPath())).toStrictEqual(["$.some.foo[0]", "$.some.bar[0]"]);
   });
 
   test("node to pointer", () => {
-    const nodes = new JSONPathNodeList(
-      env.find("$.some['foo', 'bar'][0]", {
-        some: {
-          foo: [1, 2, 3],
-          bar: [4, 5, 6],
-          baz: [7, 8, 9],
-        },
-      }),
-    );
+    const nodes = env.find("$.some['foo', 'bar'][0]", {
+      some: {
+        foo: [1, 2, 3],
+        bar: [4, 5, 6],
+        baz: [7, 8, 9],
+      },
+    });
     expect(nodes.length).toBe(2);
-    expect(nodes.pointers().map((p) => p.toString())).toStrictEqual(["/some/foo/0", "/some/bar/0"]);
+    expect(nodes.map((n) => n.toPointer().toString())).toStrictEqual([
+      "/some/foo/0",
+      "/some/bar/0",
+    ]);
   });
 
   test("node pointer property", () => {
-    const nodes = new JSONPathNodeList(
-      env.find("$.some['foo', 'bar'][0]", {
-        some: {
-          foo: [1, 2, 3],
-          bar: [4, 5, 6],
-          baz: [7, 8, 9],
-        },
-      }),
-    );
+    const nodes = env.find("$.some['foo', 'bar'][0]", {
+      some: {
+        foo: [1, 2, 3],
+        bar: [4, 5, 6],
+        baz: [7, 8, 9],
+      },
+    });
     expect(nodes.length).toBe(2);
     expect(nodes.map((p) => p.pointer.toString())).toStrictEqual(["/some/foo/0", "/some/bar/0"]);
   });
 
   test("node to patch op", () => {
-    const nodes = new JSONPathNodeList(
-      env.find("$.some.foo", {
-        some: {
-          foo: [1, 2, 3],
-          baz: [7, 8, 9],
-        },
-      }),
-    );
+    const nodes = env.find("$.some.foo", {
+      some: {
+        foo: [1, 2, 3],
+        baz: [7, 8, 9],
+      },
+    });
 
     expect(nodes.length).toBe(1);
-    const node = nodes.nodes[0]!;
+    const node = nodes[0]!;
 
     expect(node.addOp(42)).toStrictEqual({ op: "add", path: "/some/foo", value: 42 });
     expect(node.removeOp()).toStrictEqual({ op: "remove", path: "/some/foo" });

@@ -4,15 +4,35 @@
 
 **Features**
 
-- Added `find`, `JSONPathEnvironment.find` and `JSONPathQuery.find`, all of which return `Array<JSONPathNode>`, **not** an instance of `JSONPathNodeList`.
-
-  `JSONPathNodeList` is now opt-in: `nodeList = new JSONPathNodeList(find(expr, data))`.
+- Added `find`, `JSONPathEnvironment.find` and `JSONPathQuery.find`, all of which return `Array<JSONPathNode>`.
 
 - Added `findAll`, `findAllIter`, `JSONPathEnvironment.findAll`, `JSONPathEnvironment.findAllIter`, `JSONPathQuery.findAll` and `JSONPathQuery.findAllIter`, all of which return JSON values, not JSONPath nodes. By not tracking node location information (required for RFC 9535 compliance), `findAll` and `findAllIter` are significantly faster and more memory efficient than `find` and `findIter`.
 
 - Added `test`, `JSONPathEnvironment.test` and `JSONPathQuery.test`, all of which return `true` if the query expression matches at least one node, or `false` otherwise.
 
 - Added diagnostic data to JSONPath errors and functions for rendering pretty error messages.
+
+**JSONPath API Changes**
+
+- Removed `JSONPathNodeList`. `find(expr, data)` and `query(expr, data)` (depreciated) now return `Array<JSONPathNode>`. Use `map` on the array instead. For example `const locations = jsonpath.find(expr, data).map((n) => n.location)`.
+- Renamed `RegexFunctionOptions.cacheSize` to `RegexFunctionOptions.cacheCapacity`.
+- Changed `JSONPathEnvironment.functionRegister` to be a plain object instead of a map and renamed it to `JSONPathEnvironment.functions`.
+- Removed the `keysPattern` `JSONPathEnvironment` option. It is no longer possible to configure custom syntax for the keys selector.
+- Removed `JSONPathQuery.valuesOrSingular`.
+- Removed `JSONPathNode.path` with options in favour of `JSONPathNode.normalizedPath` and `JSONPathNode.shorthandPath`.
+- Removed `JSONPathIndexError`. XXX:
+- Removed `IRegexpError`. Now you get a `JSONPathError` when debugging regex filter functions.
+- Renamed `JSONPathRecursionLimitError` to `JSONPathRecursionError`.
+- Renamed type `JSONValue` to `JSONLike`;
+- Replaced enum `FunctionExpressionType` with `ExpressionType` and constants `NODES_TYPE`, `VALUE_TYPE`, `LOGICAL_TYPE`.
+
+- Depreciated `query`, `JSONPathEnvironment.query` and `JSONPathQuery.query` in favour of `find`.
+- Depreciated `lazyQuery`, `JSONPathEnvironment.lazyQuery` and `JSONPathQuery.lazyQuery` in favour of `findIter`, `JSONPathEnvironment.findIter` and `JSONPathQuery.findIter`.
+
+**JSON Pointer API Changes**
+
+- Changed the `JSONPointer` constructor to accept tokens (`string[]`) instead of an RFC 6901 formatted string.
+- Added static method `JSONPointer.fromString(pointer)` for creating a `JSONPointer` from an RFC 6901 formatted string.
 
 **Performance improvements**
 
@@ -27,30 +47,6 @@ TODO: JSONPath
 TODO: JSON Pointer
 
 - Errors as values
-
-**JSONPath API Changes**
-
-- Depreciated `query`, `JSONPathEnvironment.query` and `JSONPathQuery.query` in favour of `find`.
-
-- Changed `query`, `JSONPathEnvironment.query` and `JSONPathQuery.query` to return `Array<JSONPathNode>` instead of `JSONPathNodeList`. `query` is identical to `find`, above.
-
-- Renamed `RegexFunctionOptions.cacheSize` to `RegexFunctionOptions.cacheCapacity`.
-- Changed `JSONPathEnvironment.functionRegister` to be a plain object instead of a map and renamed it to `JSONPathEnvironment.functions`.
-- Removed the `keysPattern` `JSONPathEnvironment` option. It is no longer possible to configure custom syntax for the keys selector.
-- Replaced `FunctionExpressionType` with `ExpressionType` and constants `NODES_TYPE`, `VALUE_TYPE`, `LOGICAL_TYPE`.
-- Removed `JSONPathQuery.valuesOrSingular`.
-- Removed `JSONPathNode.path` and `JSONPathNodeList.paths` that accepted options in favour of `JSONPathNode.normalizedPath`, `JSONPathNode.shorthandPath`, `JSONPathNodeList.normalizedPaths` and `JSONPathNodeList.shorthandPaths`.
-- Removed `JSONPathIndexError`. XXX:
-- Removed `IRegexpError`. Now you get a `JSONPathError` when debugging regex filter functions.
-- Renamed `JSONPathRecursionLimitError` to `JSONPathRecursionError`.
-- Renamed type `JSONValue` to `JSONLike`;
-
-- Depreciated `lazyQuery`, `JSONPathEnvironment.lazyQuery` and `JSONPathQuery.lazyQuery` in favour of `findIter`, `JSONPathEnvironment.findIter` and `JSONPathQuery.findIter`.
-
-**JSON Pointer API Changes**
-
-- Changed the `JSONPointer` constructor to accept tokens (`string[]`) instead of an RFC 6901 formatted string.
-- Added static method `JSONPointer.fromString(pointer)` for creating a `JSONPointer` from an RFC 6901 formatted string.
 
 ## Version 2.3.2
 

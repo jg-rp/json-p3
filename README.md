@@ -33,8 +33,8 @@ const data = {
   ],
 };
 
-const nodes = jsonpath.query("$.users[?@.score < 100].name", data);
-console.log(nodes.values()); // [ 'John', 'Sally', 'Jane' ]
+const nodes = jsonpath.find("$.users[?@.score < 100].name", data);
+console.log(nodes.map((n) => n.value)); // [ 'John', 'Sally', 'Jane' ]
 ```
 
 ## Links

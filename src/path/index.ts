@@ -8,7 +8,7 @@ export { JSONPathEnvironment } from "./environment";
 export type { JSONPathEnvironmentOptions } from "./environment";
 
 export { JSONPathQuery } from "./query";
-export { JSONPathNode, JSONPathNodeList } from "./nodes";
+export { JSONPathNode } from "./nodes";
 
 export { NODES_TYPE, VALUE_TYPE, LOGICAL_TYPE, Has, CachingRegexFunction } from "./functions";
 export type {

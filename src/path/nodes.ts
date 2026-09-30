@@ -10,7 +10,7 @@ export type InternalNode = {
   parent: InternalNode | undefined;
 };
 
-export class InternalNodeList {
+export class NodeList {
   readonly length: number;
 
   constructor(readonly nodes: InternalNode[]) {
@@ -119,67 +119,5 @@ export class JSONPathNode {
 
   testOp(value: JSONLike): OpObject {
     return { op: "test", path: this.toPointer().toString(), value };
-  }
-}
-
-export class JSONPathNodeList {
-  readonly length: number;
-
-  constructor(readonly nodes: JSONPathNode[]) {
-    this.length = nodes.length;
-  }
-
-  /**
-   * @returns an iterator over nodes in the list.
-   */
-  [Symbol.iterator](): Iterator<JSONPathNode> {
-    return this.nodes[Symbol.iterator]();
-  }
-
-  map<U>(callback: (value: JSONPathNode, index: number, array: JSONPathNode[]) => U): U[] {
-    return this.nodes.map(callback);
-  }
-
-  /**
-   * @returns An array containing the values at each node in the list.
-   */
-  values(): JSONLike[] {
-    return this.nodes.map((node) => node.value);
-  }
-
-  /**
-   * @returns An array of locations for each node in the node list.
-   *
-   * A location is an array of property names and array indices that were
-   * required to reach the node's value in the target JSON value.
-   */
-  locations(): Array<Array<string | number>> {
-    return this.nodes.map((node) => node.location);
-  }
-
-  entries(): Array<[string, JSONLike]> {
-    return this.nodes.map((node) => [node.normalizedPath(), node.value]);
-  }
-
-  /**
-   * @returns An array of normalized path strings for each node in the list.
-   *
-   * A normalized path contains only property name and index selectors, and
-   * always uses bracketed segments, never shorthand selectors.
-   */
-  normalizedPaths(): string[] {
-    return this.nodes.map((node) => node.normalizedPath());
-  }
-
-  shorthandPaths(): string[] {
-    return this.nodes.map((node) => node.shorthandPath());
-  }
-
-  /**
-   * @returns An array of {@link JSONPointer} instances, one for each node
-   * in the list.
-   */
-  pointers(): JSONPointer[] {
-    return this.nodes.map((node) => node.toPointer());
   }
 }

@@ -1,4 +1,4 @@
-import { query, compile, findIter, JSONPathNodeList, JSONPathQuery } from "../../src/json-p3";
+import { query, compile, findIter, JSONPathQuery } from "../../src/json-p3";
 
 describe("issues", () => {
   test("issue 40", () => {
@@ -25,7 +25,7 @@ describe("issues", () => {
       expect(nodes.map((n) => n.value)).toStrictEqual(t.want);
 
       const it = findIter(t.path, t.data);
-      const rv = new JSONPathNodeList(Array.from(it)).map((n) => n.value);
+      const rv = Array.from(it).map((n) => n.value);
       expect(rv).toStrictEqual(t.want);
     }
   });

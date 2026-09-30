@@ -26,7 +26,7 @@ export {
 
 export type { FilterFunction, ExpressionType, JSONPathEnvironmentOptions } from "./path";
 
-export { JSONPathNode, JSONPathNodeList } from "./path";
+export { JSONPathNode } from "./path";
 
 export type { JSONLike } from "./types";
 

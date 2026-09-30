@@ -1,7 +1,6 @@
 import {
   compile,
   JSONPathEnvironment,
-  JSONPathNodeList,
   JSONPathSyntaxError,
   type JSONLike,
 } from "../../src/json-p3";
@@ -119,11 +118,11 @@ describe("extra features", () => {
   test("keys from an object, location is valid", () => {
     const path = "$.some.~";
     const data = { some: { a: 1, b: 2, c: 3 } };
-    const nodes = new JSONPathNodeList(env.query(path, data));
-    expect(nodes.values()).toStrictEqual(["a", "b", "c"]);
-    expect(env.findAll(nodes.nodes[0]!.normalizedPath(), data)).toStrictEqual(["a"]);
-    expect(env.findAll(nodes.nodes[1]!.normalizedPath(), data)).toStrictEqual(["b"]);
-    expect(env.findAll(nodes.nodes[2]!.normalizedPath(), data)).toStrictEqual(["c"]);
+    const nodes = env.query(path, data);
+    expect(nodes.map((n) => n.value)).toStrictEqual(["a", "b", "c"]);
+    expect(env.findAll(nodes[0]!.normalizedPath(), data)).toStrictEqual(["a"]);
+    expect(env.findAll(nodes[1]!.normalizedPath(), data)).toStrictEqual(["b"]);
+    expect(env.findAll(nodes[2]!.normalizedPath(), data)).toStrictEqual(["c"]);
   });
 });
 
@@ -253,9 +252,7 @@ describe("extra docs examples", () => {
     "$description",
     ({ path, data, want, want_paths }: DocsTestCase) => {
       expect(env.query(path, data).map((n) => n.value)).toStrictEqual(want);
-      expect(
-        new JSONPathNodeList(env.query(path, data)).map((n) => n.shorthandPath()),
-      ).toStrictEqual(want_paths);
+      expect(env.query(path, data).map((n) => n.shorthandPath())).toStrictEqual(want_paths);
       expect(Array.from(env.lazyQuery(path, data)).map((n) => n.value)).toStrictEqual(want);
     },
   );

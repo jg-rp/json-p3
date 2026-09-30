@@ -2,7 +2,6 @@ import { readFileSync } from "fs";
 
 import type { JSONLike } from "../../src/types";
 
-import { JSONPathNodeList } from "../../src/json-p3";
 import { JSONPathEnvironment } from "../../src/path/environment";
 import { JSONPathError } from "../../src/path/errors";
 
@@ -42,13 +41,16 @@ describe("compliance test suite", () => {
       if (invalid_selector) {
         expect(() => env.compile(selector)).toThrow(JSONPathError);
       } else if (document) {
-        const nodes = new JSONPathNodeList(env.find(selector, document));
+        const nodes = env.find(selector, document);
+        const values = nodes.map((n) => n.value);
+        const normalizedPaths = nodes.map((n) => n.normalizedPath());
+
         if (result) {
-          expect(nodes.values()).toStrictEqual(result);
-          expect(nodes.normalizedPaths()).toStrictEqual(result_paths);
+          expect(values).toStrictEqual(result);
+          expect(normalizedPaths).toStrictEqual(result_paths);
         } else if (results) {
-          expect(results).toContainEqual(nodes.values());
-          expect(results_paths).toContainEqual(nodes.normalizedPaths());
+          expect(results).toContainEqual(values);
+          expect(results_paths).toContainEqual(normalizedPaths);
         }
       }
     },
@@ -60,9 +62,9 @@ describe("compliance test suite, lazy", () => {
     "$name",
     ({ selector, document, result, result_paths, results, results_paths }: Case) => {
       const it = env.findIter(selector, document);
-      const nodes = new JSONPathNodeList(Array.from(it));
-      const values = nodes.values();
-      const paths = nodes.normalizedPaths();
+      const nodes = Array.from(it);
+      const values = nodes.map((n) => n.value);
+      const paths = nodes.map((n) => n.normalizedPath());
 
       if (result) {
         expect(values).toStrictEqual(result);

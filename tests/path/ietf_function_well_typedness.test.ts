@@ -37,6 +37,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import type { NodeList } from "../../src/path/nodes";
+
 import {
   type FilterFunction,
   NODES_TYPE,
@@ -44,7 +46,6 @@ import {
   VALUE_TYPE,
   JSONPathEnvironment,
   JSONPathTypeError,
-  JSONPathNodeList,
 } from "../../src/json-p3";
 
 type TestCase = {
@@ -140,7 +141,7 @@ class MockFoo implements FilterFunction {
   argTypes = [NODES_TYPE];
   returnType = NODES_TYPE;
 
-  call(nodes: JSONPathNodeList): JSONPathNodeList {
+  call(nodes: NodeList): NodeList {
     return nodes;
   }
 }

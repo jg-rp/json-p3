@@ -5,6 +5,7 @@ import {
   JSONPathSyntaxError,
   JSONPathTypeError,
   JSONPathNameError,
+  JSONPathIndexError,
 } from "../../src/path/errors";
 
 describe("syntax error", () => {
@@ -66,7 +67,7 @@ describe("index error", () => {
   const env = new JSONPathEnvironment();
   test("index out of range", () => {
     const query = "$.foo[9007199254740992]";
-    expect(() => env.query(query, {})).toThrow(JSONPathTypeError);
+    expect(() => env.query(query, {})).toThrow(JSONPathIndexError);
     expect(() => env.query(query, {})).toThrow("index out of range");
   });
 });

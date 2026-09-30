@@ -38,6 +38,7 @@ import {
   type StringExpression,
 } from "./ast";
 import {
+  JSONPathIndexError,
   JSONPathNameError,
   JSONPathRecursionError,
   JSONPathSyntaxError,
@@ -204,7 +205,7 @@ export abstract class Parser {
   raiseForDepth(): void {
     this.depth++;
     if (this.depth > this.maxDepth) {
-      throw new JSONPathRecursionError("maximum recusrion depth reached");
+      throw new JSONPathRecursionError("maximum recursion depth reached");
     }
   }
 
@@ -258,13 +259,13 @@ export abstract class Parser {
     const value = this.tokenValue(token);
 
     if (value.length > 1 && (value.startsWith("0") || value.startsWith("-0"))) {
-      throw new JSONPathTypeError(`invalid index '${value}'`, token, this.source);
+      throw new JSONPathIndexError(`invalid index '${value}'`, token, this.source);
     }
 
     const n = Number(value);
 
     if (n < this.env.minIntIndex || n > this.env.maxIntIndex) {
-      throw new JSONPathTypeError(`index out of range ${value}`, token, this.source);
+      throw new JSONPathIndexError(`index out of range ${value}`, token, this.source);
     }
 
     return n;

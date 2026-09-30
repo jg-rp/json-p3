@@ -21,6 +21,7 @@ export type {
 export * as functions from "./functions";
 
 export {
+  type Diagnostic,
   JSONPathError,
   JSONPathNameError,
   DetailedJSONPathError,

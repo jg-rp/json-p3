@@ -194,7 +194,7 @@ $..products[?(@.price < $.price_cap)]
 ]
 ```
 
-Filter expressions can also call predefined [function extensions](functions.md).
+Filter expressions can also call predefined [function extensions](./jsonpath-functions.md).
 
 ## More on segments
 

@@ -24,7 +24,6 @@
 - Removed the `keysPattern` `JSONPathEnvironment` option. It is no longer possible to configure custom syntax for the keys selector.
 - Removed `JSONPathQuery.valuesOrSingular`.
 - Removed `JSONPathNode.path` with options in favour of `JSONPathNode.normalizedPath` and `JSONPathNode.shorthandPath`.
-- Removed `JSONPathIndexError`. XXX:
 - Removed `IRegexpError`. Now you get a `JSONPathError` when debugging regex filter functions.
 - Renamed `JSONPathRecursionLimitError` to `JSONPathRecursionError`.
 - Renamed type `JSONValue` to `JSONLike`;

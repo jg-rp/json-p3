@@ -28,13 +28,13 @@ export type JSONPathEnvironmentOptions = {
   strict?: boolean;
 
   /**
-   * The maximum number allowed when indexing or slicing an array. Defaults to
+   * The maximum integer allowed when indexing or slicing an array. Defaults to
    * 2**53 -1.
    */
   maxIntIndex?: number;
 
   /**
-   * The minimum number allowed when indexing or slicing an array. Defaults to
+   * The minimum integer allowed when indexing or slicing an array. Defaults to
    * -(2**53) -1.
    */
   minIntIndex?: number;
@@ -46,11 +46,14 @@ export type JSONPathEnvironmentOptions = {
   maxExpressionDepth?: number;
 
   /**
-   * The maximum number of objects and/or arrays the recursive descent selector
-   * can visit before a `JSONPathRecursionError` is thrown.
+   * The maximum number of objects and/or arrays the descendant segment can
+   * visit before a `JSONPathRecursionError` is thrown.
    */
   maxRecursionDepth?: number;
 
+  /**
+   * The JSONPath parser to use. Currently there's only one parser.
+   */
   parser?: ParserClass;
 };
 
@@ -59,20 +62,20 @@ export class JSONPathEnvironment {
    * Indicates if the environment should to be strict about its compliance with
    * JSONPath standards.
    *
-   * Defaults to `true`. Setting `strict` to `false` currently has no effect.
-   * If/when we add non-standard features, the environment's strictness will
-   * control their availability.
+   * Defaults to `true`. Setting `strict` to `false` enables the non-standard
+   * current key identifier, key selector, keys selector and keys filter
+   * selector.
    */
   readonly strict: boolean;
 
   /**
-   * The maximum number allowed when indexing or slicing an array. Defaults to
+   * The maximum integer allowed when indexing or slicing an array. Defaults to
    * 2**53 -1.
    */
   readonly maxIntIndex: number;
 
   /**
-   * The minimum number allowed when indexing or slicing an array. Defaults to
+   * The minimum integer allowed when indexing or slicing an array. Defaults to
    * -(2**53) -1.
    */
   readonly minIntIndex: number;
@@ -84,8 +87,8 @@ export class JSONPathEnvironment {
   readonly maxExpressionDepth: number;
 
   /**
-   * The maximum number of objects and/or arrays the recursive descent selector
-   * can visit before a `JSONPathRecursionError` is thrown.
+   * The maximum number of objects and/or arrays the descendant segment can
+   * visit before a `JSONPathRecursionError` is thrown.
    */
   readonly maxRecursionDepth: number;
 
@@ -107,19 +110,33 @@ export class JSONPathEnvironment {
     this.setupFilterFunctions();
   }
 
+  /**
+   * Compile a JSONPath query expression for later evaluation.
+   */
   compile(expression: string): JSONPathQuery {
     return new JSONPathQuery(this, new this.parser(this, expression, tokenize(expression)).parse());
   }
 
+  /**
+   * Evaluate JSONPath query _expression_ against _data_ and return an array of matched nodes.
+   */
   find(expression: string, data: JSONLike): JSONPathNode[] {
     return this.compile(expression).find(data);
   }
 
+  /**
+   * Evaluate JSONPath query _expression_ against _data_ and generate nodes lazily.
+   *
+   * Note that some queries will require node iterators to be materialized into node lists, so
+   * peak memory usage might be higher than expected.
+   */
   findIter(expression: string, data: JSONLike): IterableIterator<JSONPathNode> {
     return this.compile(expression).findIter(data);
   }
 
   /**
+   * Evaluate JSONPath query _expression_ against _data_ and return an array of matched nodes.
+   *
    * @deprecated Use {@link find} instead.
    */
   query(expression: string, data: JSONLike): JSONPathNode[] {
@@ -127,31 +144,53 @@ export class JSONPathEnvironment {
   }
 
   /**
+   * Evaluate JSONPath query _expression_ against _data_ and generate nodes lazily.
+   *
    * @deprecated Use {@link findIter} instead.
    */
   lazyQuery(expression: string, data: JSONLike): IterableIterator<JSONPathNode> {
     return this.compile(expression).lazyQuery(data);
   }
 
+  /**
+   * Evaluate JSONPath query _expression_ against _data_ and return an array of values.
+   */
   findAll(expression: string, data: JSONLike): JSONLike[] {
     return this.compile(expression).findAll(data);
   }
 
+  /**
+   * Evaluate JSONPath query _expression_ against _data_ and generate values lazily.
+   *
+   * Note that some queries will require internal iterators to be materialized into arrays, so
+   * peak memory usage might be higher than expected.
+   */
   findAllIter(expression: string, data: JSONLike): IterableIterator<JSONLike> {
     return this.compile(expression).findAllIter(data);
   }
 
+  /**
+   * Evaluate JSONPath query _expression_ against _data_ and return the first matching node,
+   * or `undefined` if there were no matches.
+   */
   findOne(expression: string, data: JSONLike): JSONPathNode | undefined {
     return this.compile(expression).findOne(data);
   }
 
   /**
+   * Evaluate JSONPath query _expression_ against _data_ and return the first matching node,
+   * or `undefined` if there were no matches.
+   *
    * @deprecated Use {@link findOne} instead.
    */
   match(expression: string, data: JSONLike): JSONPathNode | undefined {
     return this.compile(expression).match(data);
   }
 
+  /**
+   * Return `true` if JSONPath query _expression_ matches at least one node in `data`, or
+   * `false` otherwise.
+   */
   test(expression: string, data: JSONLike): boolean {
     return this.compile(expression).test(data);
   }

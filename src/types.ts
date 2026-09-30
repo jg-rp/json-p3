@@ -1,3 +1,6 @@
+/**
+ * A JSON-like value, as you'd get from `JSON.parse()`.
+ */
 export type JSONLike =
   | string
   | number

@@ -1,9 +1,9 @@
 import { getTokenValue, type Token } from "./token";
 
-export interface Diagnostic {
+export type Diagnostic = {
   span: Token;
   source: string;
-}
+};
 
 export function formatDetailedMessage(err: DiagnosticError): string {
   const d = err.diagnostic;
@@ -111,6 +111,12 @@ export class JSONPathNameError extends DetailedJSONPathError {
 export class JSONPathTypeError extends DetailedJSONPathError {
   override get label(): string {
     return "type error";
+  }
+}
+
+export class JSONPathIndexError extends DetailedJSONPathError {
+  override get label(): string {
+    return "index error";
   }
 }
 

@@ -10,6 +10,10 @@
 
 - Added `test`, `JSONPathEnvironment.test` and `JSONPathQuery.test`, all of which return `true` if the query expression matches at least one node, or `false` otherwise.
 
+- Added getter `JSONPathNode.pointer`, which lazily builds and returns a JSON Pointer for the node's location. `JSONPathNode.toPointer()` is still available if you don't want to cache a pointer in memory for every a node.
+
+- Added `JSONPathNode` methods for generating patch operation: `addOp(value)`, `removeOp()`, `replaceOp(value)`, `moveOp(to)`, `copyOp(to)` and `testOp(value)`.
+
 - Added diagnostic data to JSONPath errors and functions for rendering pretty error messages.
 
 **JSONPath API Changes**

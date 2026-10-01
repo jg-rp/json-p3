@@ -47,22 +47,22 @@ bench
       compile(expr);
     }
   })
-  .add("parse and render", () => {
+  .add("parse and eval", () => {
     for (const [expr, data] of queries) {
       query(expr, data);
     }
   })
-  .add("parse and render basic", () => {
+  .add("parse and eval basic", () => {
     for (const [expr, data] of queries) {
       findAll(expr, data);
     }
   })
-  .add("just render", () => {
+  .add("just eval", () => {
     for (const [q, data] of compiledQueries) {
       q.query(data);
     }
   })
-  .add("just render basic", () => {
+  .add("just eval basic", () => {
     for (const [q, data] of compiledQueries) {
       q.findAll(data);
     }

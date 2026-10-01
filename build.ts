@@ -22,6 +22,7 @@ await Bun.build({
   banner,
   define: {
     NODE_ENV: "production",
+    "process.env.PACKAGE_VERSION": JSON.stringify(pkg.version),
   },
 });
 
@@ -35,6 +36,7 @@ await Bun.build({
   banner,
   define: {
     NODE_ENV: "production",
+    "process.env.PACKAGE_VERSION": JSON.stringify(pkg.version),
   },
 });
 
@@ -50,6 +52,7 @@ await Bun.build({
   define: {
     "process.env.RUNTIME": '"browser"',
     NODE_ENV: "production",
+    "process.env.PACKAGE_VERSION": JSON.stringify(pkg.version),
   },
 });
 
@@ -65,5 +68,6 @@ await Bun.build({
   define: {
     "process.env.RUNTIME": '"browser"',
     NODE_ENV: "production",
+    "process.env.PACKAGE_VERSION": JSON.stringify(pkg.version),
   },
 });

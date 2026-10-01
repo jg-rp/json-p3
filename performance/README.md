@@ -2,13 +2,13 @@
 
 A comparison of JSONPath parsing and evaluation performance between version 2.3.2 and version 3.0.0. Note that version 3 introduced a "basic" evaluation mode which does not track node locations.
 
-All benchmarks are run on an M2 Mac Mini with Node version v26.1.0 and Bun 1.4.2.
+All benchmarks are run on an M2 Mac Mini with Node v26.1.0 and Bun 1.4.2.
 
 ## The benchmarks
 
-- `bench_cts.mjs` measures ops per second, where one op is all valid JSONPath query expressions from the JSONPath Compliance test suite. These are all small queries on very small data.
+- `bench_cts.mjs` measures ops per second, where one op is all valid JSONPath query expressions from the JSONPath Compliance Test Suite. These are all small queries on very small data.
 
-- `bench_citylots.mjs` measures total query evaluation time for each a handful of queries on larger data. We use data from https://github.com/zemirco/sf-city-lots-json and queries from https://github.com/andykais/json-querying-performance-testing, with the addition of a regex conditional query.
+- `bench_citylots.mjs` measures total query evaluation time for each of a handful of queries on larger data. We use data from https://github.com/zemirco/sf-city-lots-json and queries from https://github.com/andykais/json-querying-performance-testing, with the addition of a regex conditional query.
 
 ### Valid CTS Queries
 

@@ -1,3 +1,5 @@
+export const version = process.env.PACKAGE_VERSION;
+
 export * as jsonpath from "./path";
 
 export {

@@ -1,6 +1,3 @@
-// TODO: Look at Ruby JSON P3 errors
-// TODO: Pretty errors
-
 /**
  * Base class for all JSON Pointer errors.
  */

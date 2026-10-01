@@ -1,6 +1,6 @@
 import type { JSONPathEnvironment } from "./environment";
 
-import { hasStringKey, isArray, isPlainObject, type JSONLike } from "../types";
+import { hasStringKey, isArray, isPlainObject, type JSONValue } from "../types";
 import {
   ABSOLUTE_QUERY_EXPRESSION,
   AND_EXPRESSION,
@@ -39,26 +39,26 @@ import { BasicNodeList } from "./nodes";
 import { Nothing } from "./nothing";
 import { Resolver } from "./resolver";
 
-export type BasicResolverClass = new (env: JSONPathEnvironment, root: JSONLike) => BasicResolver;
+export type BasicResolverClass = new (env: JSONPathEnvironment, root: JSONValue) => BasicResolver;
 
 export class BasicResolver extends Resolver {
   constructor(
     protected env: JSONPathEnvironment,
-    protected root: JSONLike,
+    protected root: JSONValue,
   ) {
     super();
   }
 
-  resolve(segments: Segment[]): JSONLike[] {
-    let nodes: JSONLike[] = [this.root];
+  resolve(segments: Segment[]): JSONValue[] {
+    let nodes: JSONValue[] = [this.root];
     for (const segment of segments) {
       nodes = this.resolveSegment(segment, nodes);
     }
     return nodes;
   }
 
-  resolveIter(segments: Segment[]): IterableIterator<JSONLike> {
-    let nodes: IterableIterator<JSONLike> = [this.root][Symbol.iterator]();
+  resolveIter(segments: Segment[]): IterableIterator<JSONValue> {
+    let nodes: IterableIterator<JSONValue> = [this.root][Symbol.iterator]();
 
     for (const segment of segments) {
       nodes = this.resolveSegmentIter(segment, nodes);
@@ -67,8 +67,8 @@ export class BasicResolver extends Resolver {
     return nodes;
   }
 
-  resolveSegment(segment: Segment, nodes: JSONLike[]): JSONLike[] {
-    const result: JSONLike[] = [];
+  resolveSegment(segment: Segment, nodes: JSONValue[]): JSONValue[] {
+    const result: JSONValue[] = [];
 
     switch (segment.kind) {
       case CHILD_SEGMENT:
@@ -96,7 +96,7 @@ export class BasicResolver extends Resolver {
     return result;
   }
 
-  *resolveSegmentIter(segment: Segment, nodes: IterableIterator<JSONLike>): Generator<JSONLike> {
+  *resolveSegmentIter(segment: Segment, nodes: IterableIterator<JSONValue>): Generator<JSONValue> {
     switch (segment.kind) {
       case CHILD_SEGMENT:
         for (const node of nodes) {
@@ -121,8 +121,8 @@ export class BasicResolver extends Resolver {
     }
   }
 
-  resolveSelector(selector: Selector, value: JSONLike): JSONLike[] {
-    const result: JSONLike[] = [];
+  resolveSelector(selector: Selector, value: JSONValue): JSONValue[] {
+    const result: JSONValue[] = [];
 
     switch (selector.kind) {
       case NAME_SELECTOR:
@@ -204,7 +204,7 @@ export class BasicResolver extends Resolver {
     return result;
   }
 
-  *resolveSelectorIter(selector: Selector, value: JSONLike): Generator<JSONLike> {
+  *resolveSelectorIter(selector: Selector, value: JSONValue): Generator<JSONValue> {
     switch (selector.kind) {
       case NAME_SELECTOR:
         if (hasStringKey(value, selector.value)) {
@@ -286,7 +286,7 @@ export class BasicResolver extends Resolver {
   evaluateExpression(
     expr: Expression,
     currentKey: number | string,
-    currentValue: JSONLike,
+    currentValue: JSONValue,
     lazy: boolean,
   ): unknown {
     let left: unknown;
@@ -398,7 +398,7 @@ export class BasicResolver extends Resolver {
     }
   }
 
-  private *visit(node: JSONLike, depth: number = 1): Generator<JSONLike> {
+  private *visit(node: JSONValue, depth: number = 1): Generator<JSONValue> {
     if (depth >= this.env.maxRecursionDepth) {
       throw new JSONPathRecursionError("recursion limit reached");
     }
@@ -427,17 +427,17 @@ export class BasicResolver extends Resolver {
   }
 
   private slice(
-    arr: JSONLike[],
+    arr: JSONValue[],
     start?: number,
     end?: number,
     step?: number,
-  ): Array<[number, JSONLike]> {
+  ): Array<[number, JSONValue]> {
     const len = arr.length;
     step = step ?? 1;
 
     if (step === 0 || !len) return [];
 
-    const result: Array<[number, JSONLike]> = [];
+    const result: Array<[number, JSONValue]> = [];
     let i: number;
 
     if (step > 0) {

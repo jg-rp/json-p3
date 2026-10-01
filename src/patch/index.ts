@@ -1,4 +1,4 @@
-import { type JSONLike } from "../types";
+import { type JSONValue } from "../types";
 import { JSONPatch, type OpObject } from "./patch";
 
 export { JSONPatch } from "./patch";
@@ -13,6 +13,6 @@ export type { OpObject } from "./patch";
  * @returns The input object with modifications applied in place, or a different
  * object if the patch replaces the "document root".
  */
-export function apply(ops: OpObject[], data: JSONLike): JSONLike {
+export function apply(ops: OpObject[], data: JSONValue): JSONValue {
   return new JSONPatch(ops).apply(data);
 }

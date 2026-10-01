@@ -1,4 +1,4 @@
-import type { JSONLike } from "json-p3";
+import type { JSONValue } from "json-p3";
 
 import { JSONPathEnvironment, JSONPathError } from "json-p3";
 import { describe, test, expect } from "vitest";
@@ -6,10 +6,10 @@ import { describe, test, expect } from "vitest";
 type Case = {
   name: string;
   selector: string;
-  document?: JSONLike;
-  result?: JSONLike[];
+  document?: JSONValue;
+  result?: JSONValue[];
   result_paths?: string[];
-  results?: JSONLike[][];
+  results?: JSONValue[][];
   results_paths?: string[][];
   invalid_selector?: boolean;
 };

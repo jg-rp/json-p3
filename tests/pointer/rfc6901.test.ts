@@ -33,11 +33,11 @@
  */
 
 import { JSONPointer } from "../../src/pointer";
-import { type JSONLike } from "../../src/types";
+import { type JSONValue } from "../../src/types";
 
 type Case = {
   pointer: string;
-  want: JSONLike;
+  want: JSONValue;
 };
 
 const RFC6901_DOCUMENT = {

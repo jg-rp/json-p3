@@ -1,4 +1,4 @@
-import type { JSONLike } from "../types";
+import type { JSONValue } from "../types";
 
 import { JSONPointer, UNDEFINED } from "./pointer";
 
@@ -33,8 +33,8 @@ export {
  */
 export function resolve(
   pointer: string,
-  data: JSONLike,
-  fallback: JSONLike | typeof UNDEFINED = UNDEFINED,
-): JSONLike {
+  data: JSONValue,
+  fallback: JSONValue | typeof UNDEFINED = UNDEFINED,
+): JSONValue {
   return JSONPointer.fromString(pointer).resolve(data, fallback);
 }

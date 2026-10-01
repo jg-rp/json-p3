@@ -30,7 +30,7 @@ export type { FilterFunction, ExpressionType, JSONPathEnvironmentOptions } from 
 
 export { JSONPathNode } from "./path";
 
-export type { JSONLike } from "./types";
+export type { JSONValue } from "./types";
 
 export * as jsonpointer from "./pointer";
 export {

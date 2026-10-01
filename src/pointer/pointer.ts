@@ -1,4 +1,4 @@
-import { isArray, isNumber, isPlainObject, isString, type JSONLike } from "../types";
+import { isArray, isNumber, isPlainObject, isString, type JSONValue } from "../types";
 import {
   JSONPointerError,
   JSONPointerIndexError,
@@ -18,7 +18,7 @@ const RE_RELATIVE_POINTER = /(?<ORIGIN>\d+)(?<INDEX_G>(?<SIGN>[+-])(?<INDEX>\d))
 const RE_INT = /(0|[1-9]\d*)/;
 
 // A JSON Pointer evaluation result for a single token.
-type Result<E = JSONPointerError> = [JSONLike, null] | [null, E];
+type Result<E = JSONPointerError> = [JSONValue, null] | [null, E];
 
 export class JSONPointer {
   constructor(readonly tokens: string[]) {}
@@ -71,7 +71,7 @@ export class JSONPointer {
    * @throws {@link JSONPointerResolutionError} If the pointer can not be resolved and
    * no fallback is given.
    */
-  resolve(data: JSONLike, fallback: JSONLike | typeof UNDEFINED = UNDEFINED): JSONLike {
+  resolve(data: JSONValue, fallback: JSONValue | typeof UNDEFINED = UNDEFINED): JSONValue {
     if (!this.tokens.length) return data;
 
     let result = data;
@@ -89,7 +89,7 @@ export class JSONPointer {
     return result;
   }
 
-  resolveWithParent(data: JSONLike): [JSONLike | typeof UNDEFINED, JSONLike | typeof UNDEFINED] {
+  resolveWithParent(data: JSONValue): [JSONValue | typeof UNDEFINED, JSONValue | typeof UNDEFINED] {
     if (!this.tokens.length) return [UNDEFINED, data];
 
     let parent = data;
@@ -103,7 +103,7 @@ export class JSONPointer {
       }
     }
 
-    let result: JSONLike;
+    let result: JSONValue;
     [result, err] = this.getItem(
       parent,
       this.tokens[this.tokens.length - 1]!,
@@ -128,7 +128,7 @@ export class JSONPointer {
    * that form part of the target JSON document. This method will return
    * `true` if a falsy value is found.
    */
-  exists(value: JSONLike): boolean {
+  exists(value: JSONValue): boolean {
     try {
       this.resolve(value);
     } catch (error) {
@@ -194,7 +194,7 @@ export class JSONPointer {
     return pointer;
   }
 
-  private getItem(value: JSONLike, token: string, tokenIndex: number): Result {
+  private getItem(value: JSONValue, token: string, tokenIndex: number): Result {
     if (isArray(value)) {
       return this.getArrayItem(value, token, tokenIndex);
     }
@@ -206,7 +206,7 @@ export class JSONPointer {
     return [null, new JSONPointerTypeError(`unexpected primitive '${this.slice(tokenIndex)}'`)];
   }
 
-  private getArrayItem(value: Array<JSONLike>, token: string, tokenIndex: number): Result {
+  private getArrayItem(value: Array<JSONValue>, token: string, tokenIndex: number): Result {
     if (token !== "length" && Object.hasOwn(value, token)) {
       return [value[Number(token)], null];
     }
@@ -219,7 +219,7 @@ export class JSONPointer {
   }
 
   private getObjectItem(
-    value: Record<string, JSONLike>,
+    value: Record<string, JSONValue>,
     token: string,
     tokenIndex: number,
   ): Result {
@@ -234,7 +234,7 @@ export class JSONPointer {
     return [null, new JSONPointerKeyError(`no such property '${this.slice(tokenIndex)}'`)];
   }
 
-  private getRelativeArrayItem(value: Array<JSONLike>, token: string, tokenIndex: number): Result {
+  private getRelativeArrayItem(value: Array<JSONValue>, token: string, tokenIndex: number): Result {
     const index = token.slice(1);
     if (RE_INT.test(index) && Object.hasOwn(value, index)) {
       return [Number(index), null];

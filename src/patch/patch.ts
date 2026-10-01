@@ -1,13 +1,13 @@
 import { deepEquals } from "../deep_equals";
 import { JSONPointer, UNDEFINED } from "../pointer";
 import { JSONPointerError, JSONPointerResolutionError } from "../pointer/errors";
-import { type JSONLike, isArray, isPlainObject, isString } from "../types";
+import { type JSONValue, isArray, isPlainObject, isString } from "../types";
 import { JSONPatchError, JSONPatchTestFailure } from "./errors";
 
 export type OpObject = {
   op: string;
   path: string;
-  value?: JSONLike;
+  value?: JSONValue;
   from?: string;
 };
 
@@ -24,7 +24,7 @@ export interface Op {
    * Apply the patch operation to _value_.
    * @param value - The target JSON value.
    */
-  apply: (value: JSONLike, index: number) => JSONLike;
+  apply: (value: JSONValue, index: number) => JSONValue;
 
   /**
    * A plain object representation of the patch operation.
@@ -40,10 +40,10 @@ export class OpAdd implements Op {
 
   constructor(
     readonly path: JSONPointer,
-    readonly value: JSONLike,
+    readonly value: JSONValue,
   ) {}
 
-  apply(value: JSONLike, index: number): JSONLike {
+  apply(value: JSONValue, index: number): JSONValue {
     return add(value, this.path, this.value, this.name, index);
   }
 
@@ -60,7 +60,7 @@ export class OpRemove implements Op {
 
   constructor(readonly path: JSONPointer) {}
 
-  apply(value: JSONLike, index: number): JSONLike {
+  apply(value: JSONValue, index: number): JSONValue {
     remove(value, this.path, this.name, index);
     return value;
   }
@@ -78,10 +78,10 @@ export class OpReplace implements Op {
 
   constructor(
     readonly path: JSONPointer,
-    readonly value: JSONLike,
+    readonly value: JSONValue,
   ) {}
 
-  apply(value: JSONLike, index: number): JSONLike {
+  apply(value: JSONValue, index: number): JSONValue {
     const [parent, obj] = this.path.resolveWithParent(value);
     if (parent === UNDEFINED) {
       // Replace the root object.
@@ -130,7 +130,7 @@ export class OpMove implements Op {
     readonly path: JSONPointer,
   ) {}
 
-  apply(value: JSONLike, index: number): JSONLike {
+  apply(value: JSONValue, index: number): JSONValue {
     if (this.path.isRelativeTo(this.from)) {
       throw new JSONPatchError(
         `can't move object to one of its own children (${this.name}:${index})`,
@@ -161,7 +161,7 @@ export class OpCopy implements Op {
     readonly path: JSONPointer,
   ) {}
 
-  apply(value: JSONLike, index: number): JSONLike {
+  apply(value: JSONValue, index: number): JSONValue {
     const [_, sourceObj] = this.from.resolveWithParent(value);
     if (sourceObj === UNDEFINED) {
       throw new JSONPatchError(`source object does not exist (${this.name}:${index})`);
@@ -178,7 +178,7 @@ export class OpCopy implements Op {
     };
   }
 
-  protected deepCopy(value: JSONLike): JSONLike {
+  protected deepCopy(value: JSONValue): JSONValue {
     return JSON.parse(JSON.stringify(value));
   }
 }
@@ -191,10 +191,10 @@ export class OpTest implements Op {
 
   constructor(
     readonly path: JSONPointer,
-    readonly value: JSONLike,
+    readonly value: JSONValue,
   ) {}
 
-  apply(value: JSONLike, index: number): JSONLike {
+  apply(value: JSONValue, index: number): JSONValue {
     const [_, obj] = this.path.resolveWithParent(value);
     if (!deepEquals(obj, this.value)) {
       throw new JSONPatchTestFailure(`test failed (${this.name}:${index})`);
@@ -214,12 +214,12 @@ export class OpTest implements Op {
  * `OpCopy`.
  */
 function add(
-  data: JSONLike,
+  data: JSONValue,
   path: JSONPointer,
-  value: JSONLike,
+  value: JSONValue,
   opLabel: string,
   opIndex: number,
-): JSONLike {
+): JSONValue {
   const [parent, obj] = path.resolveWithParent(data);
 
   if (parent === UNDEFINED) {
@@ -261,7 +261,7 @@ function add(
  * This is semantically the `remove` operation used by `OpRemove` and
  * `OpMove`.
  */
-function remove(data: JSONLike, path: JSONPointer, opLabel: string, opIndex: number): JSONLike {
+function remove(data: JSONValue, path: JSONPointer, opLabel: string, opIndex: number): JSONValue {
   const [parent, obj] = path.resolveWithParent(data);
 
   if (parent === UNDEFINED) {
@@ -311,7 +311,7 @@ export class JSONPatch {
     }
   }
 
-  add(path: string | JSONPointer, value: JSONLike): this {
+  add(path: string | JSONPointer, value: JSONValue): this {
     this.ops.push(new OpAdd(this.ensurePointer(path, "add", this.ops.length), value));
     return this;
   }
@@ -321,7 +321,7 @@ export class JSONPatch {
     return this;
   }
 
-  replace(path: string | JSONPointer, value: JSONLike): this {
+  replace(path: string | JSONPointer, value: JSONValue): this {
     this.ops.push(new OpReplace(this.ensurePointer(path, "replace", this.ops.length), value));
     return this;
   }
@@ -346,12 +346,12 @@ export class JSONPatch {
     return this;
   }
 
-  test(path: string | JSONPointer, value: JSONLike): this {
+  test(path: string | JSONPointer, value: JSONValue): this {
     this.ops.push(new OpTest(this.ensurePointer(path, "test", this.ops.length), value));
     return this;
   }
 
-  apply(value: JSONLike): JSONLike {
+  apply(value: JSONValue): JSONValue {
     let result = value;
 
     for (let i = 0; i < this.ops.length; i++) {
@@ -445,7 +445,7 @@ export class JSONPatch {
     }
   }
 
-  protected opValue(opObj: OpObject, key: keyof OpObject, op: string, index: number): JSONLike {
+  protected opValue(opObj: OpObject, key: keyof OpObject, op: string, index: number): JSONValue {
     if (!Object.hasOwn(opObj, key)) {
       throw new JSONPatchError(`missing property '${key}' (${op}:${index})`);
     }

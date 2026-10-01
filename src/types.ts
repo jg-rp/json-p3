@@ -1,14 +1,14 @@
 /**
  * A JSON-like value, as you'd get from `JSON.parse()`.
  */
-export type JSONLike =
+export type JSONValue =
   | string
   | number
   | null
   | undefined
   | boolean
-  | JSONLike[]
-  | { [key: string]: JSONLike };
+  | JSONValue[]
+  | { [key: string]: JSONValue };
 
 /**
  * A type predicate for object.

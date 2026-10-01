@@ -1,6 +1,6 @@
 import { readFileSync } from "fs";
 
-import type { JSONLike } from "../../src/types";
+import type { JSONValue } from "../../src/types";
 
 import { JSONPathEnvironment } from "../../src/path/environment";
 import { JSONPathError } from "../../src/path/errors";
@@ -8,10 +8,10 @@ import { JSONPathError } from "../../src/path/errors";
 type Case = {
   name: string;
   selector: string;
-  document?: JSONLike;
-  result?: JSONLike[];
+  document?: JSONValue;
+  result?: JSONValue[];
   result_paths?: string[];
-  results?: JSONLike[][];
+  results?: JSONValue[][];
   results_paths?: string[][];
   invalid_selector?: boolean;
 };

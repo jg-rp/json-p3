@@ -33,14 +33,14 @@
  */
 
 import { JSONPatch, type OpObject, apply } from "../../src/patch";
-import { type JSONLike } from "../../src/types";
+import { type JSONValue } from "../../src/types";
 
 type Case = {
   description: string;
-  data: JSONLike;
+  data: JSONValue;
   patch: JSONPatch;
   op: OpObject;
-  want: JSONLike;
+  want: JSONValue;
 };
 
 const TEST_CASES: Case[] = [
@@ -154,7 +154,7 @@ const TEST_CASES: Case[] = [
   },
 ];
 
-function deepCopy(value: JSONLike): JSONLike {
+function deepCopy(value: JSONValue): JSONValue {
   return JSON.parse(JSON.stringify(value));
 }
 

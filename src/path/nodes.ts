@@ -1,14 +1,14 @@
 import type { OpObject } from "../patch";
 
 import { JSONPointer } from "../pointer";
-import { isString, type JSONLike } from "../types";
+import { isString, type JSONValue } from "../types";
 import { canonicalString, RE_IDENT, shorthandString } from "./serialize";
 
 /**
  * A light weight transient node used during JSONPath evaluation.
  */
 export type InternalNode = {
-  value: JSONLike;
+  value: JSONValue;
   location: Array<string | number>;
   parent: InternalNode | undefined;
 };
@@ -24,7 +24,7 @@ export class NodeList {
 export class BasicNodeList {
   readonly length: number;
 
-  constructor(readonly nodes: JSONLike[]) {
+  constructor(readonly nodes: JSONValue[]) {
     this.length = nodes.length;
   }
 }
@@ -33,7 +33,7 @@ export class BasicNodeList {
  * A JSON value and its location within a JSON document.
  */
 export class JSONPathNode {
-  readonly value: JSONLike;
+  readonly value: JSONValue;
   readonly location: Array<string | number>;
   private parent: InternalNode | undefined;
   private ptr?: JSONPointer;
@@ -112,7 +112,7 @@ export class JSONPathNode {
   /**
    * Return a JSON Pointer _add_ operation with the path set to this node.
    */
-  addOp(value: JSONLike): OpObject {
+  addOp(value: JSONValue): OpObject {
     return { op: "add", path: this.toPointer().toString(), value };
   }
 
@@ -126,7 +126,7 @@ export class JSONPathNode {
   /**
    * Return a JSON Pointer _replace_ operation with the path set to this node.
    */
-  replaceOp(value: JSONLike): OpObject {
+  replaceOp(value: JSONValue): OpObject {
     return { op: "replace", path: this.toPointer().toString(), value };
   }
 
@@ -147,7 +147,7 @@ export class JSONPathNode {
   /**
    * Return a JSON Pointer _test_ operation with the path set to this node.
    */
-  testOp(value: JSONLike): OpObject {
+  testOp(value: JSONValue): OpObject {
     return { op: "test", path: this.toPointer().toString(), value };
   }
 }

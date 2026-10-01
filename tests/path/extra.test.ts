@@ -2,14 +2,14 @@ import {
   compile,
   JSONPathEnvironment,
   JSONPathSyntaxError,
-  type JSONLike,
+  type JSONValue,
 } from "../../src/json-p3";
 
 type TestCase = {
   description: string;
   path: string;
-  data: JSONLike;
-  want: JSONLike;
+  data: JSONValue;
+  want: JSONValue;
 };
 
 const TEST_CASES: TestCase[] = [
@@ -139,8 +139,8 @@ describe("extra errors", () => {
 type DocsTestCase = {
   description: string;
   path: string;
-  data: JSONLike;
-  want: JSONLike;
+  data: JSONValue;
+  want: JSONValue;
   want_paths: string[];
 };
 

@@ -1,4 +1,4 @@
-import { compile, type JSONLike } from "../../src/json-p3";
+import { compile, type JSONValue } from "../../src/json-p3";
 import { JSONPathEnvironment } from "../../src/path/environment";
 import {
   JSONPathRecursionError,
@@ -85,7 +85,7 @@ describe("recursion limit reached", () => {
   test("recursive data", () => {
     const env = new JSONPathEnvironment();
     const query = "$..a";
-    const arr: JSONLike[] = [];
+    const arr: JSONValue[] = [];
     const data = { foo: arr };
     arr.push(data);
     expect(() => env.query(query, data)).toThrow(JSONPathRecursionError);

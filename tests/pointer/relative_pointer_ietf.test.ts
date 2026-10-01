@@ -30,14 +30,14 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import type { JSONLike } from "../../src/types";
+import type { JSONValue } from "../../src/types";
 
 import { JSONPointer, RelativeJSONPointer } from "../../src/pointer";
 
 type TestCase = {
   pointer: string;
   rel: string;
-  want: JSONLike;
+  want: JSONValue;
 };
 
 const DOCUMENT = {

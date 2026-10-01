@@ -26,8 +26,6 @@ This release includes several breaking API changes and performance improvements.
 
 - Renamed `JSONPathEnvironment.functionRegister` to `JSONPathEnvironment.functions`. It is now a plain object instead of a map.
 
-- Renamed type `JSONValue` to `JSONLike`.
-
 - Removed the `keysPattern` `JSONPathEnvironment` option. It is no longer possible to configure custom syntax for the keys selector.
 
 - Removed `JSONPathQuery.valuesOrSingular`.

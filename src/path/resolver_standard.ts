@@ -1,6 +1,6 @@
 import type { JSONPathEnvironment } from "./environment";
 
-import { hasStringKey, isArray, isPlainObject, type JSONLike } from "../types";
+import { hasStringKey, isArray, isPlainObject, type JSONValue } from "../types";
 import {
   ABSOLUTE_QUERY_EXPRESSION,
   AND_EXPRESSION,
@@ -41,13 +41,13 @@ import { Resolver } from "./resolver";
 
 export type StandardResolverClass = new (
   env: JSONPathEnvironment,
-  root: JSONLike,
+  root: JSONValue,
 ) => StandardResolver;
 
 export class StandardResolver extends Resolver {
   constructor(
     protected env: JSONPathEnvironment,
-    protected root: JSONLike,
+    protected root: JSONValue,
   ) {
     super();
   }
@@ -388,7 +388,7 @@ export class StandardResolver extends Resolver {
   evaluateExpression(
     expr: Expression,
     currentKey: number | string,
-    currentValue: JSONLike,
+    currentValue: JSONValue,
     lazy: boolean,
   ): unknown {
     let left: unknown;
@@ -535,17 +535,17 @@ export class StandardResolver extends Resolver {
   }
 
   private slice(
-    arr: JSONLike[],
+    arr: JSONValue[],
     start?: number,
     end?: number,
     step?: number,
-  ): Array<[number, JSONLike]> {
+  ): Array<[number, JSONValue]> {
     const len = arr.length;
     step = step ?? 1;
 
     if (step === 0 || !len) return [];
 
-    const result: Array<[number, JSONLike]> = [];
+    const result: Array<[number, JSONValue]> = [];
     let i: number;
 
     if (step > 0) {

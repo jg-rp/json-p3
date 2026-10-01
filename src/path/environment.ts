@@ -1,4 +1,4 @@
-import type { JSONLike } from "../types";
+import type { JSONValue } from "../types";
 import type { JSONPathNode } from "./nodes";
 import type { Parser } from "./parser";
 import type { Token } from "./token";
@@ -120,7 +120,7 @@ export class JSONPathEnvironment {
   /**
    * Evaluate JSONPath query _expression_ against _data_ and return an array of matched nodes.
    */
-  find(expression: string, data: JSONLike): JSONPathNode[] {
+  find(expression: string, data: JSONValue): JSONPathNode[] {
     return this.compile(expression).find(data);
   }
 
@@ -130,7 +130,7 @@ export class JSONPathEnvironment {
    * Note that some queries will require node iterators to be materialized into node lists, so
    * peak memory usage might be higher than expected.
    */
-  findIter(expression: string, data: JSONLike): IterableIterator<JSONPathNode> {
+  findIter(expression: string, data: JSONValue): IterableIterator<JSONPathNode> {
     return this.compile(expression).findIter(data);
   }
 
@@ -139,7 +139,7 @@ export class JSONPathEnvironment {
    *
    * @deprecated Use {@link find} instead.
    */
-  query(expression: string, data: JSONLike): JSONPathNode[] {
+  query(expression: string, data: JSONValue): JSONPathNode[] {
     return this.compile(expression).query(data);
   }
 
@@ -148,14 +148,14 @@ export class JSONPathEnvironment {
    *
    * @deprecated Use {@link findIter} instead.
    */
-  lazyQuery(expression: string, data: JSONLike): IterableIterator<JSONPathNode> {
+  lazyQuery(expression: string, data: JSONValue): IterableIterator<JSONPathNode> {
     return this.compile(expression).lazyQuery(data);
   }
 
   /**
    * Evaluate JSONPath query _expression_ against _data_ and return an array of values.
    */
-  findAll(expression: string, data: JSONLike): JSONLike[] {
+  findAll(expression: string, data: JSONValue): JSONValue[] {
     return this.compile(expression).findAll(data);
   }
 
@@ -165,7 +165,7 @@ export class JSONPathEnvironment {
    * Note that some queries will require internal iterators to be materialized into arrays, so
    * peak memory usage might be higher than expected.
    */
-  findAllIter(expression: string, data: JSONLike): IterableIterator<JSONLike> {
+  findAllIter(expression: string, data: JSONValue): IterableIterator<JSONValue> {
     return this.compile(expression).findAllIter(data);
   }
 
@@ -173,7 +173,7 @@ export class JSONPathEnvironment {
    * Evaluate JSONPath query _expression_ against _data_ and return the first matching node,
    * or `undefined` if there were no matches.
    */
-  findOne(expression: string, data: JSONLike): JSONPathNode | undefined {
+  findOne(expression: string, data: JSONValue): JSONPathNode | undefined {
     return this.compile(expression).findOne(data);
   }
 
@@ -183,7 +183,7 @@ export class JSONPathEnvironment {
    *
    * @deprecated Use {@link findOne} instead.
    */
-  match(expression: string, data: JSONLike): JSONPathNode | undefined {
+  match(expression: string, data: JSONValue): JSONPathNode | undefined {
     return this.compile(expression).match(data);
   }
 
@@ -191,7 +191,7 @@ export class JSONPathEnvironment {
    * Return `true` if JSONPath query _expression_ matches at least one node in `data`, or
    * `false` otherwise.
    */
-  test(expression: string, data: JSONLike): boolean {
+  test(expression: string, data: JSONValue): boolean {
     return this.compile(expression).test(data);
   }
 

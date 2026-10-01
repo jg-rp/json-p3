@@ -42,7 +42,7 @@ console.log(nodes.map((n) => n.pointer.toString())); // [ "/users/0/name", "/use
 
 ### Just values
 
-If you don't need node locations or any of the methods available on `JSONPathNode`, use [`jsonpath.findAll(expr, data)`](./api/json-p3/namespaces/jsonpath/functions/findAll.md) instead. It always returns an array of type [`JSONLike`](./api/type-aliases/JSONLike.md).
+If you don't need node locations or any of the methods available on `JSONPathNode`, use [`jsonpath.findAll(expr, data)`](./api/json-p3/namespaces/jsonpath/functions/findAll.md) instead. It always returns an array of type [`JSONValue`](./api/type-aliases/JSONValue.md).
 
 `findAll` can be significantly faster and more memory efficient than `find`.
 

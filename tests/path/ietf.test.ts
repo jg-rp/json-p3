@@ -37,15 +37,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import type { JSONLike } from "../../src/types";
+import type { JSONValue } from "../../src/types";
 
 import { query } from "../../src/json-p3";
 
 type TestCase = {
   description: string;
   path: string;
-  data: JSONLike;
-  want: JSONLike;
+  data: JSONValue;
+  want: JSONValue;
 };
 
 const FILTER_SELECTOR_DATA = {

@@ -1,4 +1,4 @@
-import type { JSONLike } from "../types";
+import type { JSONValue } from "../types";
 import type { JSONPathQuery } from "./query";
 
 import { JSONPathEnvironment } from "./environment";
@@ -44,14 +44,14 @@ export function compile(expression: string): JSONPathQuery {
 /**
  * Evaluate JSONPath query _expression_ against _data_ and return an array of matched nodes.
  */
-export function find(expression: string, data: JSONLike): JSONPathNode[] {
+export function find(expression: string, data: JSONValue): JSONPathNode[] {
   return DEFAULT_ENVIRONMENT.find(expression, data);
 }
 
 /**
  * Evaluate JSONPath query _expression_ against _data_ and return an array of matched nodes.
  */
-export function findIter(expression: string, data: JSONLike): IterableIterator<JSONPathNode> {
+export function findIter(expression: string, data: JSONValue): IterableIterator<JSONPathNode> {
   return DEFAULT_ENVIRONMENT.findIter(expression, data);
 }
 
@@ -60,7 +60,7 @@ export function findIter(expression: string, data: JSONLike): IterableIterator<J
  *
  * @deprecated Use {@link find} instead.
  */
-export function query(expression: string, data: JSONLike): JSONPathNode[] {
+export function query(expression: string, data: JSONValue): JSONPathNode[] {
   return DEFAULT_ENVIRONMENT.query(expression, data);
 }
 
@@ -69,14 +69,14 @@ export function query(expression: string, data: JSONLike): JSONPathNode[] {
  *
  * @deprecated Use {@link findIter} instead.
  */
-export function lazyQuery(expression: string, data: JSONLike): IterableIterator<JSONPathNode> {
+export function lazyQuery(expression: string, data: JSONValue): IterableIterator<JSONPathNode> {
   return DEFAULT_ENVIRONMENT.lazyQuery(expression, data);
 }
 
 /**
  * Evaluate JSONPath query _expression_ against _data_ and return an array of values.
  */
-export function findAll(expression: string, data: JSONLike): JSONLike[] {
+export function findAll(expression: string, data: JSONValue): JSONValue[] {
   return DEFAULT_ENVIRONMENT.findAll(expression, data);
 }
 
@@ -86,7 +86,7 @@ export function findAll(expression: string, data: JSONLike): JSONLike[] {
  * Note that some queries will require internal iterators to be materialized into arrays, so
  * peak memory usage might be higher than expected.
  */
-export function findAllIter(expression: string, data: JSONLike): IterableIterator<JSONLike> {
+export function findAllIter(expression: string, data: JSONValue): IterableIterator<JSONValue> {
   return DEFAULT_ENVIRONMENT.findAllIter(expression, data);
 }
 
@@ -94,7 +94,7 @@ export function findAllIter(expression: string, data: JSONLike): IterableIterato
  * Evaluate JSONPath query _expression_ against _data_ and return the first matching node,
  * or `undefined` if there were no matches.
  */
-export function findOne(expression: string, data: JSONLike): JSONPathNode | undefined {
+export function findOne(expression: string, data: JSONValue): JSONPathNode | undefined {
   return DEFAULT_ENVIRONMENT.findOne(expression, data);
 }
 
@@ -104,7 +104,7 @@ export function findOne(expression: string, data: JSONLike): JSONPathNode | unde
  *
  * @deprecated Use {@link findOne} instead.
  */
-export function match(expression: string, data: JSONLike): JSONPathNode | undefined {
+export function match(expression: string, data: JSONValue): JSONPathNode | undefined {
   return DEFAULT_ENVIRONMENT.match(expression, data);
 }
 
@@ -112,6 +112,6 @@ export function match(expression: string, data: JSONLike): JSONPathNode | undefi
  * Return `true` if JSONPath query _expression_ matches at least one node in `data`, or
  * `false` otherwise.
  */
-export function test(expression: string, data: JSONLike): boolean {
+export function test(expression: string, data: JSONValue): boolean {
   return DEFAULT_ENVIRONMENT.test(expression, data);
 }

@@ -4,6 +4,9 @@ import { JSONPointer } from "../pointer";
 import { isString, type JSONLike } from "../types";
 import { canonicalString, RE_IDENT, shorthandString } from "./serialize";
 
+/**
+ * A light weight transient node used during JSONPath evaluation.
+ */
 export type InternalNode = {
   value: JSONLike;
   location: Array<string | number>;
@@ -26,6 +29,9 @@ export class BasicNodeList {
   }
 }
 
+/**
+ * A JSON value and its location within a JSON document.
+ */
 export class JSONPathNode {
   readonly value: JSONLike;
   readonly location: Array<string | number>;
@@ -79,10 +85,16 @@ export class JSONPathNode {
     return path;
   }
 
+  /**
+   * Return this node's parent, or `undefined` if this node is the document root.
+   */
   parentNode(): JSONPathNode | undefined {
     return this.parent ? new JSONPathNode(this.parent) : undefined;
   }
 
+  /**
+   * A JSON Pointer derived from this node's location.
+   */
   get pointer(): JSONPointer {
     if (!this.ptr) {
       this.ptr = new JSONPointer(this.location.map(String));
@@ -97,26 +109,44 @@ export class JSONPathNode {
     return new JSONPointer(this.location.map(String));
   }
 
+  /**
+   * Return a JSON Pointer _add_ operation with the path set to this node.
+   */
   addOp(value: JSONLike): OpObject {
     return { op: "add", path: this.toPointer().toString(), value };
   }
 
+  /**
+   * Return a JSON Pointer _remove_ operation with the path set to this node.
+   */
   removeOp(): OpObject {
     return { op: "remove", path: this.toPointer().toString() };
   }
 
+  /**
+   * Return a JSON Pointer _replace_ operation with the path set to this node.
+   */
   replaceOp(value: JSONLike): OpObject {
     return { op: "replace", path: this.toPointer().toString(), value };
   }
 
+  /**
+   * Return a JSON Pointer _move_ operation with _from_ set to this node.
+   */
   moveOp(to: JSONPointer): OpObject {
     return { op: "move", from: this.toPointer().toString(), path: to.toString() };
   }
 
+  /**
+   * Return a JSON Pointer _copy_ operation with _from_ set to this node.
+   */
   copyOp(to: JSONPointer): OpObject {
     return { op: "copy", from: this.toPointer().toString(), path: to.toString() };
   }
 
+  /**
+   * Return a JSON Pointer _test_ operation with the path set to this node.
+   */
   testOp(value: JSONLike): OpObject {
     return { op: "test", path: this.toPointer().toString(), value };
   }

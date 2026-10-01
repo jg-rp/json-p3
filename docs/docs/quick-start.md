@@ -8,7 +8,7 @@ This guide is for JSON P3 version 3. See [quick-start.md](https://github.com/jg-
 
 ## JSONPath
 
-Find _nodes_ matching a JSONPath query expression with [`jsonpath.find(expr, data)`](./api/globals.md#find).
+Find _nodes_ matching a JSONPath query expression with [`jsonpath.find(expr, data)`](./api/json-p3/namespaces/jsonpath/functions/find.md).
 
 The first argument must be a string conforming to [RFC 9535](https://datatracker.ietf.org/doc/html/rfc9535). The second argument should be JSON-like data, as you'd get from `JSON.parse()`.
 
@@ -42,7 +42,7 @@ console.log(nodes.map((n) => n.pointer.toString())); // [ "/users/0/name", "/use
 
 ### Just values
 
-If you don't need node locations or any of the methods available on `JSONPathNode`, use [`jsonpath.findAll(expr, data)`](./api/globals.md#findall) instead. It always returns an array of type [`JSONLike`](./api/type-aliases/JSONLike.md).
+If you don't need node locations or any of the methods available on `JSONPathNode`, use [`jsonpath.findAll(expr, data)`](./api/json-p3/namespaces/jsonpath/functions/findAll.md) instead. It always returns an array of type [`JSONLike`](./api/type-aliases/JSONLike.md).
 
 `findAll` can be significantly faster and more memory efficient than `find`.
 
@@ -66,7 +66,7 @@ console.log(values); // [ "Alice", "Charlie" ]
 
 ### Iterators
 
-[`findIter(expr, data)`](./api/globals.md#finditer) is an alternative to `find()` that generates nodes lazily. `findIter` can be a good choice if you're working with very large datasets.
+[`findIter(expr, data)`](./api/json-p3/namespaces/jsonpath/functions/findIter.md) is an alternative to `find()` that generates nodes lazily. `findIter` can be a good choice if you're working with very large datasets.
 
 ```javascript
 import { jsonpath } from "json-p3";
@@ -86,7 +86,7 @@ for (const node of jsonpath.findIter(expr, data)) {
 }
 ```
 
-There's also [`jsonpath.findAllIter(expr, data)`](./api/globals.md#findalliter) that generates values lazily instead of nodes.
+There's also [`jsonpath.findAllIter(expr, data)`](./api/json-p3/namespaces/jsonpath/functions/findAllIter.md) that generates values lazily instead of nodes.
 
 ```javascript
 // ... continued from above
@@ -98,7 +98,7 @@ for (const value of jsonpath.findAllIter(expr, data)) {
 
 ### First match
 
-[`jsonpath.findOne(expr, data)`](./api/globals.md#findone) returns the first available node, or `undefined` if there were no matches.
+[`jsonpath.findOne(expr, data)`](./api/json-p3/namespaces/jsonpath/functions/findOne.md) returns the first available node, or `undefined` if there were no matches.
 
 ```javascript
 import { jsonpath } from "json-p3";
@@ -121,7 +121,7 @@ if (match) {
 }
 ```
 
-And [`jsonpath.test(expr, data)`](./api/globals.md#test) returns `true` if there's at least one match, or `false` otherwise.
+And [`jsonpath.test(expr, data)`](./api/json-p3/namespaces/jsonpath/functions/test.md) returns `true` if there's at least one match, or `false` otherwise.
 
 ```javascript
 // ... continued from above
@@ -133,7 +133,7 @@ if (!jsonpath.test(expr, data)) {
 
 ### Compilation
 
-[`find`](#jsonpath) is a convenience function equivalent to `new JSONPathEnvironment().compile(path).find(data)`. Use [`jsonpath.compile(expr)`](./api/globals.md#compile) to construct a [`JSONPathQuery`](./api/classes/JSONPathQuery.md) object that can be applied to different data repeatedly.
+[`find`](#jsonpath) is a convenience function equivalent to `new JSONPathEnvironment().compile(path).find(data)`. Use [`jsonpath.compile(expr)`](./api/json-p3/namespaces/jsonpath/functions/compile.md) to construct a [`JSONPathQuery`](./api/classes/JSONPathQuery.md) object that can be applied to different data repeatedly.
 
 ```javascript
 import { jsonpath } from "json-p3";
@@ -155,7 +155,7 @@ console.log(query.findAll(data)); // [ "Alice", "Charlie" ]
 
 ## JSON Pointer
 
-Resolve a JSON Pointer against some data using [`jsonpointer.resolve(pointer, data)`](./api/globals.md#resolve).
+Resolve a JSON Pointer against some data using [`jsonpointer.resolve(pointer, data)`](./api/json-p3/namespaces/jsonpointer/functions/resolve.md).
 
 The first argument must be a string following [RFC 6901](https://datatracker.ietf.org/doc/html/rfc6901). The second argument should be JSON-like data, as you'd get from `JSON.parse()`.
 
@@ -249,7 +249,7 @@ console.log(pointer.to("2/baz/2").resolve(data)); // 6
 
 ## JSON Patch
 
-Apply a JSON Patch ([RFC 6902](https://datatracker.ietf.org/doc/html/rfc6902)) to some data with [`jsonpatch.apply(ops, data)`](./api/globals.md#apply). **Data is modified in place.**.
+Apply a JSON Patch ([RFC 6902](https://datatracker.ietf.org/doc/html/rfc6902)) to some data with [`jsonpatch.apply(ops, data)`](./api/json-p3/namespaces/jsonpatch/functions/apply.md). **Data is modified in place.**.
 
 ```javascript
 import { jsonpatch } from "json-p3";

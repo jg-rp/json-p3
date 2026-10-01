@@ -111,28 +111,29 @@ Add, remove or replace filter functions by updating the [function register](../a
 Every filter function must define the types of its parameters and the type of its return value, according to the JSONPath specification's [type system](https://datatracker.ietf.org/doc/html/rfc9535#name-type-system-for-function-ex). This example implements a `typeof()` function, which accepts a parameter of [`VALUE_TYPE`](../api/type-aliases/ExpressionType.md) and returns a `VALUE_TYPE`.
 
 ```typescript
-import {
-  FilterFunction,
-  FunctionExpressionType,
-  JSONPathEnvironment,
-} from "json-p3";
+import { jsonpath, JSONPathEnvironment } from "json-p3";
 
-class TypeOfFilterFunction implements FilterFunction {
-  readonly argTypes = [FunctionExpressionType.ValueType];
-  readonly returnType = FunctionExpressionType.ValueType;
+class TypeOfFilterFunction implements jsonpath.FilterFunction {
+  readonly argTypes = [jsonpath.VALUE_TYPE];
+  readonly returnType = jsonpath.VALUE_TYPE;
 
   public call(value: unknown): string {
     return typeof value;
   }
 }
-```
 
-We would then register an instance of `TypeOfFilterFunction` with a `JSONPathEnvironment`, and use the environment's `query()`, `compile()` or `match()` methods.
-
-```typescript
-// .. continued from above
 const env = new JSONPathEnvironment();
-env.functions.set("typeof", new TypeOfFilterFunction());
+env.functions["typeof"] = new TypeOfFilterFunction();
 
-const nodes = env.query("$.users[?typeof(@.score) == 'number']", data);
+const data = {
+  users: [
+    { id: "usr_101", name: "Alice", status: "pending" },
+    { id: 102, name: "Bob", status: "active" },
+    { id: "usr_103", name: "Charlie", status: "pending" },
+  ],
+};
+
+const result = env.findAll("$.users[?typeof(@.id) == 'number'].name", data);
+
+console.log(result);
 ```

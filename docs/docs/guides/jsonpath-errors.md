@@ -5,21 +5,21 @@
 **Compile time errors**
 
 - `JSONPathSyntaxError`
-- `JSONPathNameError`
+- `JSONPathNameError` (unknown filter function)
 - `JSONPathTypeError`
 - `JSONPathIndexError`
-- `JSONPathRecursionError`
+- `JSONPathRecursionError` if a maximum expression depth is set.
 
 **Evaluation time errors**
 
-- `JSONPathRecursionError` (when a descendant segment recursion limit is set)
-- `JSONPathError` (when debugging regex filters)
+- `JSONPathRecursionError` if a descendant segment recursion limit is set.
+- `JSONPathError` when debugging regex filters.
 
 ## Diagnostic messages
 
 Compile time errors `JSONPathSyntaxError`, `JSONPathNameError`, `JSONPathTypeError` and `JSONPathIndexError` all inherit from `DetailedJSONPathError`, exposing [diagnostic](../api/json-p3/namespaces/jsonpath/type-aliases/Diagnostic.md) data and a [`render()`](../api/classes/DetailedJSONPathError.md#render) method.
 
-`DetailedJSONPathError.render` returns a formatted string giving context to the error message that is useful for debugging queries.
+`DetailedJSONPathError.render()` returns a formatted string giving context to the error message that is useful for debugging queries.
 
 ```javascript
 import { jsonpath } from "json-p3";

@@ -8,6 +8,7 @@ import clsx from "clsx";
 
 import {
   JSONPathEnvironment,
+  DetailedJSONPathError,
   version as p3version,
 } from "@site/../dist/json-p3.esm";
 
@@ -124,7 +125,11 @@ export default function Playground() {
         ),
       );
     } catch (error) {
-      setResult(JSON.stringify(String(error), undefined, "  "));
+      if (error instanceof DetailedJSONPathError) {
+        setResult(error.render());
+      } else {
+        setResult(JSON.stringify(String(error), undefined, "  "));
+      }
       setResultPaths("[]");
     }
   }
@@ -154,7 +159,11 @@ export default function Playground() {
         ),
       );
     } catch (error) {
-      setResult(JSON.stringify(String(error), undefined, "  "));
+      if (error instanceof DetailedJSONPathError) {
+        setResult(error.render());
+      } else {
+        setResult(JSON.stringify(String(error), undefined, "  "));
+      }
       setResultPaths("[]");
     }
   }

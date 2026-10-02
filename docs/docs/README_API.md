@@ -6,5 +6,4 @@ Welcome to the API documentation for JSON P3. Also see the [quick start guide](/
 
 - [JSONPathEnvironment](/api/classes/JSONPathEnvironment)
 - [JSONPathEnvironment Options](/api/type-aliases/JSONPathEnvironmentOptions)
-- [JSONPathNodeList](/api/classes/JSONPathNodeList)
 - [JSONPathNode](/api/classes/JSONPathNode)

@@ -1,6 +1,6 @@
 # JSON P3 Change Log
 
-## Version 3.0.0 (unreleased)
+## Version 3.0.0
 
 This release includes several breaking API changes and performance improvements. JSONPath, Pointer and Patch syntax and semantics are unchanged.
 

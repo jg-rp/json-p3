@@ -1,71 +1,66 @@
 {
   "name": "json-p3",
-  "version": "2.3.2",
-  "author": "James Prior",
-  "license": "MIT",
+  "version": "3.0.0",
   "description": "JSONPath, JSON Pointer and JSON Patch",
+  "keywords": [
+    "JSON",
+    "JSON Patch",
+    "JSON Pointer",
+    "JSONPath"
+  ],
   "homepage": "https://github.com/jg-rp/json-p3",
   "bugs": {
     "url": "https://github.com/jg-rp/json-p3/issues"
   },
+  "license": "MIT",
+  "author": "James Prior",
   "repository": {
     "type": "git",
     "url": "https://github.com/jg-rp/json-p3.git"
   },
-  "scripts": {
-    "test": "jest",
-    "build:types": "tsc -p tsconfig.build.json --emitDeclarationOnly",
-    "build:js": "rollup -c",
-    "build": "npm run build:types && npm run build:js",
-    "type-check": "tsc -p tsconfig.build.json --noEmit",
-    "coverage": "jest --collectCoverage",
-    "clean": "rm -rf ./lib ./dist ./coverage ./docs/docs/api",
-    "lint": "eslint src tests --ext .js,.jsx,.ts,.tsx"
-  },
-  "browserslist": [
-    "defaults",
-    "not IE 11",
-    "maintained node versions"
-  ],
-  "main": "dist/json-p3.cjs.js",
-  "module": "dist/json-p3.esm.js",
-  "browser": "dist/json-p3.browser.js",
-  "browser-min": "dist/json-p3.browser.min.js",
-  "jsdelivr": "dist/json-p3.iife.min.js",
-  "unpkg": "dist/json-p3.iife.min.js",
-  "types": "dist/index.d.ts",
   "files": [
     "dist/**/*"
   ],
-  "devDependencies": {
-    "@babel/cli": "^7.25.9",
-    "@babel/core": "^7.26.0",
-    "@babel/preset-env": "^7.26.0",
-    "@babel/preset-typescript": "^7.26.0",
-    "@eslint/js": "^10.0.1",
-    "@jest/globals": "^29.7.0",
-    "@rollup/plugin-babel": "^6.0.4",
-    "@rollup/plugin-commonjs": "^25.0.8",
-    "@rollup/plugin-node-resolve": "^15.3.0",
-    "@rollup/plugin-replace": "^5.0.7",
-    "@rollup/plugin-terser": "^1.0.0",
-    "@rollup/plugin-typescript": "^11.1.6",
-    "@types/jest": "^29.5.14",
-    "eslint": "^10.9.1",
-    "eslint-plugin-sonarjs": "^4.2.0",
-    "iregexp-check": "^0.1.2",
-    "jest": "^29.7.0",
-    "prettier": "^3.9.6",
-    "rollup": "^4.28.0",
-    "ts-jest": "^29.2.5",
-    "tslib": "^2.8.1",
-    "typescript": "^5.9.3",
-    "typescript-eslint": "^8.69.0"
+  "type": "module",
+  "main": "dist/json-p3.esm.js",
+  "module": "dist/json-p3.esm.js",
+  "browser": "dist/json-p3.browser.esm.js",
+  "types": "dist/json-p3.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/json-p3.d.ts",
+      "import": "./dist/json-p3.esm.js"
+    }
   },
-  "keywords": [
-    "JSON",
-    "JSONPath",
-    "JSON Pointer",
-    "JSON Patch"
-  ]
+  "scripts": {
+    "test:browser": "bun run dist && vitest run --config vitest.browser.config.ts --browser",
+    "test:node": "bun run dist && vitest run --config vitest.node.bundle.config.ts",
+    "build:types": "bun run tsc -p tsconfig.build.json",
+    "build:js": "bun build.ts",
+    "dist": "rm -rf ./dist && bun run build:js && bun run build:types",
+    "lint": "bun run oxlint",
+    "type-check": "bun run tsc -p tsconfig.build.json --noEmit",
+    "publish": "bun run dist && bun publish",
+    "fmt": "bun run oxfmt",
+    "fmt:check": "bun run oxfmt --check"
+  },
+  "dependencies": {
+    "iregexp-check": "^0.1.2"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@types/jest": "^30.0.0",
+    "@vitest/browser-playwright": "^5.0.1",
+    "oxfmt": "^0.68.0",
+    "oxlint": "^1.83.0",
+    "oxlint-tsgolint": "^7.0.2002",
+    "playwright": "^1.63.0",
+    "tinybench": "^6.2.0",
+    "vitest": "^5.0.1"
+  },
+  "peerDependencies": {
+    "typescript": "^7.0.2"
+  },
+  "browser-min": "dist/json-p3.browser.min.esm.js",
+  "jsdeliver": "dist/json-p3.browser.min.esm.js"
 }

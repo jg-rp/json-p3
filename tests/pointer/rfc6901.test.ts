@@ -33,7 +33,7 @@
  */
 
 import { JSONPointer } from "../../src/pointer";
-import { JSONValue } from "../../src/types";
+import { type JSONValue } from "../../src/types";
 
 type Case = {
   pointer: string;
@@ -70,7 +70,7 @@ const RFC6901_TEST_CASES: Case[] = [
 
 describe("RFC6901", () => {
   test.each<Case>(RFC6901_TEST_CASES)("$pointer", ({ pointer, want }: Case) => {
-    const p = new JSONPointer(pointer);
+    const p = JSONPointer.fromString(pointer);
     expect(p.resolve(RFC6901_DOCUMENT)).toStrictEqual(want);
   });
 });

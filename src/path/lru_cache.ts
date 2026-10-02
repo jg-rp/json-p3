@@ -13,16 +13,17 @@ export class LRUCache<K, V> extends Map<K, V> {
     this.maxSize = maxSize;
   }
 
-  get(key: K): V | undefined {
+  override get(key: K): V | undefined {
     const val = super.get(key);
     if (this.has(key)) {
       this.delete(key);
+      // oxlint-disable-next-line typescript/no-unsafe-type-assertion
       this.set(key, val as V);
     }
     return val;
   }
 
-  set(key: K, value: V): this {
+  override set(key: K, value: V): this {
     if (this.has(key)) {
       this.delete(key);
     } else if (this.size >= this.maxSize) {

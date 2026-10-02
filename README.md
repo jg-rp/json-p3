@@ -21,22 +21,6 @@ We follow <a href="https://datatracker.ietf.org/doc/html/rfc9535">RFC 9535</a> a
 
 ---
 
-```javascript
-import { jsonpath } from "json-p3";
-
-const data = {
-  users: [
-    { name: "Sue", score: 100 },
-    { name: "John", score: 86 },
-    { name: "Sally", score: 84 },
-    { name: "Jane", score: 55 },
-  ],
-};
-
-const nodes = jsonpath.query("$.users[?@.score < 100].name", data);
-console.log(nodes.values()); // [ 'John', 'Sally', 'Jane' ]
-```
-
 ## Links
 
 - Docs: https://jg-rp.github.io/json-p3/
@@ -48,26 +32,29 @@ console.log(nodes.values()); // [ 'John', 'Sally', 'Jane' ]
 - NPM: https://www.npmjs.com/package/json-p3
 - Issue tracker: https://github.com/jg-rp/json-p3/issues
 
-## Bundles
+## Example
 
-JSON P3 is written in TypeScript, compiled to JavaScript using [Babel](https://babeljs.io/), and bundled using [Rollup](https://rollupjs.org/introduction/). The following, included bundles target `defaults, maintained node version`, as defined by [Browserslist](https://browsersl.ist/#q=defaults%2C+maintained+node+versions).
+```javascript
+import { jsonpath } from "json-p3";
 
-JSON P3 has zero runtime dependencies.
+const expr = "$.users[?@.status == 'pending'].name";
 
-| Bundle                | Description                                                                |
-| --------------------- | -------------------------------------------------------------------------- |
-| `json-p3.cjs.js`      | A CommonJS formatted bundle.                                               |
-| `json-p3.esm.js`      | An ECMAScript module formatted bundle.                                     |
-| `json-p3-iife.min.js` | A minified bundle formatted as an Immediately Invoked Function Expression. |
+const data = {
+  users: [
+    { id: "usr_101", name: "Alice", status: "pending" },
+    { id: "usr_102", name: "Bob", status: "active" },
+    { id: "usr_103", name: "Charlie", status: "pending" },
+  ],
+};
 
-## Compliance Environment Variables
+const nodes = jsonpath.find(expr, data);
 
-These environment variables control the location of the compliance test suite under test and if nondeterministic object iteration is enabled for those tests.
-
-| Environment Variable          | Description                                                                                                           |
-| ----------------------------- | --------------------------------------------------------------------------------------------------------------------- |
-| `JSONP3_CTS_PATH`             | The path to `cts.json` used by `compliance.test.ts`. Defaults to `tests/path/cts/cts.json`.                           |
-| `JSONP3_CTS_NONDETERMINISTIC` | When set to `true`, enables nondeterministic iteration of JSON objects for `compliance.test.ts`. Defaults to `false`. |
+console.log(nodes.map((n) => n.value)); // [ "Alice", "Charlie" ]
+console.log(nodes.map((n) => n.location)); // [ [ "users", 0, "name" ], [ "users", 2, "name" ] ]
+console.log(nodes.map((n) => n.normalizedPath())); // [ "$['users'][0]['name']", "$['users'][2]['name']" ]
+console.log(nodes.map((n) => n.shorthandPath())); // [ "$.users[0].name", "$.users[2].name" ]
+console.log(nodes.map((n) => n.pointer.toString())); // [ "/users/0/name", "/users/2/name" ]
+```
 
 ## Contributing
 

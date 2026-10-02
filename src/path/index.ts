@@ -1,112 +1,117 @@
-import { JSONValue } from "../types";
+import type { JSONValue } from "../types";
+import type { JSONPathQuery } from "./query";
+
 import { JSONPathEnvironment } from "./environment";
-import { JSONPathNode, JSONPathNodeList } from "./node";
-import { JSONPathQuery } from "./path";
+import { JSONPathNode } from "./nodes";
 
 export { JSONPathEnvironment } from "./environment";
 export type { JSONPathEnvironmentOptions } from "./environment";
 
-export { JSONPathSegment } from "./segments";
-export { JSONPathSelector } from "./selectors";
-export { JSONPathQuery } from "./path";
-export { JSONPathNodeList, JSONPathNode } from "./node";
-export { Token, TokenKind } from "./token";
+export { JSONPathQuery } from "./query";
+export { JSONPathNode } from "./nodes";
 
-export * as selectors from "./selectors";
-export * as expressions from "./expression";
+export { NODES_TYPE, VALUE_TYPE, LOGICAL_TYPE, Has, CachingRegexFunction } from "./functions";
+export type {
+  ExpressionType,
+  FilterFunction,
+  RegexFunctionOptions,
+  HasFilterFunctionOptions,
+} from "./functions";
+
 export * as functions from "./functions";
 
-export { FunctionExpressionType } from "./functions";
-export type { FilterFunction } from "./functions";
-
 export {
+  type Diagnostic,
   JSONPathError,
-  JSONPathIndexError,
-  JSONPathLexerError,
+  JSONPathNameError,
+  DetailedJSONPathError,
   JSONPathSyntaxError,
   JSONPathTypeError,
-  JSONPathRecursionLimitError,
+  JSONPathRecursionError,
 } from "./errors";
 
-export { Nothing, KEY_MARK } from "./types";
-export type {
-  JSONPathValue,
-  FilterContext,
-  SerializationOptions,
-} from "./types";
+export { Nothing } from "./nothing";
 
 export const DEFAULT_ENVIRONMENT = new JSONPathEnvironment();
 
 /**
- * Query JSON value _value_ with JSONPath expression _path_.
- * @param path - A JSONPath expression/query.
- * @param value - The JSON-like value the JSONPath query is applied to.
- * @returns A list of JSONPathNode objects, one for each value matched
- *  by _path_ in _value_.
- *
- * @throws {@link JSONPathSyntaxError}
- * If the path does not conform to standard syntax.
- *
- * @throws {@link JSONPathTypeError}
- * If filter function arguments are invalid, or filter expression are
- * used in an invalid way.
+ * Compile a JSONPath query expression for later evaluation.
  */
-export function query(path: string, value: JSONValue): JSONPathNodeList {
-  return DEFAULT_ENVIRONMENT.query(path, value);
+export function compile(expression: string): JSONPathQuery {
+  return DEFAULT_ENVIRONMENT.compile(expression);
 }
 
 /**
- * Lazily query JSON value _value_ with JSONPath expression _path_.
- * Lazy queries can be faster and more memory efficient when querying
- * large datasets, especially when using recursive decent selectors.
- *
- * @param path - A JSONPath expression/query.
- * @param value - The JSON-like value the JSONPath query is applied to.
- * @returns A sequence of {@link JSONPathNode} objects resulting from
- * applying _path_ to _value_.
- *
- * @throws {@link JSONPathSyntaxError}
- * If the path does not conform to standard syntax.
- *
- * @throws {@link JSONPathTypeError}
- * If filter function arguments are invalid, or filter expression are
- * used in an invalid way.
+ * Evaluate JSONPath query _expression_ against _data_ and return an array of matched nodes.
  */
-export function lazyQuery(
-  path: string,
-  value: JSONValue,
-): IterableIterator<JSONPathNode> {
-  return DEFAULT_ENVIRONMENT.lazyQuery(path, value);
+export function find(expression: string, data: JSONValue): JSONPathNode[] {
+  return DEFAULT_ENVIRONMENT.find(expression, data);
 }
 
 /**
- * Compile JSONPath _path_ for later use.
- * @param path - A JSONPath expression/query.
- * @returns A path object with a `query()` method.
- *
- * @throws {@link JSONPathSyntaxError}
- * If the path does not conform to standard syntax.
- *
- * @throws {@link JSONPathTypeError}
- * If filter function arguments are invalid, or filter expression are
- * used in an invalid way.
+ * Evaluate JSONPath query _expression_ against _data_ and return an array of matched nodes.
  */
-export function compile(path: string): JSONPathQuery {
-  return DEFAULT_ENVIRONMENT.compile(path);
+export function findIter(expression: string, data: JSONValue): IterableIterator<JSONPathNode> {
+  return DEFAULT_ENVIRONMENT.findIter(expression, data);
 }
 
 /**
- * Return a {@link JSONPathNode} instance for the first object found in
- * _value_ matching _path_.
+ * Evaluate JSONPath query _expression_ against _data_ and return an array of matched nodes.
  *
- * @param path - A JSONPath query.
- * @param value - JSON-like data to which the query _path_ will be applied.
- * @returns The first node in _value_ matching  _path_, or `undefined` if
- * there are no matches.
+ * @deprecated Use {@link find} instead.
  */
-export function match(
-  path: string,
-  value: JSONValue,
-): JSONPathNode | undefined {
-  return DEFAULT_ENVIRONMENT.match(path, value);
+export function query(expression: string, data: JSONValue): JSONPathNode[] {
+  return DEFAULT_ENVIRONMENT.query(expression, data);
+}
+
+/**
+ * Evaluate JSONPath query _expression_ against _data_ and generate nodes lazily.
+ *
+ * @deprecated Use {@link findIter} instead.
+ */
+export function lazyQuery(expression: string, data: JSONValue): IterableIterator<JSONPathNode> {
+  return DEFAULT_ENVIRONMENT.lazyQuery(expression, data);
+}
+
+/**
+ * Evaluate JSONPath query _expression_ against _data_ and return an array of values.
+ */
+export function findAll(expression: string, data: JSONValue): JSONValue[] {
+  return DEFAULT_ENVIRONMENT.findAll(expression, data);
+}
+
+/**
+ * Evaluate JSONPath query _expression_ against _data_ and generate values lazily.
+ *
+ * Note that some queries will require internal iterators to be materialized into arrays, so
+ * peak memory usage might be higher than expected.
+ */
+export function findAllIter(expression: string, data: JSONValue): IterableIterator<JSONValue> {
+  return DEFAULT_ENVIRONMENT.findAllIter(expression, data);
+}
+
+/**
+ * Evaluate JSONPath query _expression_ against _data_ and return the first matching node,
+ * or `undefined` if there were no matches.
+ */
+export function findOne(expression: string, data: JSONValue): JSONPathNode | undefined {
+  return DEFAULT_ENVIRONMENT.findOne(expression, data);
+}
+
+/**
+ * Evaluate JSONPath query _expression_ against _data_ and return the first matching node,
+ * or `undefined` if there were no matches.
+ *
+ * @deprecated Use {@link findOne} instead.
+ */
+export function match(expression: string, data: JSONValue): JSONPathNode | undefined {
+  return DEFAULT_ENVIRONMENT.match(expression, data);
+}
+
+/**
+ * Return `true` if JSONPath query _expression_ matches at least one node in `data`, or
+ * `false` otherwise.
+ */
+export function test(expression: string, data: JSONValue): boolean {
+  return DEFAULT_ENVIRONMENT.test(expression, data);
 }

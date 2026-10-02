@@ -3,16 +3,10 @@ on: [push, pull_request]
 jobs:
   test:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [18.x, 20.x, 22.x, 24.x]
     steps:
       - uses: actions/checkout@v7
         with:
           submodules: true
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v7
-        with:
-          node-version: ${{ matrix.node-version }}
-      - run: npm install --include=dev
-      - run: npm test
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install
+      - run: bun test

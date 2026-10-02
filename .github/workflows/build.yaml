@@ -3,16 +3,13 @@ on: [push, pull_request]
 jobs:
   build:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [20.x, 22.x, 24.x]
     steps:
       - uses: actions/checkout@v7
         with:
           submodules: true
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v7
-        with:
-          node-version: ${{ matrix.node-version }}
-      - run: npm install --include=dev
-      - run: npm run build
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install
+      - run: bunx playwright install chromium --with-deps
+      - run: bun run dist
+      - run: bun run test:browser
+      - run: bun run test:node

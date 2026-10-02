@@ -28,6 +28,7 @@ const sidebars = {
         "guides/jsonpath-syntax",
         "guides/jsonpath-extra",
         "guides/jsonpath-functions",
+        "guides/jsonpath-errors",
         "guides/json-pointer",
         "guides/json-patch",
       ],

@@ -1,0 +1,160 @@
+{
+  "tests": [
+    {
+      "name": "shorthand name",
+      "query": "$.a",
+      "canonical": "$['a']",
+      "shorthand": "$.a"
+    },
+    {
+      "name": "descendant, shorthand name",
+      "query": "$..a",
+      "canonical": "$..['a']",
+      "shorthand": "$..a"
+    },
+    {
+      "name": "double quotes, name selector",
+      "query": "$[\"a\"]",
+      "canonical": "$['a']",
+      "shorthand": "$.a"
+    },
+    {
+      "name": "double quotes, name selector, single quote",
+      "query": "$[\"a'\"]",
+      "canonical": "$['a\\'']",
+      "shorthand": "$[\"a'\"]"
+    },
+    {
+      "name": "single quotes, name selector, escaped single quote",
+      "query": "$['a\\'']",
+      "canonical": "$['a\\'']",
+      "shorthand": "$[\"a'\"]"
+    },
+    {
+      "name": "shorthand name, nested",
+      "query": "$.a.b.c",
+      "canonical": "$['a']['b']['c']",
+      "shorthand": "$.a.b.c"
+    },
+    {
+      "name": "double quotes, name selector, nested",
+      "query": "$[\"a\"][\"b\"][\"c\"]",
+      "canonical": "$['a']['b']['c']",
+      "shorthand": "$.a.b.c"
+    },
+    {
+      "name": "double quotes, name selector",
+      "query": "$[\"\\\\\"]",
+      "canonical": "$['\\\\']",
+      "shorthand": "$['\\\\']"
+    },
+    {
+      "name": "descendant, wildcard shorthand",
+      "query": "$..*",
+      "canonical": "$..[*]",
+      "shorthand": "$..*"
+    },
+    {
+      "name": "wildcard shorthand",
+      "query": "$.*",
+      "canonical": "$[*]",
+      "shorthand": "$.*"
+    },
+    {
+      "name": "double quotes, name selector, escaped backspace",
+      "query": "$[\"\\b\"]",
+      "canonical": "$['\\b']",
+      "shorthand": "$['\\b']"
+    },
+    {
+      "name": "double quotes, name selector, escaped form feed",
+      "query": "$[\"\\f\"]",
+      "canonical": "$['\\f']",
+      "shorthand": "$['\\f']"
+    },
+    {
+      "name": "double quotes, name selector, escaped line feed",
+      "query": "$[\"\\n\"]",
+      "canonical": "$['\\n']",
+      "shorthand": "$['\\n']"
+    },
+    {
+      "name": "double quotes, name selector, escaped carriage return",
+      "query": "$[\"\\r\"]",
+      "canonical": "$['\\r']",
+      "shorthand": "$['\\r']"
+    },
+    {
+      "name": "double quotes, name selector, escaped tab",
+      "query": "$[\"\\t\"]",
+      "canonical": "$['\\t']",
+      "shorthand": "$['\\t']"
+    },
+    {
+      "name": "negative index",
+      "query": "$[-2]",
+      "canonical": "$[-2]",
+      "shorthand": "$[-2]"
+    },
+    {
+      "name": "slice, negative",
+      "query": "$[-1:-4:-2]",
+      "canonical": "$[-1:-4:-2]",
+      "shorthand": "$[-1:-4:-2]"
+    },
+    {
+      "name": "slice, explicit step of one",
+      "query": "$[2:4:1]",
+      "canonical": "$[2:4:1]",
+      "shorthand": "$[2:4:1]"
+    },
+    {
+      "name": "slice, empty",
+      "query": "$[::]",
+      "canonical": "$[::1]",
+      "shorthand": "$[::1]"
+    },
+    {
+      "name": "filter, comparison",
+      "query": "$[?@.a=='b']",
+      "canonical": "$[?@['a'] == 'b']",
+      "shorthand": "$[?@.a == 'b']"
+    },
+    {
+      "name": "filter, logical",
+      "query": "$[?@.a&&@.b]",
+      "canonical": "$[?@['a'] && @['b']]",
+      "shorthand": "$[?@.a && @.b]"
+    },
+    {
+      "name": "filter, logical not",
+      "query": "$[?!@.a || !@.b]",
+      "canonical": "$[?!@['a'] || !@['b']]",
+      "shorthand": "$[?!@.a || !@.b]"
+    },
+    {
+      "name": "filter, logical not, grouped",
+      "query": "$[?!(@.a && !@.b)]",
+      "canonical": "$[?!(@['a'] && !@['b'])]",
+      "shorthand": "$[?!(@.a && !@.b)]"
+    },
+    {
+      "name": "filter, logical, explicit precedence",
+      "query": "$[?(@.a || @.b) && @.c]",
+      "canonical": "$[?(@['a'] || @['b']) && @['c']]",
+      "shorthand": "$[?(@.a || @.b) && @.c]"
+    },
+    {
+      "name": "multiple selectors",
+      "query": "$[ \"a\",\"b\" ]",
+      "canonical": "$['a', 'b']",
+      "shorthand": "$['a', 'b']"
+    },
+    {
+      "name": "multiple selectors, wildcard",
+      "query": "$[ \"a\",\"b\",* ]",
+      "canonical": "$['a', 'b', *]",
+      "shorthand": "$['a', 'b', *]"
+    }
+  ]
+}

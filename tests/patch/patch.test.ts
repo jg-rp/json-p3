@@ -1,11 +1,10 @@
-import { JSONPatch, JSONPatchError, OpObject, apply } from "../../src/patch";
+// oxlint-disable typescript/no-unsafe-type-assertion
+import { JSONPatch, JSONPatchError, type OpObject, apply } from "../../src/patch";
 
 describe("JSON Patch", () => {
   test("remove root", () => {
     const patch = new JSONPatch().remove("");
-    expect(() => patch.apply({ foo: "bar" })).toThrow(
-      "can't remove root (remove:0)",
-    );
+    expect(() => patch.apply({ foo: "bar" })).toThrow("can't remove root (remove:0)");
   });
   test("test op failure", () => {
     const patch = new JSONPatch().test("/baz", "bar");
@@ -14,9 +13,7 @@ describe("JSON Patch", () => {
   test("add to nonexistent target", () => {
     const patch = new JSONPatch().add("/baz/bat", "qux");
     expect(() => patch.apply({ foo: "bar" })).toThrow(JSONPatchError);
-    expect(() => patch.apply({ foo: "bar" })).toThrow(
-      "no such property '/baz' (add:0)",
-    );
+    expect(() => patch.apply({ foo: "bar" })).toThrow("no such property '/baz' (add:0)");
   });
   test("move to child", () => {
     expect(() => {
@@ -33,9 +30,7 @@ describe("JSON Patch", () => {
   test("array index out of range", () => {
     const patch = new JSONPatch().add("/foo/7", 99);
     expect(() => patch.apply({ foo: [1, 2, 3] })).toThrow(JSONPatchError);
-    expect(() => patch.apply({ foo: [1, 2, 3] })).toThrow(
-      "index out of range (add:0)",
-    );
+    expect(() => patch.apply({ foo: [1, 2, 3] })).toThrow("index out of range (add:0)");
   });
   test("to array", () => {
     const patchObj = [
@@ -54,41 +49,31 @@ describe("JSON Patch", () => {
     const data = { foo: [1, 2, 3] };
     const patch = new JSONPatch().remove("/foo/99");
     expect(() => patch.apply(data)).toThrow(JSONPatchError);
-    expect(() => patch.apply(data)).toThrow(
-      "can't remove nonexistent item (remove:0)",
-    );
+    expect(() => patch.apply(data)).toThrow("can't remove nonexistent item (remove:0)");
   });
   test("remove nonexistent property", () => {
     const data = { foo: { bar: [1, 2, 3] } };
     const patch = new JSONPatch().remove("/foo/baz");
     expect(() => patch.apply(data)).toThrow(JSONPatchError);
-    expect(() => patch.apply(data)).toThrow(
-      "can't remove nonexistent property (remove:0)",
-    );
+    expect(() => patch.apply(data)).toThrow("can't remove nonexistent property (remove:0)");
   });
   test("replace nonexistent array item", () => {
     const data = { foo: [1, 2, 3] };
     const patch = new JSONPatch().replace("/foo/99", 42);
     expect(() => patch.apply(data)).toThrow(JSONPatchError);
-    expect(() => patch.apply(data)).toThrow(
-      "can't replace nonexistent item (replace:0)",
-    );
+    expect(() => patch.apply(data)).toThrow("can't replace nonexistent item (replace:0)");
   });
   test("replace nonexistent property", () => {
     const data = { foo: { bar: [1, 2, 3] } };
     const patch = new JSONPatch().replace("/foo/baz", 42);
     expect(() => patch.apply(data)).toThrow(JSONPatchError);
-    expect(() => patch.apply(data)).toThrow(
-      "can't replace nonexistent property (replace:0)",
-    );
+    expect(() => patch.apply(data)).toThrow("can't replace nonexistent property (replace:0)");
   });
   test("move, source does no exist", () => {
     const data = { foo: { bar: [1, 2, 3] } };
     const patch = new JSONPatch().move("/foo/baz", "/foo/qux");
     expect(() => patch.apply(data)).toThrow(JSONPatchError);
-    expect(() => patch.apply(data)).toThrow(
-      "can't move nonexistent property (move:0)",
-    );
+    expect(() => patch.apply(data)).toThrow("can't move nonexistent property (move:0)");
   });
   test("move to root", () => {
     const data = { foo: { bar: [1, 2, 3] } };
@@ -109,15 +94,11 @@ describe("JSON Patch", () => {
   });
   test("constructor, missing path", () => {
     const opObj: OpObject = { op: "add", value: "foo" } as never;
-    expect(() => new JSONPatch([opObj])).toThrow(
-      "missing property 'path' (add:0)",
-    );
+    expect(() => new JSONPatch([opObj])).toThrow("missing property 'path' (add:0)");
   });
   test("constructor, missing value", () => {
-    const opObj: OpObject = { op: "add", path: "/foo" } as never;
-    expect(() => new JSONPatch([opObj])).toThrow(
-      "missing property 'value' (add:0)",
-    );
+    const opObj: OpObject = { op: "add", path: "/foo" };
+    expect(() => new JSONPatch([opObj])).toThrow("missing property 'value' (add:0)");
   });
   test("constructor, path is not a string", () => {
     const opObj: OpObject = { op: "add", path: 42, value: "foo" } as never;
@@ -128,7 +109,7 @@ describe("JSON Patch", () => {
   test("constructor, invalid pointer", () => {
     const opObj: OpObject = { op: "add", path: "bar/", value: "foo" };
     expect(() => new JSONPatch([opObj])).toThrow(
-      '"bar/" pointers must start with a slash or be the empty string (add:0)',
+      "pointers must start with a slash or be the empty string (add:0)",
     );
   });
   test("pointer is not a string", () => {
@@ -139,7 +120,7 @@ describe("JSON Patch", () => {
   });
   test("build, invalid pointer", () => {
     expect(() => new JSONPatch().add("bar/", "foo")).toThrow(
-      '"bar/" pointers must start with a slash or be the empty string (add:0)',
+      "pointers must start with a slash or be the empty string (add:0)",
     );
   });
   test("move, end of array", () => {

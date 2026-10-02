@@ -109,8 +109,20 @@ export default function Playground() {
     try {
       setQuery(value.trim());
       const rv = ENV.query(value.trim(), data);
-      setResult(JSON.stringify(rv.values(), undefined, "  "));
-      setResultPaths(JSON.stringify(rv.paths(), undefined, "  "));
+      setResult(
+        JSON.stringify(
+          rv.map((n) => n.value),
+          undefined,
+          "  ",
+        ),
+      );
+      setResultPaths(
+        JSON.stringify(
+          rv.map((n) => n.normalizedPath()),
+          undefined,
+          "  ",
+        ),
+      );
     } catch (error) {
       setResult(JSON.stringify(String(error), undefined, "  "));
       setResultPaths("[]");
@@ -127,8 +139,20 @@ export default function Playground() {
       const _data = JSON.parse(value);
       setData(_data);
       const rv = ENV.query(query, _data);
-      setResult(JSON.stringify(rv.values(), undefined, "  "));
-      setResultPaths(JSON.stringify(rv.paths(), undefined, "  "));
+      setResult(
+        JSON.stringify(
+          rv.map((n) => n.value),
+          undefined,
+          "  ",
+        ),
+      );
+      setResultPaths(
+        JSON.stringify(
+          rv.map((n) => n.normalizedPath()),
+          undefined,
+          "  ",
+        ),
+      );
     } catch (error) {
       setResult(JSON.stringify(String(error), undefined, "  "));
       setResultPaths("[]");

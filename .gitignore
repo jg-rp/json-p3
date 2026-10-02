@@ -23,6 +23,7 @@ tests/dev.test.ts
 tests/path/dev.test.ts
 dev.js
 dev.mjs
+dev.ts
 
 # system
 .DS_Store

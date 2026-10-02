@@ -1,27 +1,16 @@
-import {
-  query,
-  compile,
-  lazyQuery,
-  JSONPathNodeList,
-  JSONPathQuery,
-} from "../../src";
+import { query, compile, findIter, JSONPathQuery } from "../../src/json-p3";
 
 describe("issues", () => {
   test("issue 40", () => {
     const data = { a: "d449f7a5-9153-4f39-a05d-dca1c35538ec" };
-    const path =
-      '$[?search(@, "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{10}")]';
+    const path = '$[?search(@, "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{10}")]';
     const nodes = query(path, data);
-    expect(nodes.values()).toStrictEqual([
-      "d449f7a5-9153-4f39-a05d-dca1c35538ec",
-    ]);
+    expect(nodes.map((n) => n.value)).toStrictEqual(["d449f7a5-9153-4f39-a05d-dca1c35538ec"]);
   });
 
   test("issue 42", () => {
     // This was failing with an "unbalanced parentheses" syntax error.
-    expect(compile("$[? count(@.likes[? @.location]) > 3]")).toBeInstanceOf(
-      JSONPathQuery,
-    );
+    expect(compile("$[? count(@.likes[? @.location]) > 3]")).toBeInstanceOf(JSONPathQuery);
   });
 
   test("issue 47", () => {
@@ -33,10 +22,10 @@ describe("issues", () => {
 
     for (const t of cases) {
       const nodes = query(t.path, t.data);
-      expect(nodes.values()).toStrictEqual(t.want);
+      expect(nodes.map((n) => n.value)).toStrictEqual(t.want);
 
-      const it = lazyQuery(t.path, t.data);
-      const rv = new JSONPathNodeList(Array.from(it)).values();
+      const it = findIter(t.path, t.data);
+      const rv = Array.from(it).map((n) => n.value);
       expect(rv).toStrictEqual(t.want);
     }
   });

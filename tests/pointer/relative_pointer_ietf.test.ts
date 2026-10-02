@@ -30,8 +30,9 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import type { JSONValue } from "../../src/types";
+
 import { JSONPointer, RelativeJSONPointer } from "../../src/pointer";
-import { JSONValue } from "../../src/types";
 
 type TestCase = {
   pointer: string;
@@ -60,15 +61,12 @@ const TEST_CASES: TestCase[] = [
 ];
 
 describe("IETF examples", () => {
-  test.each<TestCase>(TEST_CASES)(
-    "$pointer -> $rel",
-    ({ pointer, rel, want }: TestCase) => {
-      const p = new JSONPointer(pointer);
-      const r = new RelativeJSONPointer(rel);
-      const newPointer = r.to(p);
-      expect(newPointer.resolve(DOCUMENT)).toStrictEqual(want);
-      expect(p.to(rel).toString()).toBe(newPointer.toString());
-      expect(r.toString()).toBe(rel);
-    },
-  );
+  test.each<TestCase>(TEST_CASES)("$pointer -> $rel", ({ pointer, rel, want }: TestCase) => {
+    const p = JSONPointer.fromString(pointer);
+    const r = new RelativeJSONPointer(rel);
+    const newPointer = r.to(p);
+    expect(newPointer.resolve(DOCUMENT)).toStrictEqual(want);
+    expect(p.to(rel).toString()).toBe(newPointer.toString());
+    expect(r.toString()).toBe(rel);
+  });
 });

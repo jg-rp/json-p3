@@ -40,7 +40,7 @@
     "dist": "rm -rf ./dist && bun run build:js && bun run build:types",
     "lint": "bun run oxlint",
     "type-check": "bun run tsc -p tsconfig.build.json --noEmit",
-    "publish": "bun run dist && bun publish",
+    "publish": "bun run dist",
     "fmt": "bun run oxfmt",
     "fmt:check": "bun run oxfmt --check"
   },

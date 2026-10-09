@@ -1,6 +1,6 @@
 # JSON P3 Change Log
 
-## Version 3.0.1 (unreleased)
+## Version 3.0.1
 
 **Fixes**
 
@@ -9,8 +9,6 @@
 - Fixed `\u` escape sequence rejection of code points less than or equal to 0x1F. The spec requires us to reject literals of 0x1F or lower, not escape sequences.
 
 - Fixed the shorthand name selector to reject names containing `-`, as required by the spec.
-
-**Packaging**
 
 - Changed all relative imports to use an explicit `.js` file extension. See [#55](https://github.com/jg-rp/json-p3/issues/55).
 

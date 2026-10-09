@@ -1,4 +1,11 @@
-import { query, compile, findIter, JSONPathQuery } from "../../src/json-p3";
+import {
+  query,
+  compile,
+  findAll,
+  findIter,
+  JSONPathQuery,
+  JSONPathSyntaxError,
+} from "../../src/json-p3";
 
 describe("issues", () => {
   test("issue 40", () => {
@@ -28,5 +35,33 @@ describe("issues", () => {
       const rv = Array.from(it).map((n) => n.value);
       expect(rv).toStrictEqual(t.want);
     }
+  });
+
+  test("python jsonpath issue 24", () => {
+    const data = { "\u001f": 1, é: 2 };
+    expect(findAll("$['\\u001f']", data)).toStrictEqual([1]);
+    expect(findAll("$['\\u00e9']", data)).toStrictEqual([2]);
+    expect(findAll("$['\\u00E9']", data)).toStrictEqual([2]);
+  });
+
+  test("python jsonpath issue 25", () => {
+    expect(() => {
+      compile("$.a-b");
+    }).toThrow(JSONPathSyntaxError);
+
+    expect(findAll("$.😀", { "😀": 1 })).toStrictEqual([1]);
+    expect(findAll("$['😀']", { "😀": 1 })).toStrictEqual([1]);
+  });
+
+  test("python jsonpath issue 26", () => {
+    expect(() => compile("$[1,]")).toThrow(JSONPathSyntaxError);
+    expect(() => compile("$[1, ]")).toThrow(JSONPathSyntaxError);
+    expect(() => compile("$[ 1, ]")).toThrow(JSONPathSyntaxError);
+  });
+
+  test("python jsonpath issue 27", () => {
+    expect(findAll("$[?@ > false]", [0, 1, true, false])).toStrictEqual([]);
+    expect(findAll("$[?@ < true]", [0, 1, true])).toStrictEqual([]);
+    expect(findAll("$[?@ >= 0]", [true, false, 0])).toStrictEqual([0]);
   });
 });

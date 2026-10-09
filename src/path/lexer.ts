@@ -4,7 +4,7 @@ import { Tokens, type Token, type TokenKind } from "./token";
 const reFloat = /(:?-?\d+\.\d+(?:[eE][+-]?\d+)?)|(-?\d+[eE]-\d+)/y;
 const reInt = /-?\d+/y;
 const reInteger = /-?\d+[eE]\+?\d+/y;
-const reName = /[\u0080-\uFFFFa-zA-Z_][\u0080-\uFFFFa-zA-Z0-9_-]*/y;
+const reName = /[\u0080-\u{10FFFF}a-zA-Z_][\u0080-\u{10FFFF}a-zA-Z0-9_]*/uy;
 const reTrivia = /[ \n\r\t]+/;
 
 export function tokenize(source: string): Token[] {
@@ -325,7 +325,7 @@ function isNameFirst(byte: number): boolean {
     (byte >= 65 && byte <= 90) ||
     (byte >= 97 && byte <= 122) ||
     byte == 95 ||
-    (byte >= 0x80 && byte <= 0xffff)
+    (byte >= 0x80 && byte <= 0x10ffff)
   );
 }
 

@@ -1,6 +1,6 @@
 # JSONPath Query Syntax
 
-This page provides a short introduction to JSONPath syntax. We follow [RFC 6535](https://datatracker.ietf.org/doc/html/rfc9535) closely and test against the [JSONPath Compliance Test Suite](https://github.com/jsonpath-standard/jsonpath-compliance-test-suite).
+This page provides a short introduction to JSONPath syntax. We follow [RFC 9535](https://datatracker.ietf.org/doc/html/rfc9535) closely and test against the [JSONPath Compliance Test Suite](https://github.com/jsonpath-standard/jsonpath-compliance-test-suite).
 
 ## JSONPath Terminology
 

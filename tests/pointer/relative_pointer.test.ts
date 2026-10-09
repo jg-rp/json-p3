@@ -3,7 +3,7 @@ import {
   JSONPointerIndexError,
   JSONPointerSyntaxError,
   RelativeJSONPointer,
-} from "../../src/pointer";
+} from "../../src/pointer/index.js";
 
 describe("relative JSON pointer", () => {
   test("syntax error", () => {

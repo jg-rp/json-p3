@@ -1,6 +1,6 @@
 import { readFileSync } from "fs";
 
-import { compile } from "../../src/json-p3";
+import { compile } from "../../src/json-p3.js";
 
 type Case = {
   name: string;

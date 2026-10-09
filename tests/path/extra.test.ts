@@ -3,7 +3,7 @@ import {
   JSONPathEnvironment,
   JSONPathSyntaxError,
   type JSONValue,
-} from "../../src/json-p3";
+} from "../../src/json-p3.js";
 
 type TestCase = {
   description: string;

@@ -1,4 +1,4 @@
-import { find, findIter } from "../../src/json-p3";
+import { find, findIter } from "../../src/json-p3.js";
 
 // Selecting from an array large enough that spreading the result into
 // function call arguments would exceed the engine's argument limit and

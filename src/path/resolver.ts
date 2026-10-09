@@ -1,7 +1,7 @@
-import { deepEquals } from "../deep_equals";
-import { isNumber, isString } from "../types";
-import { BasicNodeList, NodeList } from "./nodes";
-import { Nothing } from "./nothing";
+import { deepEquals } from "../deep_equals.js";
+import { isNumber, isString } from "../types.js";
+import { BasicNodeList, NodeList } from "./nodes.js";
+import { Nothing } from "./nothing.js";
 
 export abstract class Resolver {
   isTruthy(value: unknown): boolean {

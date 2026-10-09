@@ -30,9 +30,9 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import type { JSONValue } from "../../src/types";
+import type { JSONValue } from "../../src/types.js";
 
-import { JSONPointer, RelativeJSONPointer } from "../../src/pointer";
+import { JSONPointer, RelativeJSONPointer } from "../../src/pointer/index.js";
 
 type TestCase = {
   pointer: string;

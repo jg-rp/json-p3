@@ -1,4 +1,4 @@
-import { compile } from "../../src/json-p3";
+import { compile } from "../../src/json-p3.js";
 
 const cases = [
   { expr: "$.a", data: { a: 1 }, want: "$.a" },

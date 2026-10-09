@@ -29,8 +29,8 @@ import {
   type Expression,
   type Segment,
   type Selector,
-} from "./ast";
-import { JSONPathError } from "./errors";
+} from "./ast.js";
+import { JSONPathError } from "./errors.js";
 
 export const RE_IDENT = /^[\p{ID_Start}_]\p{ID_Continue}*$/u;
 

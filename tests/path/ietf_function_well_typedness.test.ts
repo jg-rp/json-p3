@@ -37,7 +37,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import type { NodeList } from "../../src/path/nodes";
+import type { NodeList } from "../../src/path/nodes.js";
 
 import {
   type FilterFunction,
@@ -46,7 +46,7 @@ import {
   VALUE_TYPE,
   JSONPathEnvironment,
   JSONPathTypeError,
-} from "../../src/json-p3";
+} from "../../src/json-p3.js";
 
 type TestCase = {
   description: string;

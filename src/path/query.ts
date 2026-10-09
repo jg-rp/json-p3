@@ -1,11 +1,11 @@
-import type { JSONValue } from "../types";
-import type { Segment } from "./ast";
-import type { JSONPathEnvironment } from "./environment";
+import type { JSONValue } from "../types.js";
+import type { Segment } from "./ast.js";
+import type { JSONPathEnvironment } from "./environment.js";
 
-import { JSONPathNode } from "./nodes";
-import { BasicResolver } from "./resolver_basic";
-import { StandardResolver } from "./resolver_standard";
-import { canonicalPath, shorthandPath } from "./serialize";
+import { JSONPathNode } from "./nodes.js";
+import { BasicResolver } from "./resolver_basic.js";
+import { StandardResolver } from "./resolver_standard.js";
+import { canonicalPath, shorthandPath } from "./serialize.js";
 
 export class JSONPathQuery {
   constructor(

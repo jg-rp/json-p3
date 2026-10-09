@@ -1,4 +1,4 @@
-import { isArray, isNumber, isPlainObject, isString, type JSONValue } from "../types";
+import { isArray, isNumber, isPlainObject, isString, type JSONValue } from "../types.js";
 import {
   JSONPointerError,
   JSONPointerIndexError,
@@ -6,7 +6,7 @@ import {
   JSONPointerResolutionError,
   JSONPointerSyntaxError,
   JSONPointerTypeError,
-} from "./errors";
+} from "./errors.js";
 
 /**
  * The symbol indicating the absence of a JSON value.

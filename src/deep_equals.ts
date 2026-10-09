@@ -8,7 +8,7 @@
  * entries in a different order to compare equal.
  */
 
-import { isPlainObject } from "./types";
+import { isPlainObject } from "./types.js";
 
 export function deepEquals(a: unknown, b: unknown): boolean {
   if (a === b) {

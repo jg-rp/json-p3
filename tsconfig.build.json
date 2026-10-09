@@ -10,7 +10,8 @@
     "outDir": "./dist",
     "rootDir": "./src",
 
-    "module": "ESNext",
+    "module": "nodenext",
+    "moduleResolution" :"nodenext",
 
     "allowImportingTsExtensions": false
   },

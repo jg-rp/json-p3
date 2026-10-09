@@ -10,6 +10,10 @@
 
 - Fixed the shorthand name selector to reject names containing `-`, as required by the spec.
 
+**Packaging**
+
+- Changed all relative imports to use an explicit `.js` file extension. See [#55](https://github.com/jg-rp/json-p3/issues/55).
+
 ## Version 3.0.0
 
 This release includes several breaking API changes and performance improvements. JSONPath, Pointer and Patch syntax and semantics are unchanged.

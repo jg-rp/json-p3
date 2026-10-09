@@ -1,4 +1,4 @@
-import { LRUCache } from "../../src/path/lru_cache";
+import { LRUCache } from "../../src/path/lru_cache.js";
 
 describe("lru_cache", () => {
   test("init with entries", () => {

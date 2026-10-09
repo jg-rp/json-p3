@@ -5,7 +5,7 @@ import {
   findIter,
   JSONPathQuery,
   JSONPathSyntaxError,
-} from "../../src/json-p3";
+} from "../../src/json-p3.js";
 
 describe("issues", () => {
   test("issue 40", () => {

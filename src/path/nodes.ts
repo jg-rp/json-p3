@@ -1,8 +1,8 @@
-import type { OpObject } from "../patch";
+import type { OpObject } from "../patch/index.js";
 
-import { JSONPointer } from "../pointer";
-import { isString, type JSONValue } from "../types";
-import { canonicalString, RE_IDENT, shorthandString } from "./serialize";
+import { JSONPointer } from "../pointer/index.js";
+import { isString, type JSONValue } from "../types.js";
+import { canonicalString, RE_IDENT, shorthandString } from "./serialize.js";
 
 /**
  * A light weight transient node used during JSONPath evaluation.

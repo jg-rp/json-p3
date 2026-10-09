@@ -1,10 +1,10 @@
 import { check } from "iregexp-check";
 
-import { isArray, isPlainObject, isString } from "../types";
-import { JSONPathError } from "./errors";
-import { LRUCache } from "./lru_cache";
-import { BasicNodeList, NodeList } from "./nodes";
-import { Nothing } from "./nothing";
+import { isArray, isPlainObject, isString } from "../types.js";
+import { JSONPathError } from "./errors.js";
+import { LRUCache } from "./lru_cache.js";
+import { BasicNodeList, NodeList } from "./nodes.js";
+import { Nothing } from "./nothing.js";
 
 export const LOGICAL_TYPE = 1 as const;
 export const NODES_TYPE = 2 as const;

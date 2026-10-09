@@ -1,12 +1,12 @@
-import type { JSONValue } from "../types";
-import type { JSONPathNode } from "./nodes";
-import type { Parser } from "./parser";
-import type { Token } from "./token";
+import type { JSONValue } from "../types.js";
+import type { JSONPathNode } from "./nodes.js";
+import type { Parser } from "./parser.js";
+import type { Token } from "./token.js";
 
-import { Count, Length, Match, Search, Value, type FilterFunction } from "./functions";
-import { tokenize } from "./lexer";
-import { StandardParser } from "./parser_standard";
-import { JSONPathQuery } from "./query";
+import { Count, Length, Match, Search, Value, type FilterFunction } from "./functions.js";
+import { tokenize } from "./lexer.js";
+import { StandardParser } from "./parser_standard.js";
+import { JSONPathQuery } from "./query.js";
 
 export type ParserClass = new (env: JSONPathEnvironment, source: string, tokens: Token[]) => Parser;
 

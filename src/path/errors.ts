@@ -1,4 +1,4 @@
-import { getTokenValue, type Token } from "./token";
+import { getTokenValue, type Token } from "./token.js";
 
 export type Diagnostic = {
   span: Token;

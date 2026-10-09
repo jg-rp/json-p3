@@ -1,8 +1,8 @@
-import type { JSONValue } from "../types";
+import type { JSONValue } from "../types.js";
 
-import { JSONPointer, UNDEFINED } from "./pointer";
+import { JSONPointer, UNDEFINED } from "./pointer.js";
 
-export { JSONPointer, UNDEFINED, RelativeJSONPointer } from "./pointer";
+export { JSONPointer, UNDEFINED, RelativeJSONPointer } from "./pointer.js";
 
 export {
   JSONPointerError,
@@ -11,7 +11,7 @@ export {
   JSONPointerKeyError,
   JSONPointerSyntaxError,
   JSONPointerTypeError,
-} from "./errors";
+} from "./errors.js";
 
 /**
  * Resolve JSON Pointer _pointer_ against JSON-like data _value_.

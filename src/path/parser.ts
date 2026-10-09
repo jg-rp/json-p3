@@ -1,4 +1,4 @@
-import type { JSONPathEnvironment } from "./environment";
+import type { JSONPathEnvironment } from "./environment.js";
 
 import {
   ABSOLUTE_QUERY_EXPRESSION,
@@ -36,16 +36,16 @@ import {
   type RelativeQueryExpression,
   type Segment,
   type StringExpression,
-} from "./ast";
+} from "./ast.js";
 import {
   JSONPathIndexError,
   JSONPathNameError,
   JSONPathRecursionError,
   JSONPathSyntaxError,
   JSONPathTypeError,
-} from "./errors";
-import { LOGICAL_TYPE, NODES_TYPE, VALUE_TYPE, type ExpressionType } from "./functions";
-import { getTokenValue, REVERSE_T, Tokens, type Token, type TokenKind } from "./token";
+} from "./errors.js";
+import { LOGICAL_TYPE, NODES_TYPE, VALUE_TYPE, type ExpressionType } from "./functions.js";
+import { getTokenValue, REVERSE_T, Tokens, type Token, type TokenKind } from "./token.js";
 
 export abstract class Parser {
   protected length: number;

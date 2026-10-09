@@ -1,6 +1,6 @@
 {
   "name": "json-p3",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "JSONPath, JSON Pointer and JSON Patch",
   "keywords": [
     "JSON",

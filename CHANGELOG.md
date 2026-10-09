@@ -1,5 +1,15 @@
 # JSON P3 Change Log
 
+## Version 3.0.1 (unreleased)
+
+**Fixes**
+
+- Fixed trailing comma detection in bracketed segments. Previously we failed to consume whitespace after a comma and before checking for `]`.
+
+- Fixed `\u` escape sequence rejection of code points less than or equal to 0x1F. The spec requires us to reject literals of 0x1F or lower, not escape sequences.
+
+- Fixed the shorthand name selector to reject names containing `-`, as required by the spec.
+
 ## Version 3.0.0
 
 This release includes several breaking API changes and performance improvements. JSONPath, Pointer and Patch syntax and semantics are unchanged.

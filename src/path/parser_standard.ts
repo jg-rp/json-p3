@@ -264,6 +264,7 @@ export class StandardParser extends Parser {
 
         case Tokens.COMMA:
           this.pos++;
+          this.skip(Tokens.TRIVIA);
 
           if (this.kind() == Tokens.RIGHT_BRACKET) {
             throw new JSONPathSyntaxError("unexpected trailing comma", this.current(), this.source);

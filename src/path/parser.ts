@@ -460,10 +460,6 @@ export abstract class Parser {
 
             unescaped += String.fromCharCode(codePoint, lowSurrogate);
           } else {
-            if (codePoint < 0x1f) {
-              throw new JSONPathSyntaxError("invalid escape sequence", token, this.source);
-            }
-
             unescaped += String.fromCharCode(codePoint);
           }
       }

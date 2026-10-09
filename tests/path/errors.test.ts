@@ -1,12 +1,12 @@
-import { compile, type JSONValue } from "../../src/json-p3";
-import { JSONPathEnvironment } from "../../src/path/environment";
+import { compile, type JSONValue } from "../../src/json-p3.js";
+import { JSONPathEnvironment } from "../../src/path/environment.js";
 import {
   JSONPathRecursionError,
   JSONPathSyntaxError,
   JSONPathTypeError,
   JSONPathNameError,
   JSONPathIndexError,
-} from "../../src/path/errors";
+} from "../../src/path/errors.js";
 
 describe("syntax error", () => {
   const env = new JSONPathEnvironment();

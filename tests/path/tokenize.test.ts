@@ -1,6 +1,6 @@
-import { JSONPathSyntaxError } from "../../src/path/errors";
-import { tokenize } from "../../src/path/lexer";
-import { getTokenValue, Tokens, type TokenKind } from "../../src/path/token";
+import { JSONPathSyntaxError } from "../../src/path/errors.js";
+import { tokenize } from "../../src/path/lexer.js";
+import { getTokenValue, Tokens, type TokenKind } from "../../src/path/token.js";
 
 function tokens(source: string): Array<[TokenKind, string]> {
   return tokenize(source).map((token) => {

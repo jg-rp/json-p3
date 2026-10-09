@@ -37,9 +37,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import type { JSONValue } from "../../src/types";
+import type { JSONValue } from "../../src/types.js";
 
-import { query } from "../../src/json-p3";
+import { query } from "../../src/json-p3.js";
 
 type TestCase = {
   description: string;

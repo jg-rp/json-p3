@@ -1,24 +1,24 @@
-import type { JSONValue } from "../types";
-import type { JSONPathQuery } from "./query";
+import type { JSONValue } from "../types.js";
+import type { JSONPathQuery } from "./query.js";
 
-import { JSONPathEnvironment } from "./environment";
-import { JSONPathNode } from "./nodes";
+import { JSONPathEnvironment } from "./environment.js";
+import { JSONPathNode } from "./nodes.js";
 
-export { JSONPathEnvironment } from "./environment";
-export type { JSONPathEnvironmentOptions } from "./environment";
+export { JSONPathEnvironment } from "./environment.js";
+export type { JSONPathEnvironmentOptions } from "./environment.js";
 
-export { JSONPathQuery } from "./query";
-export { JSONPathNode } from "./nodes";
+export { JSONPathQuery } from "./query.js";
+export { JSONPathNode } from "./nodes.js";
 
-export { NODES_TYPE, VALUE_TYPE, LOGICAL_TYPE, Has, CachingRegexFunction } from "./functions";
+export { NODES_TYPE, VALUE_TYPE, LOGICAL_TYPE, Has, CachingRegexFunction } from "./functions.js";
 export type {
   ExpressionType,
   FilterFunction,
   RegexFunctionOptions,
   HasFilterFunctionOptions,
-} from "./functions";
+} from "./functions.js";
 
-export * as functions from "./functions";
+export * as functions from "./functions.js";
 
 export {
   type Diagnostic,
@@ -28,9 +28,9 @@ export {
   JSONPathSyntaxError,
   JSONPathTypeError,
   JSONPathRecursionError,
-} from "./errors";
+} from "./errors.js";
 
-export { Nothing } from "./nothing";
+export { Nothing } from "./nothing.js";
 
 export const DEFAULT_ENVIRONMENT = new JSONPathEnvironment();
 

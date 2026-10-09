@@ -1,6 +1,6 @@
 export const version = process.env.PACKAGE_VERSION;
 
-export * as jsonpath from "./path";
+export * as jsonpath from "./path/index.js";
 
 export {
   DEFAULT_ENVIRONMENT,
@@ -24,15 +24,15 @@ export {
   findOne,
   match,
   test,
-} from "./path";
+} from "./path/index.js";
 
-export type { FilterFunction, ExpressionType, JSONPathEnvironmentOptions } from "./path";
+export type { FilterFunction, ExpressionType, JSONPathEnvironmentOptions } from "./path/index.js";
 
-export { JSONPathNode } from "./path";
+export { JSONPathNode } from "./path/index.js";
 
-export type { JSONValue } from "./types";
+export type { JSONValue } from "./types.js";
 
-export * as jsonpointer from "./pointer";
+export * as jsonpointer from "./pointer/index.js";
 export {
   JSONPointer,
   RelativeJSONPointer,
@@ -44,8 +44,8 @@ export {
   JSONPointerResolutionError,
   JSONPointerSyntaxError,
   JSONPointerTypeError,
-} from "./pointer";
+} from "./pointer/index.js";
 
-export * as jsonpatch from "./patch";
-export { JSONPatch, JSONPatchError, JSONPatchTestFailure, apply } from "./patch";
-export type { OpObject } from "./patch";
+export * as jsonpatch from "./patch/index.js";
+export { JSONPatch, JSONPatchError, JSONPatchTestFailure, apply } from "./patch/index.js";
+export type { OpObject } from "./patch/index.js";

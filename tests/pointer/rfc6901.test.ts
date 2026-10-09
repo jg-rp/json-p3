@@ -32,8 +32,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { JSONPointer } from "../../src/pointer";
-import { type JSONValue } from "../../src/types";
+import { JSONPointer } from "../../src/pointer/index.js";
+import { type JSONValue } from "../../src/types.js";
 
 type Case = {
   pointer: string;

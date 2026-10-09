@@ -1,6 +1,6 @@
-import type { JSONPathEnvironment } from "./environment";
+import type { JSONPathEnvironment } from "./environment.js";
 
-import { hasStringKey, isArray, isPlainObject, type JSONValue } from "../types";
+import { hasStringKey, isArray, isPlainObject, type JSONValue } from "../types.js";
 import {
   ABSOLUTE_QUERY_EXPRESSION,
   AND_EXPRESSION,
@@ -32,12 +32,12 @@ import {
   type Expression,
   type Segment,
   type Selector,
-} from "./ast";
-import { JSONPathError, JSONPathRecursionError } from "./errors";
-import { NODES_TYPE } from "./functions";
-import { NodeList, type InternalNode } from "./nodes";
-import { Nothing } from "./nothing";
-import { Resolver } from "./resolver";
+} from "./ast.js";
+import { JSONPathError, JSONPathRecursionError } from "./errors.js";
+import { NODES_TYPE } from "./functions.js";
+import { NodeList, type InternalNode } from "./nodes.js";
+import { Nothing } from "./nothing.js";
+import { Resolver } from "./resolver.js";
 
 export type StandardResolverClass = new (
   env: JSONPathEnvironment,

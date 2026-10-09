@@ -1,11 +1,11 @@
-import { JSONPointer, resolve, UNDEFINED } from "../../src/pointer";
 import {
   JSONPointerIndexError,
   JSONPointerKeyError,
   JSONPointerSyntaxError,
   JSONPointerTypeError,
   JSONPointerResolutionError,
-} from "../../src/pointer/errors";
+} from "../../src/pointer/errors.js";
+import { JSONPointer, resolve, UNDEFINED } from "../../src/pointer/index.js";
 
 describe("resolve JSON pointer", () => {
   test("string representation", () => {

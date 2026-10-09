@@ -1,8 +1,8 @@
-import { deepEquals } from "../deep_equals";
-import { JSONPointer, UNDEFINED } from "../pointer";
-import { JSONPointerError, JSONPointerResolutionError } from "../pointer/errors";
-import { type JSONValue, isArray, isPlainObject, isString } from "../types";
-import { JSONPatchError, JSONPatchTestFailure } from "./errors";
+import { deepEquals } from "../deep_equals.js";
+import { JSONPointerError, JSONPointerResolutionError } from "../pointer/errors.js";
+import { JSONPointer, UNDEFINED } from "../pointer/index.js";
+import { type JSONValue, isArray, isPlainObject, isString } from "../types.js";
+import { JSONPatchError, JSONPatchTestFailure } from "./errors.js";
 
 export type OpObject = {
   op: string;

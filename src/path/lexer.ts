@@ -1,5 +1,5 @@
-import { JSONPathSyntaxError } from "./errors";
-import { Tokens, type Token, type TokenKind } from "./token";
+import { JSONPathSyntaxError } from "./errors.js";
+import { Tokens, type Token, type TokenKind } from "./token.js";
 
 const reFloat = /(:?-?\d+\.\d+(?:[eE][+-]?\d+)?)|(-?\d+[eE]-\d+)/y;
 const reInt = /-?\d+/y;

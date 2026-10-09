@@ -1,5 +1,5 @@
-import { JSONPathEnvironment, JSONPathError } from "../../src/path";
-import { Has, Match, Search } from "../../src/path/functions";
+import { Has, Match, Search } from "../../src/path/functions.js";
+import { JSONPathEnvironment, JSONPathError } from "../../src/path/index.js";
 
 describe("match filter", () => {
   test("with caching", () => {

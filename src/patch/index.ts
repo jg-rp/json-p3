@@ -1,9 +1,9 @@
-import { type JSONValue } from "../types";
-import { JSONPatch, type OpObject } from "./patch";
+import { type JSONValue } from "../types.js";
+import { JSONPatch, type OpObject } from "./patch.js";
 
-export { JSONPatch } from "./patch";
-export { JSONPatchError, JSONPatchTestFailure } from "./errors";
-export type { OpObject } from "./patch";
+export { JSONPatch } from "./patch.js";
+export { JSONPatchError, JSONPatchTestFailure } from "./errors.js";
+export type { OpObject } from "./patch.js";
 
 /**
  * Apply JSON Patch operations to JSON-like data. **Data is modified in place.**

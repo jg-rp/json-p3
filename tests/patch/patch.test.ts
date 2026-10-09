@@ -1,5 +1,5 @@
 // oxlint-disable typescript/no-unsafe-type-assertion
-import { JSONPatch, JSONPatchError, type OpObject, apply } from "../../src/patch";
+import { JSONPatch, JSONPatchError, type OpObject, apply } from "../../src/patch/index.js";
 
 describe("JSON Patch", () => {
   test("remove root", () => {

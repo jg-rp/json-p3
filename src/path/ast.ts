@@ -1,4 +1,4 @@
-import type { Token } from "./token";
+import type { Token } from "./token.js";
 
 export type Segment = ChildSegment | DescendantSegment;
 

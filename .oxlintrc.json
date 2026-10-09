@@ -6,7 +6,17 @@
     "suspicious": "warn",
     "perf": "warn"
   },
-  "rules": {},
+  "rules": {
+    "import/extensions": [
+      "error",
+      "always",
+      {
+        "ignorePackages": true,
+        "checkTypeImports": true,
+      }
+    ]
+
+  },
   "env": {
     "builtin": true
   },

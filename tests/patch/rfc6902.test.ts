@@ -32,8 +32,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { JSONPatch, type OpObject, apply } from "../../src/patch";
-import { type JSONValue } from "../../src/types";
+import { JSONPatch, type OpObject, apply } from "../../src/patch/index.js";
+import { type JSONValue } from "../../src/types.js";
 
 type Case = {
   description: string;

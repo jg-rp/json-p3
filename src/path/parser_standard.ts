@@ -36,10 +36,10 @@ import {
   type Segment,
   type Selector,
   type SliceSelector,
-} from "./ast";
-import { JSONPathSyntaxError } from "./errors";
-import { Parser } from "./parser";
-import { REVERSE_T, span, Tokens, type Token, type TokenKind } from "./token";
+} from "./ast.js";
+import { JSONPathSyntaxError } from "./errors.js";
+import { Parser } from "./parser.js";
+import { REVERSE_T, span, Tokens, type Token, type TokenKind } from "./token.js";
 
 const PRECEDENCE_LOWEST = 1;
 const PRECEDENCE_LOGICAL_OR = 4;

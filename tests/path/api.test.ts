@@ -1,5 +1,5 @@
-import { JSONPathEnvironment, JSONPathNode } from "../../src/path";
-import { JSONPointer } from "../../src/pointer";
+import { JSONPathEnvironment, JSONPathNode } from "../../src/path/index.js";
+import { JSONPointer } from "../../src/pointer/index.js";
 
 describe("JSONPathNode API", () => {
   const env = new JSONPathEnvironment();

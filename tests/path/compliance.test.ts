@@ -1,9 +1,9 @@
 import { readFileSync } from "fs";
 
-import type { JSONValue } from "../../src/types";
+import type { JSONValue } from "../../src/types.js";
 
-import { JSONPathEnvironment } from "../../src/path/environment";
-import { JSONPathError } from "../../src/path/errors";
+import { JSONPathEnvironment } from "../../src/path/environment.js";
+import { JSONPathError } from "../../src/path/errors.js";
 
 type Case = {
   name: string;

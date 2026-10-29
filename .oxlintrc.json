@@ -12,10 +12,9 @@
       "always",
       {
         "ignorePackages": true,
-        "checkTypeImports": true,
+        "checkTypeImports": true
       }
     ]
-
   },
   "env": {
     "builtin": true

@@ -1,6 +1,6 @@
 # JSON P3 Change Log
 
-## Version 3.0.2 (unreleased)
+## Version 3.0.2
 
 Fixed a packaging issue. Changed TypeScript from a peer dependency to a dev dependency.
 

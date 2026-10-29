@@ -50,16 +50,14 @@
   "devDependencies": {
     "@types/bun": "latest",
     "@types/jest": "^30.0.0",
-    "@vitest/browser-playwright": "^5.0.1",
+    "@vitest/browser-playwright": "^5.0.5",
     "oxfmt": "^0.68.0",
     "oxlint": "^1.83.0",
     "oxlint-tsgolint": "^7.0.2002",
     "playwright": "^1.63.0",
     "tinybench": "^6.2.0",
-    "vitest": "^5.0.1"
-  },
-  "peerDependencies": {
-    "typescript": "^7.0.2"
+    "typescript": "^7.0.2",
+    "vitest": "^5.0.5"
   },
   "browser-min": "dist/json-p3.browser.min.esm.js",
   "jsdeliver": "dist/json-p3.browser.min.esm.js"

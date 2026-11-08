@@ -1,5 +1,11 @@
 # JSON P3 Change Log
 
+## Version 3.0.3 (unreleased)
+
+**Fixes**
+
+- Fixed a bug in the JSON Patch `copy` operation where we were not calling `deepCopy` on the source object. See [#58](https://github.com/jg-rp/json-p3/issues/58).
+
 ## Version 3.0.2
 
 Fixed a packaging issue. Changed TypeScript from a peer dependency to a dev dependency.

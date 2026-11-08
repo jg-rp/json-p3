@@ -167,7 +167,7 @@ export class OpCopy implements Op {
       throw new JSONPatchError(`source object does not exist (${this.name}:${index})`);
     }
 
-    return add(value, this.path, sourceObj, this.name, index);
+    return add(value, this.path, this.deepCopy(sourceObj), this.name, index);
   }
 
   toObject(): OpObject {

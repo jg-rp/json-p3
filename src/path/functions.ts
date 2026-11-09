@@ -1,7 +1,6 @@
-import { check } from "iregexp-check";
-
 import { isArray, isPlainObject, isString } from "../types.js";
 import { JSONPathError } from "./errors.js";
+import { checkIRegexp, mapIRegexp } from "./iregexp.js";
 import { LRUCache } from "./lru_cache.js";
 import { BasicNodeList, NodeList } from "./nodes.js";
 import { Nothing } from "./nothing.js";
@@ -56,6 +55,7 @@ export type RegexFunctionOptions = {
   cacheCapacity?: number;
   throwErrors?: boolean;
   iRegexpCheck?: boolean;
+  escapeAnchors?: boolean;
 };
 
 export abstract class CachingRegexFunction<T> implements FilterFunction {
@@ -65,6 +65,7 @@ export abstract class CachingRegexFunction<T> implements FilterFunction {
   readonly cacheCapacity: number;
   readonly throwErrors: boolean;
   readonly iRegexpCheck: boolean;
+  readonly escapeAnchors: boolean;
 
   private cache: LRUCache<string, RegExp | null>;
 
@@ -72,6 +73,7 @@ export abstract class CachingRegexFunction<T> implements FilterFunction {
     this.cacheCapacity = options.cacheCapacity ?? 300;
     this.throwErrors = options.throwErrors ?? false;
     this.iRegexpCheck = options.iRegexpCheck ?? true;
+    this.escapeAnchors = options.escapeAnchors ?? false;
     this.cache = new LRUCache(this.cacheCapacity);
   }
 
@@ -87,7 +89,7 @@ export abstract class CachingRegexFunction<T> implements FilterFunction {
     }
 
     if (re === undefined) {
-      if (this.iRegexpCheck && !check(pattern)) {
+      if (this.iRegexpCheck && !checkIRegexp(pattern)) {
         this.cache.set(pattern, null);
         return this.debugOrFalse("I-Regexp check failed");
       }
@@ -119,7 +121,7 @@ export abstract class CachingRegexFunction<T> implements FilterFunction {
 
 export class Match extends CachingRegexFunction<string> {
   override compile(pattern: string): RegExp {
-    return new RegExp(fullMatch(pattern), "u");
+    return new RegExp(mapIRegexp(pattern, { escapeAnchors: this.escapeAnchors, wrap: true }), "u");
   }
 
   override go(re: RegExp, str: string): boolean {
@@ -133,7 +135,7 @@ export class Match extends CachingRegexFunction<string> {
 
 export class Search extends CachingRegexFunction<string> {
   override compile(pattern: string): RegExp {
-    return new RegExp(mapRegexp(pattern), "u");
+    return new RegExp(mapIRegexp(pattern, { escapeAnchors: this.escapeAnchors, wrap: false }), "u");
   }
 
   override go(re: RegExp, str: string): boolean {
@@ -170,7 +172,10 @@ export class Has extends CachingRegexFunction<unknown> {
   }
 
   override compile(pattern: string): RegExp {
-    return this.search ? new RegExp(mapRegexp(pattern), "u") : new RegExp(fullMatch(pattern), "u");
+    return new RegExp(
+      mapIRegexp(pattern, { escapeAnchors: this.escapeAnchors, wrap: !this.search }),
+      "u",
+    );
   }
 
   override go(re: RegExp, value: unknown): boolean {
@@ -180,54 +185,4 @@ export class Has extends CachingRegexFunction<unknown> {
 
     return false;
   }
-}
-
-// See https://datatracker.ietf.org/doc/html/rfc9485#name-ecmascript-regexps
-function mapRegexp(pattern: string): string {
-  let escaped = false;
-  let charClass = false;
-  const parts: string[] = [];
-  for (const ch of pattern) {
-    if (escaped) {
-      parts.push(ch);
-      escaped = false;
-      continue;
-    }
-
-    switch (ch) {
-      case ".":
-        if (!charClass) {
-          parts.push("(?:(?![\r\n])\\P{Cs}|\\p{Cs}\\p{Cs})");
-        } else {
-          parts.push(ch);
-        }
-        break;
-      case "\\":
-        escaped = true;
-        parts.push(ch);
-        break;
-      case "[":
-        charClass = true;
-        parts.push(ch);
-        break;
-      case "]":
-        charClass = false;
-        parts.push(ch);
-        break;
-      default:
-        parts.push(ch);
-        break;
-    }
-  }
-  return parts.join("");
-}
-
-function fullMatch(pattern: string): string {
-  const parts: string[] = [];
-  const explicitCaret = pattern.startsWith("^");
-  const explicitDollar = pattern.endsWith("$");
-  if (!explicitCaret && !explicitDollar) parts.push("^(?:");
-  parts.push(mapRegexp(pattern));
-  if (!explicitCaret && !explicitDollar) parts.push(")$");
-  return parts.join("");
 }

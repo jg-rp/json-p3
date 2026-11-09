@@ -10,7 +10,16 @@ export type { JSONPathEnvironmentOptions } from "./environment.js";
 export { JSONPathQuery } from "./query.js";
 export { JSONPathNode } from "./nodes.js";
 
-export { NODES_TYPE, VALUE_TYPE, LOGICAL_TYPE, Has, CachingRegexFunction } from "./functions.js";
+export {
+  NODES_TYPE,
+  VALUE_TYPE,
+  LOGICAL_TYPE,
+  Has,
+  CachingRegexFunction,
+  Match,
+  Search,
+} from "./functions.js";
+
 export type {
   ExpressionType,
   FilterFunction,

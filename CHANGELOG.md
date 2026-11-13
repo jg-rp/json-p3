@@ -1,5 +1,11 @@
 # JSON P3 Change Log
 
+## Version 3.1.0
+
+- Removed the `iregexp-check` dependency in favour of our own `checkIRegexp` and `mapIRegexp` functions.
+
+- Added the `escapeAnchors` argument to `RegexFunctionOptions`. `escapeAnchors` is `false` by default, and will continue to be until at least the next major release. For strict compatibility with I-Regexp (RFC 9485), set `escapeAnchors` to `true`.
+
 ## Version 3.0.3
 
 **Fixes**

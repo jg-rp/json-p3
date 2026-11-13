@@ -1,6 +1,6 @@
 {
   "name": "json-p3",
-  "version": "3.0.3",
+  "version": "3.1.0",
   "description": "JSONPath, JSON Pointer and JSON Patch",
   "keywords": [
     "JSON",
@@ -44,9 +44,7 @@
     "fmt": "bun run oxfmt",
     "fmt:check": "bun run oxfmt --check"
   },
-  "dependencies": {
-    "iregexp-check": "^0.1.2"
-  },
+  "dependencies": {},
   "devDependencies": {
     "@types/bun": "latest",
     "@types/jest": "^30.0.0",
